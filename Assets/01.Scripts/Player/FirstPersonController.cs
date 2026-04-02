@@ -13,8 +13,6 @@ public class FirstPersonController : MonoBehaviour
 
     private CharacterController cc;
     private float xRotation = 0f;
-    private float gravity = -9.81f;
-    private float verticalVelocity = 0f;
 
     void Start()
     {
