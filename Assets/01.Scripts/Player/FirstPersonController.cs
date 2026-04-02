@@ -49,11 +49,6 @@ public class FirstPersonController : MonoBehaviour
         Vector3 move = transform.right * h + transform.forward * v;
         cc.Move(move * moveSpeed * Time.deltaTime);
 
-        // 중력
-        if (cc.isGrounded && verticalVelocity < 0f)
-            verticalVelocity = -2f;
-
-        verticalVelocity += gravity * Time.deltaTime;
-        cc.Move(Vector3.up * verticalVelocity * Time.deltaTime);
+        
     }
 }
