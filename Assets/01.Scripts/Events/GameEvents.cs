@@ -22,3 +22,7 @@ public struct OnSettingsChangedEvent : IEvent
 {
     public SettingsData data;
 }
+
+public struct OnPlayerMoveStartedEvent : IEvent { }
+
+public struct OnPlayerMoveStoppedEvent : IEvent { }

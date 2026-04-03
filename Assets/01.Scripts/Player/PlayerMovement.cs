@@ -12,6 +12,9 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController _characterController;
     private Vector2 _moveInput = Vector2.zero;
     private bool _canMove = true;
+    private bool _isMoving = false;
+
+    public bool IsMoving => _isMoving;
 
     private void Awake()
     {
@@ -32,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        UpdateMoveState();
+
         Move();
     }
 
@@ -39,6 +44,25 @@ public class PlayerMovement : MonoBehaviour
     {
         // 입력값 저장
         _moveInput = value;
+    }
+
+    #region Move
+    private void UpdateMoveState()
+    {
+        bool shouldMove = _canMove && _moveInput.sqrMagnitude > 0.0001f;
+
+        if(!_isMoving && shouldMove)
+        {
+            _isMoving = true;
+            EventBus<OnPlayerMoveStartedEvent>.Publish(new OnPlayerMoveStartedEvent());
+            return;
+        }
+
+        if(_isMoving && !shouldMove)
+        {
+            _isMoving = false;
+            EventBus<OnPlayerMoveStoppedEvent>.Publish(new OnPlayerMoveStoppedEvent());
+        }
     }
 
     private void Move()
@@ -64,6 +88,15 @@ public class PlayerMovement : MonoBehaviour
         _canMove = canMove;
 
         if (!canMove)
+        {
             _moveInput = Vector2.zero;
+
+            if (_isMoving)
+            {
+                _isMoving = false;
+                EventBus<OnPlayerMoveStoppedEvent>.Publish(new OnPlayerMoveStoppedEvent());
+            }
+        }
     }
+    #endregion
 }
