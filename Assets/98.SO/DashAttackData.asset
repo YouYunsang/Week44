@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ae45ad5445d20e4d8a078104d5e150d, type: 3}
+  m_Name: DashAttackData
+  m_EditorClassIdentifier: Assembly-CSharp::DashAttackDataSO
+  _maxStack: 3
+  _stackRechargeTime: 3
+  _minAttackRange: 2
+  _maxAttackRange: 10
+  _chargeSpeed: 15
+  _dashSpeed: 40
+  _dashTimeout: 0.5
+  _stopDistance: 1.5
