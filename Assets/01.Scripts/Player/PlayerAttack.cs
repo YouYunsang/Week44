@@ -7,6 +7,11 @@ public class PlayerAttack : MonoBehaviour
     public float attackRange = 1f;
     public Camera cam;
 
+    //수평 방향: 0 (→), 4 (←)
+    //대각선:   1 (↗), 3 (↖), 5 (↙), 7 (↘)
+    //수직 방향: 2 (↑), 6 (↓) ← Obstical은 이 두 방향 제외
+
+    private readonly int[] _obsticalAllowedDirs = { 0, 1, 3, 4, 5, 7};
     void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -21,13 +26,22 @@ public class PlayerAttack : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, attackRange))
         {
             Sliceable sliceable = hit.collider.GetComponent<Sliceable>();
-            if (sliceable != null)
+            if(sliceable == null) return;
+
+            int randomDir;
+
+            if(hit.collider.CompareTag("Obstical"))
             {
-                // 0~7 랜덤 방향 선택
-                int randomDir = Random.Range(0, 8);
-                Vector3 normal = GetSliceNormal(randomDir);
-                SliceObject(hit.collider.gameObject, hit.point, normal);
+                int randomIndex = Random.Range(0, _obsticalAllowedDirs.Length);
+                randomDir = _obsticalAllowedDirs[randomIndex];
             }
+            else
+            {
+                randomDir = Random.Range(0, 8);
+            }
+
+            Vector3 normal = GetSliceNormal(randomDir);
+            SliceObject(hit.collider.gameObject, hit.point, normal);
         }
     }
 
@@ -58,7 +72,7 @@ public class PlayerAttack : MonoBehaviour
         GameObject[] slices = Slicer.Slice(plane, target);
         Destroy(target);
 
-        Vector3 force = transformedNormal + Vector3.up * 2f;
+        Vector3 force = transformedNormal + Vector3.up * 0.5f;
         slices[0].GetComponent<Rigidbody>().AddForce(force * 3f, ForceMode.Impulse);
     }
 }
