@@ -11,6 +11,7 @@ public class PlayerJump : MonoBehaviour
     public Transform groundCheck;
     public float     groundCheckRadius = 0.2f;
     public LayerMask groundLayer;
+    public InputSO input;
 
     private CharacterController _cc;
     private float _verticalVelocity = 0f;
@@ -21,10 +22,24 @@ public class PlayerJump : MonoBehaviour
         _cc = GetComponent<CharacterController>();
     }
 
+    void OnEnable()
+    {
+        input.OnJump += HandleJump;
+    }
+
+    void OnDisable()
+    {
+        input.OnJump -= HandleJump;
+    }
+
+    void HandleJump()
+    {
+        if(_isGrounded)
+            _verticalVelocity = jumpForce;
+    }
     void Update()
     {
         CheckGround();
-        HandleJump();
         ApplyGravity();
     }
 
@@ -34,15 +49,6 @@ public class PlayerJump : MonoBehaviour
             groundCheck.position,
             groundCheckRadius,
             groundLayer);
-    }
-//
-    void HandleJump()
-    {
-        // 바닥에 있을 때만 점프 가능
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && _isGrounded)
-        {
-            _verticalVelocity = jumpForce;
-        }
     }
 
     void ApplyGravity()
