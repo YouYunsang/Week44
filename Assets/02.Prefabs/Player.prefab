@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3478933504760974659}
-  - component: {fileID: 5227840720570242155}
   m_Layer: 0
   m_Name: Eye
   m_TagString: Untagged
@@ -32,31 +31,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3659662980472643730}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5227840720570242155
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1256432506596722562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4fc91ac49118823469b077cc00e536c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  _camera: {fileID: 0}
-  _playerMovement: {fileID: 0}
-  _playerLook: {fileID: 0}
-  _playerJump: {fileID: 0}
-  _characterController: {fileID: 0}
-  _input: {fileID: 0}
-  _attackRange: 2
-  _minAttackRange: 2
-  _maxAttackRange: 10
-  _chargeSpeed: 3
-  _dashSpeed: 20
-  _dashTimeout: 1
-  _stopDistance: 1
 --- !u!1 &2610172585898186420
 GameObject:
   m_ObjectHideFlags: 0
