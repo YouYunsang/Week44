@@ -37,7 +37,7 @@ public class PlayerAttack : MonoBehaviour
     {
         // 자기 오브젝트의 필수 컴포넌트 캐싱
         if (_characterController == null)
-            _characterController = GetComponent<CharacterController>();
+            _characterController = GetComponentInParent<CharacterController>();
 
         if (_playerMovement == null)
             _playerMovement = GetComponent<PlayerMovement>();
