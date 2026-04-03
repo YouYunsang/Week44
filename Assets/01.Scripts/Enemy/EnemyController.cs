@@ -6,6 +6,13 @@ public enum EnemyType
     WallMounted  // 벽 고정, 전방위 조준 발사
 }
 
+public enum PatrolAxis
+{
+    X,      // 좌우 (기본)
+    Z,      // 앞뒤
+    Custom  // 인스펙터에서 직접 방향 지정
+}
+
 public class EnemyController : MonoBehaviour
 {
     [Header("적 종류")]
@@ -19,7 +26,7 @@ public class EnemyController : MonoBehaviour
     public LayerMask PlayerLayer;
 
     [Header("Roaming 어그로 설정 (EnemyType.Roaming 전용)")]
-    [Tooltip("플레이어 최초 감지 후 확장되는 감지 반경 (detectionRange보다 크게 설정)")]
+    [Tooltip("플레이어 최초 감지 후 확장되는 감지 반경 (DetectionRange보다 크게 설정)")]
     public float AggroDetectionRange = 15f;
 
     [Header("발사 설정")]
@@ -42,9 +49,14 @@ public class EnemyController : MonoBehaviour
     [Tooltip("회전 속도")]
     public float RotationSpeed = 5f;
 
-
     [Header("Roaming 순찰 설정 (EnemyType.Roaming 전용)")]
-    [Tooltip("스폰 위치 기준 좌우 순찰 거리")]
+    [Tooltip("순찰 축 방향")]
+    public PatrolAxis PatrolAxis = PatrolAxis.X;
+
+    [Tooltip("PatrolAxis.Custom 선택 시 순찰 방향 벡터 (자동 정규화됨)")]
+    public Vector3 CustomPatrolDirection = Vector3.right;
+
+    [Tooltip("스폰 위치 기준 순찰 거리")]
     public float PatrolDistance = 5f;
 
     [Tooltip("순찰 이동 속도")]
@@ -58,6 +70,7 @@ public class EnemyController : MonoBehaviour
 
     private Vector3 _patrolOrigin;
     private int _patrolDirection = 1;
+    private Vector3 _patrolDir; // 실제 사용할 정규화된 순찰 방향
 
     // ─────────────────────────────────────────────
     private void Start()
@@ -66,7 +79,18 @@ public class EnemyController : MonoBehaviour
         if (TurretHead == null) TurretHead = transform;
 
         if (EnemyType == EnemyType.Roaming)
+        {
             _patrolOrigin = transform.position;
+
+            // 선택한 축에 따라 순찰 방향 결정
+            _patrolDir = PatrolAxis switch
+            {
+                PatrolAxis.X => Vector3.right,
+                PatrolAxis.Z => Vector3.forward,
+                PatrolAxis.Custom => CustomPatrolDirection.normalized,
+                _ => Vector3.right
+            };
+        }
     }
 
     private void Update()
@@ -99,10 +123,11 @@ public class EnemyController : MonoBehaviour
 
     // ── 플레이어 감지 ──────────────────────────────
     private void DetectPlayer()
-    {   //만약 어그로 상태면 감지범위가 aggroDetectionRange로 바뀜
-        float currentRange = ( _isAggroed)
+    {   //만약 어그로 상태면 감지범위가 AggroDetectionRange로 바뀜
+        float currentRange = (_isAggroed)
             ? AggroDetectionRange
             : DetectionRange;
+
         // 플레이어 레이어가 있으면 범위안에 플레이어 레이어만 찾음 아니면 전체 다 찾음, 전체 다 찾으면 성능 많이 먹음
         Collider[] hits = PlayerLayer != 0
             ? Physics.OverlapSphere(transform.position, currentRange, PlayerLayer)
@@ -110,7 +135,8 @@ public class EnemyController : MonoBehaviour
 
         _playerInRange = false;
         _player = null;
-        /// 매 프레임 초기화후 탐색 player태그 가진 오브젝트 찾으면 저장하고 루프 종료 Enemy는 어그로 상태로 변경 
+
+        /// 매 프레임 초기화후 탐색 player태그 가진 오브젝트 찾으면 저장하고 루프 종료 Enemy는 어그로 상태로 변경
         foreach (Collider col in hits)
         {
             if (col.CompareTag("Player"))
@@ -124,9 +150,9 @@ public class EnemyController : MonoBehaviour
                 break;
             }
         }
+
         //어그로 해제 조건
         //어그로 범위 한번 더 확인, 이 범위 밖까지 완전히 벗어 났을 때만 어그로 해제
-
         if (_isAggroed && !_playerInRange)
         {
             Collider[] aggroHits = PlayerLayer != 0
@@ -170,8 +196,9 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        // firePoint 세팅과 무관하게 플레이어를 직접 겨냥하는 방향 계산
+        // FirePoint 세팅과 무관하게 플레이어를 직접 겨냥하는 방향 계산
         Vector3 aimDir = (_player.position - FirePoint.position).normalized;
+
         //총알 프리팹 생성
         GameObject bullet = Instantiate(BulletPrefab, FirePoint.position, FirePoint.rotation);
 
@@ -183,15 +210,14 @@ public class EnemyController : MonoBehaviour
         _nextFireTime = Time.time + 1f / FireRate;
     }
 
-    // ── Roaming 전용: 좌우 순찰 ────────────────────
+    // ── Roaming 전용: 순찰 ─────────────────────────
     private void Patrol()
     {
-        Vector3 target = _patrolOrigin + Vector3.right * (_patrolDirection * PatrolDistance);
+        Vector3 target = _patrolOrigin + _patrolDir * (_patrolDirection * PatrolDistance);
         transform.position = Vector3.MoveTowards(transform.position, target, PatrolSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, target) < 0.05f)
             _patrolDirection *= -1;
-
     }
 
     // ── 기즈모 ─────────────────────────────────────
@@ -207,11 +233,21 @@ public class EnemyController : MonoBehaviour
 
             Gizmos.color = Color.green;
 
-            // patrolOrigin은 start()에서 초기화 되기 때문에 실행전에는 값이 없어서 분기
+            // patrolOrigin은 Start()에서 초기화 되기 때문에 실행전에는 값이 없어서 분기
             Vector3 origin = Application.isPlaying ? _patrolOrigin : transform.position;
+
+            // 에디터 정지 상태에서는 _patrolDir이 초기화 안 됐으므로 직접 계산
+            Vector3 dir = Application.isPlaying ? _patrolDir : PatrolAxis switch
+            {
+                PatrolAxis.X => Vector3.right,
+                PatrolAxis.Z => Vector3.forward,
+                PatrolAxis.Custom => CustomPatrolDirection.normalized,
+                _ => Vector3.right
+            };
+
             Gizmos.DrawLine(
-                origin + Vector3.right * PatrolDistance,
-                origin - Vector3.right * PatrolDistance
+                origin + dir * PatrolDistance,
+                origin - dir * PatrolDistance
             );
         }
     }

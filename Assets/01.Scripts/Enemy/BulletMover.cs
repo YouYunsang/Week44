@@ -14,6 +14,9 @@ public class BulletMover : MonoBehaviour
     [Tooltip("적에게 입히는 데미지 (IDamageable 인터페이스 사용 시)")]
     public float Damage = 10f;
 
+    [Tooltip("플레이어 레이어 (EnemyController의 PlayerLayer와 동일하게 설정)")]
+    public LayerMask PlayerLayer;
+
     private Vector3 _direction;
     private float _speed;
     private bool _initialized;
@@ -23,7 +26,6 @@ public class BulletMover : MonoBehaviour
     {
         if (!TryGetComponent(out Rigidbody rb))
             rb = gameObject.AddComponent<Rigidbody>();
-
         rb.isKinematic = true;
         rb.useGravity = false;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -34,7 +36,6 @@ public class BulletMover : MonoBehaviour
         _direction = direction.normalized;
         _speed = speed;
         _initialized = true;
-
         Destroy(gameObject, Lifetime);
     }
 
@@ -44,15 +45,30 @@ public class BulletMover : MonoBehaviour
         transform.Translate(_direction * _speed * Time.deltaTime, Space.World);
     }
 
+    // ── 플레이어 판별 ──────────────────────────────
+    /// <summary>
+    /// 태그가 "Player" 이거나 PlayerLayer에 포함된 레이어면 true
+    /// (1 << obj.layer) : 해당 오브젝트의 레이어를 비트 마스크로 변환
+    /// PlayerLayer.value와 & 연산 → 겹치는 레이어가 있으면 0이 아님
+    /// </summary>
+    private bool IsPlayer(GameObject obj)
+    {
+        if (obj.CompareTag("Player")) return true;
+        if (PlayerLayer != 0 && (PlayerLayer.value & (1 << obj.layer)) != 0) return true;
+        return false;
+    }
+
     // ── 3D 충돌 ────────────────────────────────────
     private void OnTriggerEnter(Collider other)
     {
         if (other == null) return;
         if (other.CompareTag("Turret")) return;
 
+        // 플레이어 태그 또는 플레이어 레이어가 아니면 무시
+        if (!IsPlayer(other.gameObject)) return;
+
         if (other.TryGetComponent(out IDamageable damageable))
             damageable.TakeDamage(Damage);
-
         HitDestroy();
     }
 
@@ -60,21 +76,19 @@ public class BulletMover : MonoBehaviour
     {
         // null 체크: 충돌 데이터 또는 gameObject가 이미 파괴된 경우 방어
         if (other == null || other.gameObject == null) return;
-
         // 이미 소멸 처리된 경우 중복 실행 방지
         if (_isDestroyed) return;
-
         // 터렛 자신과의 충돌 무시
         if (other.gameObject.CompareTag("Enemy")) return;
+
+        // 플레이어 태그 또는 플레이어 레이어가 아니면 무시
+        if (!IsPlayer(other.gameObject)) return;
 
         // 데미지 처리: 컴포넌트가 없어도 충돌 자체는 유효
         if (other.gameObject.TryGetComponent(out IDamageable damageable))
             damageable.TakeDamage(Damage);
-
         HitDestroy();
     }
-
- 
 
     // ── 소멸 처리 ──────────────────────────────────
     /// <summary>

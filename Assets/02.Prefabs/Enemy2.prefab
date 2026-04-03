@@ -270,18 +270,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1fe1e6c0941f346ae177aa16d51bcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  enemyType: 0
-  detectionRange: 10
-  playerLayer:
+  EnemyType: 0
+  DetectionRange: 10
+  PlayerLayer:
     serializedVersion: 2
-    m_Bits: 8
-  aggroDetectionRange: 15
-  bulletPrefab: {fileID: 7014988171735255395, guid: 3ea9057a351dc0440b93c15747bc1c78, type: 3}
-  firePoint: {fileID: 8707128219572209801}
-  fireRate: 1
-  bulletSpeed: 10
-  turretHead: {fileID: 0}
-  rotationSpeed: 5
-  is2D: 0
-  patrolDistance: 10
-  patrolSpeed: 5
+    m_Bits: 64
+  AggroDetectionRange: 15
+  BulletPrefab: {fileID: 7014988171735255395, guid: 3ea9057a351dc0440b93c15747bc1c78, type: 3}
+  FirePoint: {fileID: 8707128219572209801}
+  FireRate: 1
+  BulletSpeed: 10
+  TurretHead: {fileID: 0}
+  RotationSpeed: 5
+  PatrolAxis: 0
+  CustomPatrolDirection: {x: 1, y: 0, z: 0}
+  PatrolDistance: 5
+  PatrolSpeed: 2
