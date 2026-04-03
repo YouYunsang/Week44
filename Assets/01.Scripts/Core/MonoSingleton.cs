@@ -8,6 +8,8 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this as T;
-        DontDestroyOnLoad(gameObject);
+
+        GameObject persistTarget = transform.root != null ? transform.root.gameObject : gameObject;
+        DontDestroyOnLoad(persistTarget);
     }
 }

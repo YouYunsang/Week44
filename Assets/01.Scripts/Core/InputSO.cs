@@ -11,6 +11,7 @@ public class InputSO : ScriptableObject, NewInput.IPlayerActions
     public event Action          OnAttack;
     public event Action          OnCrouch;
     public event Action          OnSprint;
+    public event Action          OnRestart;
 
     NewInput _input;
 
@@ -57,6 +58,11 @@ public class InputSO : ScriptableObject, NewInput.IPlayerActions
     void NewInput.IPlayerActions.OnSprint(InputAction.CallbackContext ctx)
     {
         if (ctx.performed) OnSprint?.Invoke();
+    }
+
+    void NewInput.IPlayerActions.OnRestart(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed) OnRestart?.Invoke();
     }
 
     void NewInput.IPlayerActions.OnInteract(InputAction.CallbackContext ctx) { }
