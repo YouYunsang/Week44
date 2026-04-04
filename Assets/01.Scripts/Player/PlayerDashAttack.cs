@@ -202,7 +202,6 @@ public class PlayerDashAttack : MonoBehaviour
 
         // 카메라 전방 기준 대시 도착 지점 계산
         Vector3 targetPos = hit.point - _sliceExecutor.GetCameraForward() * _data.StopDistance;
-        targetPos.y = _characterController.transform.position.y;
 
         float timer = 0f;
 
@@ -216,7 +215,6 @@ public class PlayerDashAttack : MonoBehaviour
                 break;
 
             Vector3 moveDirection = (targetPos - currentPos).normalized;
-            moveDirection.y = 0f;
 
             // CharacterController 기반 대시 이동
             _characterController.Move(moveDirection * _data.DashSpeed * Time.deltaTime);

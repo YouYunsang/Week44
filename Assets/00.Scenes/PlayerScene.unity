@@ -639,6 +639,11 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
+--- !u!1 &621108262 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+  m_PrefabInstance: {fileID: 1111737470}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &800464987
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,6 +921,10 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 1591852373}
+    - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _sliceExecutor
+      value: 
+      objectReference: {fileID: 1111737477}
     - target: {fileID: 4892192173532715127, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.36083
@@ -983,14 +992,23 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1111737477}
+    - targetCorrespondingSourceObject: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1111737479}
+    - targetCorrespondingSourceObject: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1111737478}
   m_SourcePrefab: {fileID: 100100000, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
 --- !u!114 &1111737471 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7836380275553792151, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
   m_PrefabInstance: {fileID: 1111737470}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 621108262}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f5cf5110017cde43b0b9ae2ead2f492, type: 3}
@@ -1001,7 +1019,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5614986853067378888, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
   m_PrefabInstance: {fileID: 1111737470}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 621108262}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 694b47750d6c7334fb8800c80f9c3875, type: 3}
@@ -1012,7 +1030,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7789416113155416252, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
   m_PrefabInstance: {fileID: 1111737470}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 621108262}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24f40b2a2e921fa40a6c311df7cc8931, type: 3}
@@ -1023,6 +1041,69 @@ CharacterController:
   m_CorrespondingSourceObject: {fileID: 4473312493581529772, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
   m_PrefabInstance: {fileID: 1111737470}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1111737477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621108262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c40d3aeb5ded9314dabf2a192ddc926f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSliceExecutor
+  _camera: {fileID: 1591852373}
+--- !u!114 &1111737478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621108262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce5d3899ff5f43749bcd42f30693e89d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttackUI
+  _playerDashAttack: {fileID: 1111737479}
+  _dashAttackData: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _stackOffset: {x: 0, y: 60}
+  _stackRechargeBarOffset: {x: 0, y: 95}
+  _chargeGaugeOffset: {x: 0, y: 40}
+  _dashLabelOffset: {x: 0, y: -60}
+  _stackLabelWidth: 120
+  _stackLabelHeight: 30
+  _stackRechargeBarWidth: 80
+  _stackRechargeBarHeight: 6
+  _chargeGaugeWidth: 150
+  _chargeGaugeHeight: 10
+  _dashLabelWidth: 200
+  _dashLabelHeight: 40
+  _defaultCrosshairSize: 6
+  _maxChargeCrosshairSize: 10
+  _targetCrosshairSize: 14
+--- !u!114 &1111737479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621108262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d3e83900c0a9a47af79def945eff5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttack
+  _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
+  _data: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _playerMovement: {fileID: 1111737473}
+  _playerLook: {fileID: 1111737472}
+  _playerJump: {fileID: 1111737471}
+  _characterController: {fileID: 1111737474}
+  _sliceExecutor: {fileID: 1111737477}
+  _currentStack: 0
+  _currentRange: 0
 --- !u!4 &1329196315 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3659662980472643730, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
