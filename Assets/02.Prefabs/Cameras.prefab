@@ -188,6 +188,7 @@ GameObject:
   - component: {fileID: 14815735766210777}
   - component: {fileID: 6945136048099934120}
   - component: {fileID: 1938699422782994211}
+  - component: {fileID: 479034154097133273}
   m_Layer: 0
   m_Name: CM_FirstPerson
   m_TagString: Untagged
@@ -386,6 +387,27 @@ MonoBehaviour:
   _rollLarge: 1.5
   _duration: 0.5
   _attackRatio: 0.25
+--- !u!114 &479034154097133273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6836810534995814093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd599b65898c40a4ba06c957569d8983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwingCameraReactionExtension
+  _normalPitchAmount: 2
+  _normalYawAmount: 1.8
+  _normalRollAmount: 0.4
+  _normalDuration: 0.5
+  _dashPitchAmount: 3.3
+  _dashYawAmount: 2.8
+  _dashRollAmount: 0.9
+  _dashDuration: 0.8
+  _attackRatio: 0.28
 --- !u!1 &7974083907948601543
 GameObject:
   m_ObjectHideFlags: 0

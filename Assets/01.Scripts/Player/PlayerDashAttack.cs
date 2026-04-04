@@ -309,7 +309,7 @@ public class PlayerDashAttack : MonoBehaviour
         EventBus<OnDashStrikeEvent>.Publish(new OnDashStrikeEvent());
 
         // 실제 슬라이스 실행
-        _sliceExecutor.ExecuteSlice(hit);
+        _sliceExecutor.ExecuteSlice(hit, WeaponSwingType.DashAttack);
 
         // 조작 복구
         if (_playerMovement != null)

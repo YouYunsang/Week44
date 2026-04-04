@@ -126,9 +126,16 @@ public struct OnPlayerLandedEvent : IEvent
 #endregion
 
 #region Weapon Swing
+public enum WeaponSwingType
+{
+    NormalAttack,
+    DashAttack
+}
+
 // 무기 휘두르기 (슬라이스 방향 기반)
 public struct OnWeaponSwingEvent : IEvent
 {
     public Vector2 direction; // 카메라 공간 기준 정규화된 스윙 방향
+    public WeaponSwingType swingType;
 }
 #endregion
