@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 6261954569534079821}
   - component: {fileID: 3157209166717324263}
   - component: {fileID: 1024703538004245521}
+  - component: {fileID: 14815735766210777}
   - component: {fileID: 6945136048099934120}
   - component: {fileID: 1938699422782994211}
   m_Layer: 0
@@ -290,7 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBasicMultiChannelPerlin
-  NoiseProfile: {fileID: 11400000, guid: be670ad65a3a4e545ba6f29f17dcb6b7, type: 2}
+  NoiseProfile: {fileID: 11400000, guid: fb6a6463ff936424ea1a040c1af6467b, type: 2}
   PivotOffset: {x: 0, y: 0, z: 0}
   AmplitudeGain: 1
   FrequencyGain: 1
@@ -309,7 +310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraNoiseController
   _defaultSetting: {fileID: 11400000, guid: 0808e868acb8e0444ab06af25249f3f2, type: 2}
   _moveSetting: {fileID: 11400000, guid: 06dba5a6c645bcf4db6356fa95c87156, type: 2}
-  _chargeSetting: {fileID: 0}
+  _chargeSetting: {fileID: 11400000, guid: f06e6dd2627825348a3d43d4983a136c, type: 2}
 --- !u!114 &1024703538004245521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,7 +325,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraFovController
   _defaultSetting: {fileID: 11400000, guid: 9f5066fc68f3c644995c6e4991c23b64, type: 2}
   _moveSetting: {fileID: 11400000, guid: c8d3bdba9f6a00d48b7e69f35b9f2433, type: 2}
-  _chargeSetting: {fileID: 0}
+  _chargeSetting: {fileID: 11400000, guid: 76f28230ee8006842931f2c15686d58e, type: 2}
+--- !u!114 &14815735766210777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6836810534995814093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d5ead2a54f0d1d4ba455cf662d06a74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraDutchController
+  _defaultSetting: {fileID: 11400000, guid: 24073cbd29b220840b613700a6eb41eb, type: 2}
+  _chargeSetting: {fileID: 11400000, guid: f6fe6b9a6d83e674489e50b6aa800348, type: 2}
+  _chargeOscillationSpeed: 10
+  _chargeEndAmplitudeMultiplier: 0.15
 --- !u!114 &6945136048099934120
 MonoBehaviour:
   m_ObjectHideFlags: 0
