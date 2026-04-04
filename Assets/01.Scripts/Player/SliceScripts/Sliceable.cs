@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.AccessControl;
 using UnityEngine;
 
 public class Sliceable : MonoBehaviour
@@ -20,64 +17,42 @@ public class Sliceable : MonoBehaviour
     [SerializeField]
     private bool _smoothVertices = false;
 
+    [SerializeField]
+    private Material _capMaterial;
+
     public bool IsSolid
     {
-        get
-        {
-            return _isSolid;
-        }
-        set
-        {
-            _isSolid = value;
-        }
+        get { return _isSolid; }
+        set { _isSolid = value; }
     }
 
     public bool ReverseWireTriangles
     {
-        get
-        {
-            return _reverseWindTriangles;
-        }
-        set
-        {
-            _reverseWindTriangles = value;
-        }
+        get { return _reverseWindTriangles; }
+        set { _reverseWindTriangles = value; }
     }
 
-    public bool UseGravity 
+    public bool UseGravity
     {
-        get
-        {
-            return _useGravity;
-        }
-        set
-        {
-            _useGravity = value;
-        }
+        get { return _useGravity; }
+        set { _useGravity = value; }
     }
 
-    public bool ShareVertices 
+    public bool ShareVertices
     {
-        get
-        {
-            return _shareVertices;
-        }
-        set
-        {
-            _shareVertices = value;
-        }
+        get { return _shareVertices; }
+        set { _shareVertices = value; }
     }
 
-    public bool SmoothVertices 
+    public bool SmoothVertices
     {
-        get
-        {
-            return _smoothVertices;
-        }
-        set
-        {
-            _smoothVertices = value;
-        }
+        get { return _smoothVertices; }
+        set { _smoothVertices = value; }
     }
 
+    public Material CapMaterial
+    {
+        get { return _capMaterial; }
+        set { _capMaterial = value; }
+    }
 }
