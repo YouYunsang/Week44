@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4311410747898818111}
   m_Layer: 0
   m_Name: Gun
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 4363646501422379772}
   m_Layer: 0
   m_Name: EnemyBase
-  m_TagString: Player
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -305,6 +305,7 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
+  _capMaterial: {fileID: 0}
 --- !u!114 &4363646501422379772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -322,3 +323,4 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
+  _capMaterial: {fileID: 0}
