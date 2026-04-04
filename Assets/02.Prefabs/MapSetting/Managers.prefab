@@ -48,7 +48,7 @@ MonoBehaviour:
   - key: 1
     clip: {fileID: 8300000, guid: ab16651bb43aad84792cde6b21cc708f, type: 3}
   - key: 2
-    clip: {fileID: 8300000, guid: f66b3df567376c849904ef95667a79fd, type: 3}
+    clip: {fileID: 8300000, guid: ba3fa7eb5fde5204fac34882ee23926f, type: 3}
   sfxLibrary:
   - key: 1
     clip: {fileID: 8300000, guid: ea405f16bcd93dd4f851319e8a02215e, type: 3}
@@ -668,6 +668,11 @@ MonoBehaviour:
   sliceSfxKey: 0
   gameOverSfxKey: 0
   sfxAffectedByTimeScale: 1
+  preloadAudioDataOnAwake: 1
+  autoCreateBgmSources: 1
+  bgmLayerStartDelay: 0
+  bgmFadeDuration: 1
+  pauseBgmVolumeMult: 0.3
 --- !u!1 &3071883608473294510
 GameObject:
   m_ObjectHideFlags: 0
@@ -955,5 +960,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveManager
   checkpoints:
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

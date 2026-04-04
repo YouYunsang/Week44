@@ -27,8 +27,13 @@ public class AudioManager : MonoSingleton<AudioManager>
     [SerializeField] float bgmLayerStartDelay = 0f;
     [Min(0f)]
     [SerializeField] float bgmFadeDuration = 0.25f;
+    [Range(0f, 1f)]
+    [SerializeField] float pauseBgmVolumeMult = 0.3f;
 
     float _bgmTargetVolume = 1f;
+    float _pauseVolumeMult = 1f;
+
+    float ActualBgmVolume => _bgmTargetVolume * _pauseVolumeMult;
     Coroutine _bgmTransitionRoutine;
     readonly List<AudioSource> _activeBgmSources = new List<AudioSource>();
     readonly List<AudioSource> _incomingBgmSourcesBuffer = new List<AudioSource>();
@@ -58,6 +63,8 @@ public class AudioManager : MonoSingleton<AudioManager>
         EventBus<OnSliceEvent>.Subscribe(OnSlice);
         EventBus<OnTimeScaleChangedEvent>.Subscribe(OnTimeScaleChanged);
         EventBus<OnSettingsChangedEvent>.Subscribe(OnSettingsChanged);
+        EventBus<OnMenuOpenEvent>.Subscribe(OnMenuOpen);
+        EventBus<OnMenuCloseEvent>.Subscribe(OnMenuClose);
     }
 
     void OnDisable()
@@ -67,6 +74,8 @@ public class AudioManager : MonoSingleton<AudioManager>
         EventBus<OnSliceEvent>.Unsubscribe(OnSlice);
         EventBus<OnTimeScaleChangedEvent>.Unsubscribe(OnTimeScaleChanged);
         EventBus<OnSettingsChangedEvent>.Unsubscribe(OnSettingsChanged);
+        EventBus<OnMenuOpenEvent>.Unsubscribe(OnMenuOpen);
+        EventBus<OnMenuCloseEvent>.Unsubscribe(OnMenuClose);
     }
 
     void OnGameStart(OnGameStartEvent e)
@@ -87,13 +96,14 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     void OnTimeScaleChanged(OnTimeScaleChangedEvent e)
     {
-        float pitch = e.timeScale > 0f ? e.timeScale : 0f;
+        // 완전 정지(pause)일 때는 pitch를 건드리지 않음 — 볼륨 덕으로만 처리
+        if (e.timeScale <= 0f) return;
 
         for (int i = 0; i < bgmSources.Count; i++)
         {
             AudioSource source = bgmSources[i];
             if (source == null) continue;
-            source.pitch = pitch;
+            source.pitch = e.timeScale;
         }
 
         if (sfxAffectedByTimeScale)
@@ -102,9 +112,21 @@ public class AudioManager : MonoSingleton<AudioManager>
             {
                 AudioSource source = sfxSources[i];
                 if (source == null) continue;
-                source.pitch = pitch;
+                source.pitch = e.timeScale;
             }
         }
+    }
+
+    void OnMenuOpen(OnMenuOpenEvent e)
+    {
+        _pauseVolumeMult = pauseBgmVolumeMult;
+        ApplyBgmVolume();
+    }
+
+    void OnMenuClose(OnMenuCloseEvent e)
+    {
+        _pauseVolumeMult = 1f;
+        ApplyBgmVolume();
     }
 
     void OnSettingsChanged(OnSettingsChangedEvent e)
@@ -182,12 +204,16 @@ public class AudioManager : MonoSingleton<AudioManager>
     public void SetBGMVolume(float volume)
     {
         _bgmTargetVolume = volume;
+        ApplyBgmVolume();
+    }
 
+    void ApplyBgmVolume()
+    {
         for (int i = 0; i < bgmSources.Count; i++)
         {
             AudioSource source = bgmSources[i];
             if (source == null) continue;
-            source.volume = volume;
+            source.volume = ActualBgmVolume;
         }
     }
 
@@ -250,7 +276,7 @@ public class AudioManager : MonoSingleton<AudioManager>
                     outgoing[i].volume = Mathf.Lerp(outgoingStart[i], 0f, ratio);
 
                 for (int i = 0; i < _incomingBgmSourcesBuffer.Count; i++)
-                    _incomingBgmSourcesBuffer[i].volume = Mathf.Lerp(0f, _bgmTargetVolume, ratio);
+                    _incomingBgmSourcesBuffer[i].volume = Mathf.Lerp(0f, ActualBgmVolume, ratio);
 
                 yield return null;
             }
@@ -261,14 +287,14 @@ public class AudioManager : MonoSingleton<AudioManager>
             AudioSource source = outgoing[i];
             source.Stop();
             source.clip = null;
-            source.volume = _bgmTargetVolume;
+            source.volume = ActualBgmVolume;
         }
 
         _activeBgmSources.Clear();
         for (int i = 0; i < _incomingBgmSourcesBuffer.Count; i++)
         {
             AudioSource source = _incomingBgmSourcesBuffer[i];
-            source.volume = _bgmTargetVolume;
+            source.volume = ActualBgmVolume;
             _activeBgmSources.Add(source);
         }
 
@@ -334,7 +360,7 @@ public class AudioManager : MonoSingleton<AudioManager>
                 {
                     AudioSource source = bgmSources[i];
                     if (source == null || source.clip == null) continue;
-                    source.volume = Mathf.Lerp(0f, _bgmTargetVolume, ratio);
+                    source.volume = Mathf.Lerp(0f, ActualBgmVolume, ratio);
                 }
 
                 yield return null;
@@ -345,7 +371,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         {
             AudioSource source = bgmSources[i];
             if (source == null || source.clip == null) continue;
-            source.volume = _bgmTargetVolume;
+            source.volume = ActualBgmVolume;
         }
 
         _activeBgmSources.Clear();
@@ -407,7 +433,7 @@ public class AudioManager : MonoSingleton<AudioManager>
             AudioSource source = go.AddComponent<AudioSource>();
             source.playOnAwake = false;
             source.loop = true;
-            source.volume = _bgmTargetVolume;
+            source.volume = ActualBgmVolume;
 
             if (template != null)
             {
@@ -422,8 +448,8 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     void RefreshSourceLists()
     {
-        bgmSources = CollectAudioSourcesFromRoot(bgmRoot);
-        sfxSources = CollectAudioSourcesFromRoot(sfxRoot);
+        if (bgmRoot != null) bgmSources = CollectAudioSourcesFromRoot(bgmRoot);
+        if (sfxRoot != null) sfxSources = CollectAudioSourcesFromRoot(sfxRoot);
     }
 
     List<AudioSource> CollectAudioSourcesFromRoot(Transform root)

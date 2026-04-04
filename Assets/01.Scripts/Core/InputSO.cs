@@ -9,9 +9,12 @@ public class InputSO : ScriptableObject, NewInput.IPlayerActions
     public event Action<Vector2> OnLook;
     public event Action          OnJump;
     public event Action          OnAttack;
+    public event Action          OnDashAttackPressed;
+    public event Action          OnDashAttackReleased;
     public event Action          OnCrouch;
     public event Action          OnSprint;
     public event Action          OnRestart;
+    public event Action          OnStop;
 
     NewInput _input;
 
@@ -50,6 +53,13 @@ public class InputSO : ScriptableObject, NewInput.IPlayerActions
         if (ctx.performed) OnAttack?.Invoke();
     }
 
+    void NewInput.IPlayerActions.OnDashAttack(InputAction.CallbackContext ctx)
+    {
+        if(ctx.started) OnDashAttackPressed?.Invoke();
+
+        if (ctx.canceled) OnDashAttackReleased?.Invoke();
+    }
+
     void NewInput.IPlayerActions.OnCrouch(InputAction.CallbackContext ctx)
     {
         if (ctx.performed) OnCrouch?.Invoke();
@@ -63,6 +73,11 @@ public class InputSO : ScriptableObject, NewInput.IPlayerActions
     void NewInput.IPlayerActions.OnRestart(InputAction.CallbackContext ctx)
     {
         if (ctx.performed) OnRestart?.Invoke();
+    }
+
+    void NewInput.IPlayerActions.OnStop(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed) OnStop?.Invoke();
     }
 
     void NewInput.IPlayerActions.OnInteract(InputAction.CallbackContext ctx) { }
