@@ -27,7 +27,6 @@ public class PlayerDashAttackUI : MonoBehaviour
     [Header("Crosshair")]
     [SerializeField] private float _defaultCrosshairSize = 6f;
     [SerializeField] private float _maxChargeCrosshairSize = 10f;
-    [SerializeField] private float _targetCrosshairSize = 14f;
 
     private void Awake()
     {
