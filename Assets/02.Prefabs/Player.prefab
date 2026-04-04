@@ -206,7 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
-  _moveSpeed: 5
+  _moveSpeed: 10
 --- !u!114 &5614986853067378888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,7 +238,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
   _sliceExecutor: {fileID: 4021905670037479288}
-  _attackRange: 2
+  _attackRange: 9
+  _attackCooldown: 2
+  _slowAttackCooldown: 0.1
 --- !u!114 &7836380275553792151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,6 +309,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttackUI
   _playerDashAttack: {fileID: 9015818267559469537}
   _dashAttackData: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _sliceExecutor: {fileID: 0}
+  _basicAttackRange: 2
   _stackOffset: {x: 0, y: 60}
   _stackRechargeBarOffset: {x: 0, y: 95}
   _chargeGaugeOffset: {x: 0, y: 40}
@@ -392,10 +396,46 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseSource
   ImpulseDefinition:
     ImpulseChannel: 1
-    ImpulseShape: 2
+    ImpulseShape: 0
     CustomImpulseShape:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 10.90099
+        outSlope: 10.90099
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.09040333
+      - serializedVersion: 3
+        time: 0.1
+        value: 0.5
+        inSlope: 0.059334684
+        outSlope: 0.059334684
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.450626
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.2
+        value: 0.5
+        inSlope: -0.30514076
+        outSlope: -0.30514076
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.13006043
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0.14385591
+        outSlope: 0.14385591
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.06490515
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
