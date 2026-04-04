@@ -1335,6 +1335,10 @@ PrefabInstance:
       propertyPath: _sliceExecutor
       value: 
       objectReference: {fileID: 1510724058}
+    - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _attackCooldown
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4892192173532715127, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: m_LocalPosition.x
       value: -17.28
@@ -1481,6 +1485,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttackUI
   _playerDashAttack: {fileID: 1510724057}
   _dashAttackData: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _sliceExecutor: {fileID: 0}
+  _basicAttackRange: 2
   _stackOffset: {x: 0, y: 60}
   _stackRechargeBarOffset: {x: 0, y: 95}
   _chargeGaugeOffset: {x: 0, y: 40}
