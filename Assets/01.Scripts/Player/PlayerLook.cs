@@ -21,19 +21,31 @@ public class PlayerLook : MonoBehaviour
         Cursor.visible = false;
     }
 
+    private void Start()
+    {
+        if (SettingsManager.Instance != null)
+            _mouseSensitivity = SettingsManager.Instance.Data.mouseSensitivity;
+    }
+
     private void OnEnable()
     {
         if (_input != null) _input.OnLook += HandleLook;
         EventBus<OnSettingsChangedEvent>.Subscribe(OnSettingsChanged);
+        EventBus<OnMenuOpenEvent>.Subscribe(OnMenuOpen);
+        EventBus<OnMenuCloseEvent>.Subscribe(OnMenuClose);
     }
 
     private void OnDisable()
     {
         if (_input != null) _input.OnLook -= HandleLook;
         EventBus<OnSettingsChangedEvent>.Unsubscribe(OnSettingsChanged);
+        EventBus<OnMenuOpenEvent>.Unsubscribe(OnMenuOpen);
+        EventBus<OnMenuCloseEvent>.Unsubscribe(OnMenuClose);
     }
 
     private void OnSettingsChanged(OnSettingsChangedEvent e) => _mouseSensitivity = e.data.mouseSensitivity;
+    private void OnMenuOpen(OnMenuOpenEvent e)               => SetLookEnabled(false);
+    private void OnMenuClose(OnMenuCloseEvent e)             => SetLookEnabled(true);
 
     private void Update()
     {
