@@ -6,7 +6,10 @@ public class PlayerCameraFovController : MonoBehaviour
     [Header("FOV Settings")]
     [SerializeField] private float _defaultFov = 60f;
     [SerializeField] private float _moveFov = 70f;
-    [SerializeField] private float _smoothTime = 0.15f;
+    [SerializeField] private float _increaseSmoothTime = 0.5f;
+    [SerializeField] private float _decreaseSmoothTime = 0.15f;
+
+    [SerializeField] private bool _isMoving;
 
     private CinemachineCamera _cinemachineCamera;
     private float _targetFov;
@@ -39,7 +42,10 @@ public class PlayerCameraFovController : MonoBehaviour
         if (_cinemachineCamera == null) return;
 
         float currentFov = _cinemachineCamera.Lens.FieldOfView;
-        float nextFov = Mathf.SmoothDamp(currentFov, _targetFov, ref _fovVelocity, _smoothTime);
+
+        float smoothTime = _isMoving ? _increaseSmoothTime : _decreaseSmoothTime;
+
+        float nextFov = Mathf.SmoothDamp(currentFov, _targetFov, ref _fovVelocity, smoothTime);
 
         LensSettings lens = _cinemachineCamera.Lens;
         lens.FieldOfView = nextFov;
@@ -48,13 +54,13 @@ public class PlayerCameraFovController : MonoBehaviour
 
     private void HandleMoveStarted(OnPlayerMoveStartedEvent evt)
     {
-        // 이동 시작 시 넓은 FOV 적용
+        _isMoving = true;
         _targetFov = _moveFov;
     }
 
     private void HandleMoveStopped(OnPlayerMoveStoppedEvent evt)
     {
-        // 이동 종료 시 기본 FOV 복귀
+        _isMoving = false;
         _targetFov = _defaultFov;
     }
 }

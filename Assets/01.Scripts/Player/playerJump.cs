@@ -17,6 +17,10 @@ public class PlayerJump : MonoBehaviour
     private float _verticalVelocity = 0f;
     private bool _isGrounded = false;
 
+    public bool IsGrounded => _isGrounded;
+    public float VerticalVelocity => _verticalVelocity;
+
+
     private void Awake()
     {
         // 자기 컴포넌트 캐싱

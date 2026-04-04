@@ -1,0 +1,150 @@
+using UnityEngine;
+using Unity.Cinemachine;
+
+public class PlayerLandingImpulse : MonoBehaviour
+{
+    [Header("References")]
+    [SerializeField] private PlayerJump _playerJump;
+    [SerializeField] private CinemachineImpulseSource _impulseSource;
+    [SerializeField] private LandingReactionExtension _landingExtension;
+
+    [Header("Landing Detection")]
+    [SerializeField] private float _minAirTime = 0.1f;
+    [SerializeField] private float _minLandingDownwardSpeed = 2f;
+
+    [Header("Landing Speed Threshold")]
+    [SerializeField] private float _mediumLandingSpeed = 6f;
+    [SerializeField] private float _largeLandingSpeed = 10f;
+
+    [Header("Impulse Strength")]
+    [SerializeField] private float _smallImpulseStrength = 0.35f;
+    [SerializeField] private float _mediumImpulseStrength = 0.7f;
+    [SerializeField] private float _largeImpulseStrength = 1.1f;
+
+    private bool _wasGrounded = true;
+    private float _airTime = 0f;
+    private float _lastDownwardSpeed = 0f;
+
+    private void Awake()
+    {
+        if (_playerJump == null)
+            _playerJump = GetComponent<PlayerJump>();
+
+        if (_impulseSource == null)
+            _impulseSource = GetComponent<CinemachineImpulseSource>();
+
+        if (_landingExtension == null)
+        {
+            _landingExtension = FindFirstObjectByType<LandingReactionExtension>();
+        }
+    }
+
+    private void Start()
+    {
+        if (_playerJump == null) return;
+
+        _wasGrounded = _playerJump.IsGrounded;
+    }
+
+    private void Update()
+    {
+        if (_playerJump == null) return;
+
+        UpdateAirState();
+        DetectLanding();
+
+        Debug.LogFormat("Velocity : {0}", _playerJump.VerticalVelocity);
+
+        _wasGrounded = _playerJump.IsGrounded;
+    }
+
+    private void UpdateAirState()
+    {
+        if (!_playerJump.IsGrounded)
+        {
+            _airTime += Time.deltaTime;
+
+            if(_playerJump.VerticalVelocity < 0f)
+            {
+                _lastDownwardSpeed = _playerJump.VerticalVelocity;
+            }
+        }
+    }
+
+    private void DetectLanding()
+    {
+        bool isGrounded = _playerJump.IsGrounded;
+
+        if (_wasGrounded || !isGrounded) return;
+
+        if(_airTime < _minAirTime)
+        {
+            ResetAirState();
+            return;
+        }
+
+        float downwardSpeed = Mathf.Abs(_lastDownwardSpeed);
+
+        if(downwardSpeed < _minLandingDownwardSpeed)
+        {
+            ResetAirState();
+            return;
+        }
+
+        LandingImpactType impactType = EvaluateImpactType(downwardSpeed);
+        float impulseStrength = GetImpulseStrength(impactType);
+
+        GenerateLandingImpulse(impulseStrength);
+        _landingExtension.PlayLanding(impactType);
+        PublishLandingEvent(impactType, downwardSpeed, impulseStrength);
+
+        ResetAirState();
+    }
+
+    private LandingImpactType EvaluateImpactType(float downwardSpeed)
+    {
+        if (downwardSpeed >= _largeLandingSpeed) return LandingImpactType.Large;
+
+        if(downwardSpeed >= _mediumLandingSpeed) return LandingImpactType.Medium;
+
+        return LandingImpactType.Small;
+    }
+
+    private float GetImpulseStrength(LandingImpactType impactType)
+    {
+        switch (impactType)
+        {
+            case LandingImpactType.Large:
+                return _largeImpulseStrength;
+            
+            case LandingImpactType.Medium:
+                return _mediumImpulseStrength;
+
+            default:
+                return _smallImpulseStrength;
+        }
+    }
+
+    private void GenerateLandingImpulse(float impulseStrength)
+    {
+        if (_impulseSource == null) return;
+
+        _impulseSource.GenerateImpulse(impulseStrength);
+    }
+
+    private void PublishLandingEvent(LandingImpactType impactType, float downwardSpeed, float impulseStrength)
+    {
+        EventBus<OnPlayerLandedEvent>.Publish(new OnPlayerLandedEvent
+        {
+            impactType = impactType,
+            downwardSpeed = downwardSpeed,
+            impulseStrength = impulseStrength
+        });
+    }
+
+    private void ResetAirState()
+    {
+        _airTime = 0f;
+        _lastDownwardSpeed = 0f;
+    }
+}
