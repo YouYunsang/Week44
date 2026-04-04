@@ -125,6 +125,13 @@ public class PlayerDashAttack : MonoBehaviour
             isActive = true,
             normalized = 0f
         });
+
+        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
+        {
+            channel = CameraDutchChannel.DashCharge,
+            isActive = true,
+            normalized = 0f
+        });
     }
 
     private void HandleDashAttackReleased()
@@ -152,6 +159,13 @@ public class PlayerDashAttack : MonoBehaviour
         EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
         {
             channel = CameraFovChannel.DashCharge,
+            isActive = false,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
+        {
+            channel = CameraDutchChannel.DashCharge,
             isActive = false,
             normalized = 0f
         });
@@ -206,6 +220,13 @@ public class PlayerDashAttack : MonoBehaviour
         EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
         {
             channel = CameraFovChannel.DashCharge,
+            isActive = true,
+            normalized = ChargeNormalized
+        });
+
+        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
+        {
+            channel = CameraDutchChannel.DashCharge,
             isActive = true,
             normalized = ChargeNormalized
         });

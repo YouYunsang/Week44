@@ -131,8 +131,18 @@ public class PlayerCameraNoiseController : MonoBehaviour
         // 활성 상태에서는 normalized 기반 스케일링
         if (isBlendingIn)
         {
-            targetAmplitude *= Mathf.Lerp(0.35f, 1f, normalized);
-            targetFrequency *= Mathf.Lerp(0.85f, 1.15f, normalized);
+            if (_currentSetting == _chargeSetting)
+            {
+                // 시작할 때 가장 강하고 점점 약해짐
+                targetAmplitude *= Mathf.Lerp(1f, 0.5f, normalized);
+                targetFrequency *= Mathf.Lerp(1.15f, 0.9f, normalized);
+            }
+            else
+            {
+                // move는 기존처럼 활성될수록 살아나는 구조 유지
+                targetAmplitude *= Mathf.Lerp(0.35f, 1f, normalized);
+                targetFrequency *= Mathf.Lerp(0.85f, 1.15f, normalized);
+            }
         }
 
         float blendSpeed = isBlendingIn ? _currentSetting.BlendInSpeed : _currentSetting.BlendOutSpeed;

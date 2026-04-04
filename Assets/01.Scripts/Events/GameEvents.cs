@@ -95,6 +95,20 @@ public struct OnDashEndedEvent : IEvent { }
 public struct OnDashStrikeEvent : IEvent { }
 #endregion
 
+#region Dutch Control
+public enum CameraDutchChannel
+{
+    DashCharge
+}
+
+public struct OnCameraDutchSignalEvent : IEvent
+{
+    public CameraDutchChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
 #region Landing
 public enum LandingImpactType
 {
