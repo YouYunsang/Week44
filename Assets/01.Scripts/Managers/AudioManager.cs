@@ -28,12 +28,23 @@ public class AudioManager : MonoSingleton<AudioManager>
     [Min(0f)]
     [SerializeField] float bgmFadeDuration = 0.25f;
     [Range(0f, 1f)]
-    [SerializeField] float pauseBgmVolumeMult = 0.3f;
+    [SerializeField] float pauseBgmVolumeMult  = 0.3f;
+    [Range(0f, 1f)]
+    [SerializeField] float slowBgmVolumeMult   = 0.5f;
+    [Range(0f, 1f)]
+    [SerializeField] float slowBgmPitch        = 0.7f;
+    [Range(10f, 22000f)]
+    [SerializeField] float slowLowPassCutoff    = 800f;
+    [Range(1f, 10f)]
+    [SerializeField] float slowLowPassResonance = 1f;
+    [Min(0f)]
+    [SerializeField] float slowLowPassLerpDuration = 0.3f;
 
     float _bgmTargetVolume = 1f;
     float _pauseVolumeMult = 1f;
+    float _slowVolumeMult  = 1f;
 
-    float ActualBgmVolume => _bgmTargetVolume * _pauseVolumeMult;
+    float ActualBgmVolume => _bgmTargetVolume * _pauseVolumeMult * _slowVolumeMult;
     Coroutine _bgmTransitionRoutine;
     readonly List<AudioSource> _activeBgmSources = new List<AudioSource>();
     readonly List<AudioSource> _incomingBgmSourcesBuffer = new List<AudioSource>();
@@ -65,6 +76,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         EventBus<OnSettingsChangedEvent>.Subscribe(OnSettingsChanged);
         EventBus<OnMenuOpenEvent>.Subscribe(OnMenuOpen);
         EventBus<OnMenuCloseEvent>.Subscribe(OnMenuClose);
+        EventBus<OnSlowGaugeChangedEvent>.Subscribe(OnSlowGaugeChanged);
     }
 
     void OnDisable()
@@ -76,6 +88,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         EventBus<OnSettingsChangedEvent>.Unsubscribe(OnSettingsChanged);
         EventBus<OnMenuOpenEvent>.Unsubscribe(OnMenuOpen);
         EventBus<OnMenuCloseEvent>.Unsubscribe(OnMenuClose);
+        EventBus<OnSlowGaugeChangedEvent>.Unsubscribe(OnSlowGaugeChanged);
     }
 
     void OnGameStart(OnGameStartEvent e)
@@ -99,11 +112,17 @@ public class AudioManager : MonoSingleton<AudioManager>
         // 완전 정지(pause)일 때는 pitch를 건드리지 않음 — 볼륨 덕으로만 처리
         if (e.timeScale <= 0f) return;
 
+        // 슬로우(< 1) 구간: timeScale 0→1에 맞춰 slowBgmPitch→1 사이를 매핑
+        // 일반/패스트(>= 1) 구간: timeScale 그대로
+        float pitch = e.timeScale < 1f
+            ? Mathf.Lerp(slowBgmPitch, 1f, e.timeScale)
+            : e.timeScale;
+
         for (int i = 0; i < bgmSources.Count; i++)
         {
             AudioSource source = bgmSources[i];
             if (source == null) continue;
-            source.pitch = e.timeScale;
+            source.pitch = pitch;
         }
 
         if (sfxAffectedByTimeScale)
@@ -112,7 +131,7 @@ public class AudioManager : MonoSingleton<AudioManager>
             {
                 AudioSource source = sfxSources[i];
                 if (source == null) continue;
-                source.pitch = e.timeScale;
+                source.pitch = pitch;
             }
         }
     }
@@ -127,6 +146,67 @@ public class AudioManager : MonoSingleton<AudioManager>
     {
         _pauseVolumeMult = 1f;
         ApplyBgmVolume();
+    }
+
+    Coroutine _lowPassRoutine;
+
+    void OnSlowGaugeChanged(OnSlowGaugeChangedEvent e)
+    {
+        _slowVolumeMult = e.isSlowing ? slowBgmVolumeMult : 1f;
+        ApplyBgmVolume();
+
+        float targetCutoff = e.isSlowing ? slowLowPassCutoff : 22000f;
+        if (_lowPassRoutine != null) StopCoroutine(_lowPassRoutine);
+        _lowPassRoutine = StartCoroutine(LerpLowPassFilter(targetCutoff));
+    }
+
+    System.Collections.IEnumerator LerpLowPassFilter(float targetCutoff)
+    {
+        var filters = GetOrAddLowPassFilters();
+
+        // 시작 컷오프: 첫 번째 필터 기준
+        float startCutoff = filters.Count > 0 ? filters[0].cutoffFrequency : 22000f;
+
+        foreach (var f in filters)
+        {
+            f.lowpassResonanceQ = slowLowPassResonance;
+            f.enabled = true;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < slowLowPassLerpDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float cutoff = Mathf.Lerp(startCutoff, targetCutoff, elapsed / slowLowPassLerpDuration);
+            foreach (var f in filters)
+                f.cutoffFrequency = cutoff;
+            yield return null;
+        }
+
+        foreach (var f in filters)
+        {
+            f.cutoffFrequency = targetCutoff;
+            f.enabled = targetCutoff < 22000f;
+        }
+
+        _lowPassRoutine = null;
+    }
+
+    System.Collections.Generic.List<AudioLowPassFilter> GetOrAddLowPassFilters()
+    {
+        var result = new System.Collections.Generic.List<AudioLowPassFilter>();
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            AudioSource source = bgmSources[i];
+            if (source == null) continue;
+
+            AudioLowPassFilter filter = source.GetComponent<AudioLowPassFilter>();
+            if (filter == null)
+                filter = source.gameObject.AddComponent<AudioLowPassFilter>();
+
+            result.Add(filter);
+        }
+        return result;
     }
 
     void OnSettingsChanged(OnSettingsChangedEvent e)

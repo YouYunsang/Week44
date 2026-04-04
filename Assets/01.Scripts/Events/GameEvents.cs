@@ -1,3 +1,5 @@
+using UnityEngine;
+
 // 슬라이스 성공
 public struct OnSliceEvent : IEvent
 {
@@ -17,10 +19,25 @@ public struct OnTimeScaleChangedEvent : IEvent
     public float timeScale;
 }
 
+// 타임스케일 러프 요청
+public struct OnLerpTimeScaleEvent : IEvent
+{
+    public float target;
+    public float duration;
+}
+
 // 세팅 변경
 public struct OnSettingsChangedEvent : IEvent
 {
     public SettingsData data;
+}
+
+// 슬로우 게이지 변경
+public struct OnSlowGaugeChangedEvent : IEvent
+{
+    public float current;
+    public float max;
+    public bool  isSlowing;
 }
 
 // 설정 메뉴 열림/닫힘
@@ -49,7 +66,7 @@ public struct OnDashEndedEvent : IEvent { }
 public struct OnDashStrikeEvent : IEvent { }
 #endregion
 
-#region
+#region Landing
 public enum LandingImpactType
 {
     Small,
@@ -62,5 +79,13 @@ public struct OnPlayerLandedEvent : IEvent
     public LandingImpactType impactType;
     public float downwardSpeed;
     public float impulseStrength;
+}
+#endregion
+
+#region Weapon Swing
+// 무기 휘두르기 (슬라이스 방향 기반)
+public struct OnWeaponSwingEvent : IEvent
+{
+    public Vector2 direction; // 카메라 공간 기준 정규화된 스윙 방향
 }
 #endregion

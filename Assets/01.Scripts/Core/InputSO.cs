@@ -12,7 +12,8 @@ public class InputSO : ScriptableObject, NewInput.IPlayerActions
     public event Action          OnDashAttackPressed;
     public event Action          OnDashAttackReleased;
     public event Action          OnCrouch;
-    public event Action          OnSprint;
+    public event Action          OnSlowTimeStarted;
+    public event Action          OnSlowTimeStopped;
     public event Action          OnRestart;
     public event Action          OnStop;
 
@@ -65,9 +66,10 @@ public class InputSO : ScriptableObject, NewInput.IPlayerActions
         if (ctx.performed) OnCrouch?.Invoke();
     }
 
-    void NewInput.IPlayerActions.OnSprint(InputAction.CallbackContext ctx)
+    void NewInput.IPlayerActions.OnSlowTime(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed) OnSprint?.Invoke();
+        if (ctx.started)   OnSlowTimeStarted?.Invoke();
+        if (ctx.canceled)  OnSlowTimeStopped?.Invoke();
     }
 
     void NewInput.IPlayerActions.OnRestart(InputAction.CallbackContext ctx)

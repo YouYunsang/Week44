@@ -44,6 +44,11 @@ public class PlayerSliceExecutor : MonoBehaviour
         if (sliceable == null) return;
 
         int randomDir = GetRandomDir(hit.collider);
+
+        float angle    = randomDir * 45f * Mathf.Deg2Rad;
+        Vector2 swingDir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        EventBus<OnWeaponSwingEvent>.Publish(new OnWeaponSwingEvent { direction = swingDir });
+
         Vector3 normal = GetSliceNormal(randomDir);
 
         SliceObject(hit.collider.gameObject, hit.point, normal);
