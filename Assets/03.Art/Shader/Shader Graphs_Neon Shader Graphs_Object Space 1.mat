@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Plane
-  m_Shader: {fileID: -6465566751694194690, guid: e4f83ed0ca57fb64d92828ef234a1384, type: 3}
+  m_Name: Shader Graphs_Neon Shader Graphs_Object Space 1
+  m_Shader: {fileID: -6465566751694194690, guid: 8ee7ec9194bd85a40a93bd5392d79a4f, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -38,21 +38,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DarkenBetweenLines: 1
+    - _BlendSharpness: 1
     - _GirdTiling: 1
-    - _GridIntensity: 1.8
-    - _LineWidth: 0.06
+    - _GridIntensity: 1.4
+    - _LineWidth: 0.04
+    - _Metallic: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RimIntensity: 2
-    - _RimPower: 3
+    - _Smotthness: 0.5
     m_Colors:
     - _BaseColor: {r: 0.25471696, g: 0.25471696, b: 0.25471696, a: 1}
     - _GridColor: {r: 0.2093272, g: 0.9056606, b: 0.8857654, a: 1}
-    - _RimColor: {r: 0.2093272, g: 0.9056606, b: 0.8857654, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &5072801937336846906
+--- !u!114 &6044489702508965067
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
