@@ -300,7 +300,7 @@ MonoBehaviour:
   BulletSpeed: 15
   TurretHead: {fileID: 0}
   RotationSpeed: 5
-  PatrolAxis: 0
+  PatrolAxis: 1
   CustomPatrolDirection: {x: 1, y: 0, z: 0}
   PatrolDistance: 5
   PatrolSpeed: 2
