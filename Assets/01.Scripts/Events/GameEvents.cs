@@ -62,12 +62,27 @@ public struct OnCameraNoiseSignalEvent : IEvent
 public enum CameraFovChannel
 {
     Move,
-    DashCharge
+    DashCharge,
+    Dash
 }
 
 public struct OnCameraFovSignalEvent : IEvent
 {
     public CameraFovChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
+#region Camera Motion Blur
+public enum CameraMotionBlurChannel
+{
+    Dash
+}
+
+public struct OnCameraMotionBlurSignalEvent : IEvent
+{
+    public CameraMotionBlurChannel channel;
     public bool isActive;
     public float normalized;
 }

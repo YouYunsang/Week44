@@ -269,6 +269,23 @@ public class PlayerDashAttack : MonoBehaviour
         // 대시 시작 이벤트 발행
         EventBus<OnDashStartedEvent>.Publish(new OnDashStartedEvent());
 
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.Dash,
+            isActive = true,
+            normalized = 1f
+        });
+
+        EventBus<OnCameraMotionBlurSignalEvent>.Publish(new OnCameraMotionBlurSignalEvent
+        {
+            channel = CameraMotionBlurChannel.Dash,
+            isActive = true,
+            normalized = 1f
+        });
+
+        // 대시 시작 이벤트 발행
+        EventBus<OnDashStartedEvent>.Publish(new OnDashStartedEvent());
+
         // 조작 잠금
         if (_playerMovement != null)
             _playerMovement.SetMoveEnabled(false);
@@ -303,7 +320,22 @@ public class PlayerDashAttack : MonoBehaviour
         }
 
         // 대시 종료 이벤트 발행
+        // 대시 종료 이벤트 발행
         EventBus<OnDashEndedEvent>.Publish(new OnDashEndedEvent());
+
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.Dash,
+            isActive = false,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraMotionBlurSignalEvent>.Publish(new OnCameraMotionBlurSignalEvent
+        {
+            channel = CameraMotionBlurChannel.Dash,
+            isActive = false,
+            normalized = 0f
+        });
 
         // 공격 실행 이벤트 발행
         EventBus<OnDashStrikeEvent>.Publish(new OnDashStrikeEvent());
