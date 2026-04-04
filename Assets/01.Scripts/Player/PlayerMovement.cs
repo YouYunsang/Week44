@@ -23,15 +23,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_input != null)
-            _input.OnMove += HandleMove;
+        if (_input != null) _input.OnMove += HandleMove;
+        EventBus<OnMenuOpenEvent>.Subscribe(OnMenuOpen);
+        EventBus<OnMenuCloseEvent>.Subscribe(OnMenuClose);
     }
 
     private void OnDisable()
     {
-        if (_input != null)
-            _input.OnMove -= HandleMove;
+        if (_input != null) _input.OnMove -= HandleMove;
+        EventBus<OnMenuOpenEvent>.Unsubscribe(OnMenuOpen);
+        EventBus<OnMenuCloseEvent>.Unsubscribe(OnMenuClose);
     }
+
+    private void OnMenuOpen(OnMenuOpenEvent e)   => SetMoveEnabled(false);
+    private void OnMenuClose(OnMenuCloseEvent e) => SetMoveEnabled(true);
 
     private void Update()
     {
