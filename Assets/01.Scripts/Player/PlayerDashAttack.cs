@@ -27,6 +27,7 @@ public class PlayerDashAttack : MonoBehaviour
     public bool IsCharging => _isCharging;
     public bool IsDashing => _isDashing;
     public bool IsTargetInRange => _isTargetInRange;
+    public bool IsTargetBullet {get; private set;}
 
     #region GUI용(나중에 지워도 됨)
     public float RechargeNormalized =>
@@ -156,7 +157,16 @@ public class PlayerDashAttack : MonoBehaviour
             _data.MaxAttackRange);
 
         // 현재 충전 사거리 내 타겟 존재 여부 확인
-        _isTargetInRange = _sliceExecutor.TryGetSliceHit(_currentRange, out _);
+       if(_sliceExecutor.TryGetSliceHit(_currentRange, out RaycastHit hit))
+        {
+            _isTargetInRange = true;
+            IsTargetBullet = hit.collider.CompareTag("Bullet");
+        }
+        else
+        {
+            _isTargetInRange = false;
+            IsTargetBullet = false;
+        }
     }
 
     private bool TryDashAndSlice()
@@ -166,6 +176,12 @@ public class PlayerDashAttack : MonoBehaviour
 
         // release 시점의 유효 타겟 확인
         if (!_sliceExecutor.TryGetSliceHit(_currentRange, out RaycastHit hit))
+        {
+            _currentRange = _data.MinAttackRange;
+            return false;
+        }
+
+        if(hit.collider.CompareTag("Bullet"))
         {
             _currentRange = _data.MinAttackRange;
             return false;
