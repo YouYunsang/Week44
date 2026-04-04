@@ -144,9 +144,12 @@ GameObject:
   - component: {fileID: 2060091943490782191}
   - component: {fileID: 3716099222957492391}
   - component: {fileID: 669810063876823436}
-  m_Layer: 0
+  - component: {fileID: 816522476539103241}
+  - component: {fileID: 5325060359221905237}
+  - component: {fileID: 4890925015378917910}
+  m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -237,7 +240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
-  _sliceExecutor: {fileID: 4021905670037479288}
+  _sliceExecutor: {fileID: 816522476539103241}
   _attackRange: 9
   _attackCooldown: 2
   _slowAttackCooldown: 0.1
@@ -471,6 +474,71 @@ MonoBehaviour:
     DissipationDistance: 100
     PropagationSpeed: 343
   DefaultVelocity: {x: 0, y: -1, z: 0}
+--- !u!114 &816522476539103241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c40d3aeb5ded9314dabf2a192ddc926f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSliceExecutor
+  _camera: {fileID: 0}
+--- !u!114 &5325060359221905237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d3e83900c0a9a47af79def945eff5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttack
+  _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
+  _data: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _playerMovement: {fileID: 7789416113155416252}
+  _playerLook: {fileID: 5614986853067378888}
+  _playerJump: {fileID: 7836380275553792151}
+  _characterController: {fileID: 4473312493581529772}
+  _sliceExecutor: {fileID: 816522476539103241}
+  _currentStack: 0
+  _currentRange: 0
+--- !u!114 &4890925015378917910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce5d3899ff5f43749bcd42f30693e89d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttackUI
+  _playerDashAttack: {fileID: 5325060359221905237}
+  _dashAttackData: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _sliceExecutor: {fileID: 816522476539103241}
+  _basicAttackRange: 2
+  _stackOffset: {x: 0, y: 60}
+  _stackRechargeBarOffset: {x: 0, y: 95}
+  _chargeGaugeOffset: {x: 0, y: 40}
+  _dashLabelOffset: {x: 0, y: -60}
+  _stackLabelWidth: 120
+  _stackLabelHeight: 30
+  _stackRechargeBarWidth: 80
+  _stackRechargeBarHeight: 6
+  _chargeGaugeWidth: 150
+  _chargeGaugeHeight: 10
+  _dashLabelWidth: 200
+  _dashLabelHeight: 40
+  _defaultCrosshairSize: 6
+  _maxChargeCrosshairSize: 10
+  _targetCrosshairSize: 14
 --- !u!1 &5178584912461210033
 GameObject:
   m_ObjectHideFlags: 0
