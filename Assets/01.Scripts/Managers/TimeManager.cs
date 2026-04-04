@@ -3,6 +3,18 @@ using UnityEngine;
 public class TimeManager : MonoSingleton<TimeManager>
 {
 
+    void OnEnable()
+    {
+        EventBus<OnLerpTimeScaleEvent>.Subscribe(OnLerpTimeScale);
+    }
+
+    void OnDisable()
+    {
+        EventBus<OnLerpTimeScaleEvent>.Unsubscribe(OnLerpTimeScale);
+    }
+
+    void OnLerpTimeScale(OnLerpTimeScaleEvent e) => LerpTimeScale(e.target, e.duration);
+
     public void SetTimeScale(float scale)
     {
         Time.timeScale = scale;
