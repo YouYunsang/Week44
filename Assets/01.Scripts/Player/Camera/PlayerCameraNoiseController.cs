@@ -5,55 +5,95 @@ using Unity.Cinemachine;
 public class PlayerCameraNoiseController : MonoBehaviour
 {
     [Header("Noise Settings")]
-    [SerializeField] private float _idleAmplitude = 0f;
-    [SerializeField] private float _moveAmplitude = 1f;
-    [SerializeField] private float _lerpSpeed = 8f;
+    [SerializeField] private CameraNoiseSettingSO _defaultSetting;
+
+    [Header("Charge Settings")]
+    [SerializeField] private CameraNoiseSettingSO _chargeSetting;
+
+    [Header("Reference")]
+    [SerializeField] private PlayerDashAttack _playerDashAttack;
 
     private CinemachineBasicMultiChannelPerlin _perlin;
-    private float _targetAmplitude = 0f;
+    private CameraNoiseSettingSO _currentSetting;
+    private float _currentAmplitude = 0f;
+    private float _currentFrequency = 1f;
 
     private void Awake()
     {
         _perlin = GetComponent<CinemachineBasicMultiChannelPerlin>();
 
-        if(_perlin != null)
-        {
-            _targetAmplitude = _idleAmplitude;
-            _perlin.AmplitudeGain = _idleAmplitude;
-        }
-    }
+        if (_playerDashAttack == null)
+            _playerDashAttack = FindFirstObjectByType<PlayerDashAttack>();
 
-    private void OnEnable()
-    {
-        EventBus<OnPlayerMoveStartedEvent>.Subscribe(HandleMoveStarted);
-        EventBus<OnPlayerMoveStoppedEvent>.Subscribe(HandleMoveStopped);
-    }
-
-    private void OnDisable()
-    {
-        EventBus<OnPlayerMoveStartedEvent>.Unsubscribe(HandleMoveStarted);
-        EventBus<OnPlayerMoveStoppedEvent>.Unsubscribe(HandleMoveStopped);
+        ApplyImmediateSetting(_defaultSetting);
     }
 
     private void Update()
     {
-        if (_perlin == null) return;
+        if (_perlin == null || _currentSetting == null) return;
 
-        _perlin.AmplitudeGain = Mathf.Lerp(
-            _perlin.AmplitudeGain,
-            _targetAmplitude,
-            _lerpSpeed * Time.deltaTime);
+        UpdateNoiseByState();
+        ApplyRuntimeBlend();
     }
 
-    private void HandleMoveStarted(OnPlayerMoveStartedEvent evt)
+    private void UpdateNoiseByState()
     {
-        // 이동 시작 시 Noise 활성화
-        _targetAmplitude = _moveAmplitude;
+        if(_playerDashAttack != null && _playerDashAttack.IsCharging)
+        {
+            SetActiveSetting(_chargeSetting);
+            return;
+        }
+
+        SetActiveSetting(_defaultSetting);
     }
 
-    private void HandleMoveStopped(OnPlayerMoveStoppedEvent evt)
+    private void SetActiveSetting(CameraNoiseSettingSO setting)
     {
-        // 이동 종료 시 Noise 비활성화
-        _targetAmplitude = _idleAmplitude;
+        if(setting == null || _currentSetting == setting) return;
+
+        _currentSetting = setting;
+        
+        _perlin.NoiseProfile = _currentSetting.NoiseProfile;
+        _perlin.PivotOffset = _currentSetting.PivotOffset;
+    }
+
+    private void ApplyImmediateSetting(CameraNoiseSettingSO setting)
+    {
+        if (_perlin == null || setting == null) return;
+
+        _currentSetting = setting;
+        _perlin.NoiseProfile = setting.NoiseProfile;
+        _perlin.PivotOffset = setting.PivotOffset;
+        _perlin.AmplitudeGain = setting.AmplitudeGain;
+        _perlin.FrequencyGain = setting.FrequencyGain;
+
+        _currentAmplitude = setting.AmplitudeGain;
+        _currentFrequency = setting.FrequencyGain;
+    }
+
+    private void ApplyRuntimeBlend()
+    {
+        float chargeNormalized = 0f;
+        bool isCharging = _playerDashAttack != null && _playerDashAttack.IsCharging;
+
+        if (isCharging)
+            chargeNormalized = _playerDashAttack.ChargeNormalized;
+
+        float targetAmplitude = _currentSetting.AmplitudeGain;
+        float targetFrequency = _currentSetting.FrequencyGain;
+
+        if(isCharging && _currentSetting == _chargeSetting)
+        {
+            targetAmplitude *= Mathf.Lerp(0.35f, 1f, chargeNormalized);
+            targetFrequency *= Mathf.Lerp(0.8f, 1.15f, chargeNormalized);
+        }
+
+        float blendSpeed = isCharging ? _currentSetting.BlendInSpeed : _currentSetting.BlendOutSpeed;
+
+        _currentAmplitude = Mathf.Lerp(_currentAmplitude, targetAmplitude, blendSpeed * Time.deltaTime);
+        _currentFrequency = Mathf.Lerp(_currentFrequency, targetFrequency, blendSpeed * Time.deltaTime);
+
+        _perlin.AmplitudeGain = _currentAmplitude;
+        _perlin.FrequencyGain = _currentFrequency;
     }
 }
