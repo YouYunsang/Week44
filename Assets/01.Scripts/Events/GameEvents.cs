@@ -66,6 +66,22 @@ public struct OnDashEndedEvent : IEvent { }
 public struct OnDashStrikeEvent : IEvent { }
 #endregion
 
+#region Landing
+public enum LandingImpactType
+{
+    Small,
+    Medium,
+    Large
+}
+
+public struct OnPlayerLandedEvent : IEvent
+{
+    public LandingImpactType impactType;
+    public float downwardSpeed;
+    public float impulseStrength;
+}
+#endregion
+
 #region Weapon Swing
 // 무기 휘두르기 (슬라이스 방향 기반)
 public struct OnWeaponSwingEvent : IEvent
