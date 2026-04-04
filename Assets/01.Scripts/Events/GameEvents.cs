@@ -23,6 +23,9 @@ public struct OnSettingsChangedEvent : IEvent
     public SettingsData data;
 }
 
-public struct OnPlayerMoveStartedEvent : IEvent { }
+// 설정 메뉴 열림/닫힘
+public struct OnMenuOpenEvent  : IEvent { }
+public struct OnMenuCloseEvent : IEvent { }
 
+public struct OnPlayerMoveStartedEvent : IEvent { }
 public struct OnPlayerMoveStoppedEvent : IEvent { }

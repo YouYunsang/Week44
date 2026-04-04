@@ -30,10 +30,12 @@ public class TimeManager : MonoSingleton<TimeManager>
         SetTimeScale(1f);
     }
 
+    Coroutine _lerpRoutine;
+
     public void LerpTimeScale(float target, float duration)
     {
-        StopCoroutine(nameof(LerpTimeScaleRoutine));
-        StartCoroutine(LerpTimeScaleRoutine(target, duration));
+        if (_lerpRoutine != null) StopCoroutine(_lerpRoutine);
+        _lerpRoutine = StartCoroutine(LerpTimeScaleRoutine(target, duration));
     }
 
     System.Collections.IEnumerator LerpTimeScaleRoutine(float target, float duration)

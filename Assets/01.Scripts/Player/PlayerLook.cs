@@ -24,12 +24,16 @@ public class PlayerLook : MonoBehaviour
     private void OnEnable()
     {
         if (_input != null) _input.OnLook += HandleLook;
+        EventBus<OnSettingsChangedEvent>.Subscribe(OnSettingsChanged);
     }
 
     private void OnDisable()
     {
         if (_input != null) _input.OnLook -= HandleLook;
+        EventBus<OnSettingsChangedEvent>.Unsubscribe(OnSettingsChanged);
     }
+
+    private void OnSettingsChanged(OnSettingsChangedEvent e) => _mouseSensitivity = e.data.mouseSensitivity;
 
     private void Update()
     {

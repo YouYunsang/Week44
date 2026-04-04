@@ -73,6 +73,11 @@ public class SettingsManager : MonoSingleton<SettingsManager>
         Publish();
     }
 
+    void OnApplicationQuit()
+    {
+        Save();
+    }
+
     void Publish()
     {
         EventBus<OnSettingsChangedEvent>.Publish(new OnSettingsChangedEvent { data = Data });
