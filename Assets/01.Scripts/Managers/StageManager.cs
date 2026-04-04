@@ -33,10 +33,10 @@ public class StageManager : MonoSingleton<StageManager>
 
     void OnRestart()
     {
-        RespawnDeadMobs();
+        TryRespawnAll();
     }
 
-    void RespawnDeadMobs()
+    public void TryRespawnAll()
     {
         int activeIndex = GetActiveCheckpointIndex();
         if (activeIndex < 0) return;
