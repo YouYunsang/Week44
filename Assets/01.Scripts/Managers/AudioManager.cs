@@ -1,19 +1,55 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoSingleton<AudioManager>
 {
     [Header("Sources")]
-    [SerializeField] AudioSource bgmSource;
-    [SerializeField] AudioSource sfxSource;
+    [SerializeField] AudioAssetManager audioAssetManager;
+    [SerializeField] Transform bgmRoot;
+    [SerializeField] Transform sfxRoot;
+    [SerializeField] List<AudioSource> bgmSources = new List<AudioSource>();
+    [SerializeField] List<AudioSource> sfxSources = new List<AudioSource>();
 
     [Header("BGM")]
-    [SerializeField] AudioClip bgmGame;
-    [SerializeField] AudioClip bgmGameOver;
+    [SerializeField] AudioBgmKey gameStartBgmKey = AudioBgmKey.None;
+    [SerializeField] AudioBgmKey gameOverBgmKey = AudioBgmKey.None;
 
     [Header("SFX")]
-    [SerializeField] AudioClip sfxSlice;
-    [SerializeField] AudioClip sfxGameOver;
+    [SerializeField] AudioSfxKey sliceSfxKey = AudioSfxKey.None;
+    [SerializeField] AudioSfxKey gameOverSfxKey = AudioSfxKey.None;
     [SerializeField] bool sfxAffectedByTimeScale = true;
+
+    [Header("Playback Tuning")]
+    [SerializeField] bool preloadAudioDataOnAwake = true;
+    [SerializeField] bool autoCreateBgmSources = true;
+    [Min(0f)]
+    [SerializeField] float bgmLayerStartDelay = 0f;
+    [Min(0f)]
+    [SerializeField] float bgmFadeDuration = 0.25f;
+
+    float _bgmTargetVolume = 1f;
+    Coroutine _bgmTransitionRoutine;
+    readonly List<AudioSource> _activeBgmSources = new List<AudioSource>();
+    readonly List<AudioSource> _incomingBgmSourcesBuffer = new List<AudioSource>();
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if (audioAssetManager == null)
+            audioAssetManager = AudioAssetManager.Instance;
+
+        if (preloadAudioDataOnAwake && audioAssetManager != null)
+            audioAssetManager.PreloadAudioData();
+
+        RefreshSourceLists();
+    }
+
+    void OnValidate()
+    {
+        RefreshSourceLists();
+    }
 
     void OnEnable()
     {
@@ -35,26 +71,40 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     void OnGameStart(OnGameStartEvent e)
     {
-        PlayBGM(bgmGame);
+        PlayBGM(gameStartBgmKey);
     }
 
     void OnGameOver(OnGameOverEvent e)
     {
-        PlayBGM(bgmGameOver);
-        PlaySFX(sfxGameOver);
+        PlayBGM(gameOverBgmKey);
+        PlaySFX(gameOverSfxKey);
     }
 
     void OnSlice(OnSliceEvent e)
     {
-        PlaySFX(sfxSlice);
+        PlaySFX(sliceSfxKey);
     }
 
     void OnTimeScaleChanged(OnTimeScaleChangedEvent e)
     {
         float pitch = e.timeScale > 0f ? e.timeScale : 0f;
-        bgmSource.pitch = pitch;
+
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            AudioSource source = bgmSources[i];
+            if (source == null) continue;
+            source.pitch = pitch;
+        }
+
         if (sfxAffectedByTimeScale)
-            sfxSource.pitch = pitch;
+        {
+            for (int i = 0; i < sfxSources.Count; i++)
+            {
+                AudioSource source = sfxSources[i];
+                if (source == null) continue;
+                source.pitch = pitch;
+            }
+        }
     }
 
     void OnSettingsChanged(OnSettingsChangedEvent e)
@@ -63,27 +113,356 @@ public class AudioManager : MonoSingleton<AudioManager>
         SetSFXVolume(e.data.sfxVolume);
     }
 
-    public void PlayBGM(AudioClip clip)
+    public bool PlayBGM(AudioBgmKey key)
     {
-        if (clip == null) return;
-        bgmSource.clip = clip;
-        bgmSource.loop = true;
-        bgmSource.Play();
+        return PlayBGMLayers(key);
     }
 
-    public void PlaySFX(AudioClip clip)
+    public bool PlayBGM(string nameKey)
     {
-        if (clip == null) return;
+        if (!AudioKeyLookup.TryGetBgmKey(nameKey, out AudioBgmKey key)) return false;
+        return PlayBGM(key);
+    }
+
+    public bool PlayBGMLayers(params AudioBgmKey[] keys)
+    {
+        if (keys == null || keys.Length == 0) return false;
+        if (!TryGetAssetManager(out var assets)) return false;
+
+        var targetClips = new List<AudioClip>();
+        for (int i = 0; i < keys.Length; i++)
+        {
+            if (keys[i] == AudioBgmKey.None) continue;
+            if (!assets.TryGetBgmClip(keys[i], out AudioClip clip)) continue;
+            targetClips.Add(clip);
+        }
+
+        if (targetClips.Count == 0) return false;
+
+        if (_bgmTransitionRoutine != null)
+            StopCoroutine(_bgmTransitionRoutine);
+
+        _bgmTransitionRoutine = StartCoroutine(TransitionToBgmClips(targetClips));
+        return true;
+    }
+
+    public void StopBGMLayers()
+    {
+        if (_bgmTransitionRoutine != null)
+            StopCoroutine(_bgmTransitionRoutine);
+
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            AudioSource source = bgmSources[i];
+            if (source == null) continue;
+            source.Stop();
+            source.clip = null;
+        }
+
+        _activeBgmSources.Clear();
+    }
+
+    public bool PlaySFX(AudioSfxKey key)
+    {
+        if (key == AudioSfxKey.None) return false;
+        if (!TryGetAssetManager(out var assets)) return false;
+        if (!assets.TryGetSfxClip(key, out AudioClip clip)) return false;
+        if (!TryGetPrimarySfxSource(out AudioSource sfxSource)) return false;
+
         sfxSource.PlayOneShot(clip);
+        return true;
+    }
+
+    public bool PlaySFX(string nameKey)
+    {
+        if (!AudioKeyLookup.TryGetSfxKey(nameKey, out AudioSfxKey key)) return false;
+        return PlaySFX(key);
     }
 
     public void SetBGMVolume(float volume)
     {
-        bgmSource.volume = volume;
+        _bgmTargetVolume = volume;
+
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            AudioSource source = bgmSources[i];
+            if (source == null) continue;
+            source.volume = volume;
+        }
     }
 
     public void SetSFXVolume(float volume)
     {
-        sfxSource.volume = volume;
+        for (int i = 0; i < sfxSources.Count; i++)
+        {
+            AudioSource source = sfxSources[i];
+            if (source == null) continue;
+            source.volume = volume;
+        }
+    }
+
+    IEnumerator TransitionToBgmClips(List<AudioClip> targetClips)
+    {
+        RefreshSourceLists();
+
+        var outgoing = new List<AudioSource>();
+        for (int i = 0; i < _activeBgmSources.Count; i++)
+        {
+            AudioSource source = _activeBgmSources[i];
+            if (source == null || source.clip == null) continue;
+            outgoing.Add(source);
+        }
+
+        int requiredIncoming = targetClips.Count;
+        EnsureBgmSourceCount(outgoing.Count + requiredIncoming);
+        RefreshSourceLists();
+
+        if (!TryCollectDistinctIncomingSources(requiredIncoming, outgoing, _incomingBgmSourcesBuffer))
+        {
+            yield return StartCoroutine(SequentialFadeSwap(targetClips));
+            yield break;
+        }
+
+        double startTime = AudioSettings.dspTime + bgmLayerStartDelay;
+        for (int i = 0; i < _incomingBgmSourcesBuffer.Count; i++)
+        {
+            AudioSource source = _incomingBgmSourcesBuffer[i];
+            source.Stop();
+            source.clip = targetClips[i];
+            source.loop = true;
+            source.volume = 0f;
+            source.PlayScheduled(startTime);
+        }
+
+        if (bgmFadeDuration > 0f)
+        {
+            float[] outgoingStart = new float[outgoing.Count];
+            for (int i = 0; i < outgoing.Count; i++)
+                outgoingStart[i] = outgoing[i].volume;
+
+            float t = 0f;
+            while (t < bgmFadeDuration)
+            {
+                t += Time.unscaledDeltaTime;
+                float ratio = t / bgmFadeDuration;
+
+                for (int i = 0; i < outgoing.Count; i++)
+                    outgoing[i].volume = Mathf.Lerp(outgoingStart[i], 0f, ratio);
+
+                for (int i = 0; i < _incomingBgmSourcesBuffer.Count; i++)
+                    _incomingBgmSourcesBuffer[i].volume = Mathf.Lerp(0f, _bgmTargetVolume, ratio);
+
+                yield return null;
+            }
+        }
+
+        for (int i = 0; i < outgoing.Count; i++)
+        {
+            AudioSource source = outgoing[i];
+            source.Stop();
+            source.clip = null;
+            source.volume = _bgmTargetVolume;
+        }
+
+        _activeBgmSources.Clear();
+        for (int i = 0; i < _incomingBgmSourcesBuffer.Count; i++)
+        {
+            AudioSource source = _incomingBgmSourcesBuffer[i];
+            source.volume = _bgmTargetVolume;
+            _activeBgmSources.Add(source);
+        }
+
+        _incomingBgmSourcesBuffer.Clear();
+    }
+
+    IEnumerator SequentialFadeSwap(List<AudioClip> targetClips)
+    {
+        if (bgmFadeDuration > 0f)
+        {
+            float[] startVolumes = new float[bgmSources.Count];
+            for (int i = 0; i < bgmSources.Count; i++)
+                startVolumes[i] = bgmSources[i] != null ? bgmSources[i].volume : 0f;
+
+            float t = 0f;
+            while (t < bgmFadeDuration)
+            {
+                t += Time.unscaledDeltaTime;
+                float ratio = t / bgmFadeDuration;
+
+                for (int i = 0; i < bgmSources.Count; i++)
+                {
+                    AudioSource source = bgmSources[i];
+                    if (source == null) continue;
+                    source.volume = Mathf.Lerp(startVolumes[i], 0f, ratio);
+                }
+
+                yield return null;
+            }
+        }
+
+        double startTime = AudioSettings.dspTime + bgmLayerStartDelay;
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            AudioSource source = bgmSources[i];
+            if (source == null) continue;
+
+            if (i < targetClips.Count)
+            {
+                source.Stop();
+                source.clip = targetClips[i];
+                source.loop = true;
+                source.volume = 0f;
+                source.PlayScheduled(startTime);
+            }
+            else
+            {
+                source.Stop();
+                source.clip = null;
+                source.volume = 0f;
+            }
+        }
+
+        if (bgmFadeDuration > 0f)
+        {
+            float t = 0f;
+            while (t < bgmFadeDuration)
+            {
+                t += Time.unscaledDeltaTime;
+                float ratio = t / bgmFadeDuration;
+
+                for (int i = 0; i < bgmSources.Count; i++)
+                {
+                    AudioSource source = bgmSources[i];
+                    if (source == null || source.clip == null) continue;
+                    source.volume = Mathf.Lerp(0f, _bgmTargetVolume, ratio);
+                }
+
+                yield return null;
+            }
+        }
+
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            AudioSource source = bgmSources[i];
+            if (source == null || source.clip == null) continue;
+            source.volume = _bgmTargetVolume;
+        }
+
+        _activeBgmSources.Clear();
+        for (int i = 0; i < bgmSources.Count && i < targetClips.Count; i++)
+        {
+            AudioSource source = bgmSources[i];
+            if (source == null || source.clip == null) continue;
+            _activeBgmSources.Add(source);
+        }
+    }
+
+    bool TryCollectDistinctIncomingSources(int requiredCount, List<AudioSource> exclude, List<AudioSource> result)
+    {
+        result.Clear();
+
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            AudioSource source = bgmSources[i];
+            if (source == null) continue;
+            if (exclude.Contains(source)) continue;
+
+            result.Add(source);
+            if (result.Count >= requiredCount)
+                return true;
+        }
+
+        result.Clear();
+        return false;
+    }
+
+    void EnsureBgmSourceCount(int requiredCount)
+    {
+        if (!autoCreateBgmSources) return;
+
+        int currentCount = 0;
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            if (bgmSources[i] != null)
+                currentCount++;
+        }
+
+        int missing = requiredCount - currentCount;
+        if (missing <= 0) return;
+
+        Transform parent = bgmRoot != null ? bgmRoot : transform;
+        AudioSource template = null;
+        for (int i = 0; i < bgmSources.Count; i++)
+        {
+            if (bgmSources[i] == null) continue;
+            template = bgmSources[i];
+            break;
+        }
+
+        for (int i = 0; i < missing; i++)
+        {
+            var go = new GameObject($"BGM Auto Source {currentCount + i + 1}");
+            go.transform.SetParent(parent, false);
+
+            AudioSource source = go.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = true;
+            source.volume = _bgmTargetVolume;
+
+            if (template != null)
+            {
+                source.spatialBlend = template.spatialBlend;
+                source.outputAudioMixerGroup = template.outputAudioMixerGroup;
+                source.pitch = template.pitch;
+            }
+
+            bgmSources.Add(source);
+        }
+    }
+
+    void RefreshSourceLists()
+    {
+        bgmSources = CollectAudioSourcesFromRoot(bgmRoot);
+        sfxSources = CollectAudioSourcesFromRoot(sfxRoot);
+    }
+
+    List<AudioSource> CollectAudioSourcesFromRoot(Transform root)
+    {
+        var list = new List<AudioSource>();
+        if (root == null) return list;
+
+        AudioSource[] sources = root.GetComponentsInChildren<AudioSource>(true);
+        for (int i = 0; i < sources.Length; i++)
+        {
+            AudioSource source = sources[i];
+            if (source == null) continue;
+            if (list.Contains(source)) continue;
+            list.Add(source);
+        }
+
+        return list;
+    }
+
+    bool TryGetPrimarySfxSource(out AudioSource source)
+    {
+        for (int i = 0; i < sfxSources.Count; i++)
+        {
+            if (sfxSources[i] == null) continue;
+            source = sfxSources[i];
+            return true;
+        }
+
+        source = null;
+        return false;
+    }
+
+    bool TryGetAssetManager(out AudioAssetManager assets)
+    {
+        assets = audioAssetManager;
+        if (assets != null) return true;
+
+        assets = AudioAssetManager.Instance;
+        audioAssetManager = assets;
+        return assets != null;
     }
 }

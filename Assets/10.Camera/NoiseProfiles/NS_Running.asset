@@ -12,5 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7f59e54f2bfd184b9dd451a678d089b, type: 3}
   m_Name: NS_Running
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.NoiseSettings
-  PositionNoise: []
-  OrientationNoise: []
+  PositionNoise:
+  - X:
+      Frequency: 0
+      Amplitude: 0
+      Constant: 0
+    Y:
+      Frequency: 3.5
+      Amplitude: 0.2
+      Constant: 1
+    Z:
+      Frequency: 0
+      Amplitude: 0
+      Constant: 0
+  OrientationNoise:
+  - X:
+      Frequency: 2.5
+      Amplitude: 0.1
+      Constant: 1
+    Y:
+      Frequency: 0.5
+      Amplitude: 0.1
+      Constant: 1
+    Z:
+      Frequency: 0.2
+      Amplitude: 0.1
+      Constant: 1

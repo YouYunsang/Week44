@@ -47,6 +47,7 @@ public class CheckpointManager : MonoSingleton<CheckpointManager>
     public void RebuildCheckpointList()
     {
         checkpoints = FindObjectsByType<Checkpoint>(FindObjectsSortMode.None)
+            .Where(c => c != null && c.UseAsSavePoint)
             .OrderBy(c => c.ProgressionIndex)
             .ToList();
 
@@ -57,6 +58,7 @@ public class CheckpointManager : MonoSingleton<CheckpointManager>
     public void ActivateCheckpoint(Checkpoint checkpoint)
     {
         if (checkpoint == null) return;
+        if (!checkpoint.UseAsSavePoint) return;
 
         if (!checkpoints.Contains(checkpoint))
             RebuildCheckpointList();

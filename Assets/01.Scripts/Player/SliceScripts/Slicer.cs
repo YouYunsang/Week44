@@ -99,6 +99,8 @@ namespace Assets.Scripts.SliceScripts
             
             var rb = gameObject.AddComponent<Rigidbody>();
             rb.useGravity = useGravity;
+
+            gameObject.AddComponent<SliceFragment>();
         }
     }
 }
