@@ -23,6 +23,25 @@ public struct OnSettingsChangedEvent : IEvent
     public SettingsData data;
 }
 
+#region Player Move
 public struct OnPlayerMoveStartedEvent : IEvent { }
 
 public struct OnPlayerMoveStoppedEvent : IEvent { }
+#endregion
+
+#region Player Dash Attack
+// 대시 차징 시작
+public struct OnDashChargeStartedEvent : IEvent { }
+
+// 대시 차징 취소
+public struct OnDashChargeCanceledEvent : IEvent { }
+
+// 대시 돌진 시작
+public struct OnDashStartedEvent : IEvent { }
+
+// 대시 돌진 종료
+public struct OnDashEndedEvent : IEvent { }
+
+// 대시 공격 판정 실행
+public struct OnDashStrikeEvent : IEvent { }
+#endregion
