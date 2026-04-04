@@ -111,6 +111,20 @@ public class PlayerDashAttack : MonoBehaviour
 
         // 차징 시작 이벤트 발행
         EventBus<OnDashChargeStartedEvent>.Publish(new OnDashChargeStartedEvent());
+
+        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+        {
+            channel = CameraNoiseChannel.DashCharge,
+            isActive = true,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.DashCharge,
+            isActive = true,
+            normalized = 0f
+        });
     }
 
     private void HandleDashAttackReleased()
@@ -127,6 +141,20 @@ public class PlayerDashAttack : MonoBehaviour
             // 실패 시 차징 취소 이벤트 발행
             EventBus<OnDashChargeCanceledEvent>.Publish(new OnDashChargeCanceledEvent());
         }
+
+        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+        {
+            channel = CameraNoiseChannel.DashCharge,
+            isActive = false,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.DashCharge,
+            isActive = false,
+            normalized = 0f
+        });
 
         _isTargetInRange = false;
     }
@@ -167,6 +195,20 @@ public class PlayerDashAttack : MonoBehaviour
             _isTargetInRange = false;
             IsTargetBullet = false;
         }
+
+        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+        {
+            channel = CameraNoiseChannel.DashCharge,
+            isActive = true,
+            normalized = ChargeNormalized
+        });
+
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.DashCharge,
+            isActive = true,
+            normalized = ChargeNormalized
+        });
     }
 
     private bool TryDashAndSlice()

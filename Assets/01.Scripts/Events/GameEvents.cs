@@ -44,6 +44,35 @@ public struct OnSlowGaugeChangedEvent : IEvent
 public struct OnMenuOpenEvent  : IEvent { }
 public struct OnMenuCloseEvent : IEvent { }
 
+#region Camera Noise Control
+public enum CameraNoiseChannel
+{
+    Move,
+    DashCharge
+}
+public struct OnCameraNoiseSignalEvent : IEvent
+{
+    public CameraNoiseChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
+#region Camera Fov Control
+public enum CameraFovChannel
+{
+    Move,
+    DashCharge
+}
+
+public struct OnCameraFovSignalEvent : IEvent
+{
+    public CameraFovChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
 #region Player Move
 public struct OnPlayerMoveStartedEvent : IEvent { }
 public struct OnPlayerMoveStoppedEvent : IEvent { }
@@ -64,20 +93,6 @@ public struct OnDashEndedEvent : IEvent { }
 
 // 대시 공격 판정 실행
 public struct OnDashStrikeEvent : IEvent { }
-#endregion
-
-#region Camera Noise
-public enum CameraNoiseChannel
-{
-    Move,
-    DashCharge
-}
-public struct OnCameraNoiseSignalEvent : IEvent
-{
-    public CameraNoiseChannel channel;
-    public bool isActive;
-    public float normalized;
-}
 #endregion
 
 #region Landing

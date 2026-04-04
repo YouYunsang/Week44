@@ -7,40 +7,77 @@ public class PlayerCameraNoiseController : MonoBehaviour
     [Header("Noise Settings")]
     [SerializeField] private CameraNoiseSettingSO _defaultSetting;
 
+    [Header("Move Settings")]
+    [SerializeField] private CameraNoiseSettingSO _moveSetting;
+
     [Header("Charge Settings")]
     [SerializeField] private CameraNoiseSettingSO _chargeSetting;
 
-    [Header("Reference")]
-    [SerializeField] private PlayerDashAttack _playerDashAttack;
-
     private CinemachineBasicMultiChannelPerlin _perlin;
     private CameraNoiseSettingSO _currentSetting;
+
     private float _currentAmplitude = 0f;
     private float _currentFrequency = 1f;
+
+    private bool _isMoveActive = false;
+    private float _moveNormalized = 0f;
+
+    private bool _isChargeActive = false;
+    private float _chargeNormalized = 0f;
 
     private void Awake()
     {
         _perlin = GetComponent<CinemachineBasicMultiChannelPerlin>();
 
-        if (_playerDashAttack == null)
-            _playerDashAttack = FindFirstObjectByType<PlayerDashAttack>();
-
         ApplyImmediateSetting(_defaultSetting);
+    }
+
+    private void OnEnable()
+    {
+        EventBus<OnCameraNoiseSignalEvent>.Subscribe(HandleNoiseSignal);
+    }
+
+    private void OnDisable()
+    {
+        EventBus<OnCameraNoiseSignalEvent>.Unsubscribe(HandleNoiseSignal);
     }
 
     private void Update()
     {
         if (_perlin == null || _currentSetting == null) return;
 
-        UpdateNoiseByState();
+        UpdateNoiseByPriority();
         ApplyRuntimeBlend();
     }
 
-    private void UpdateNoiseByState()
+    private void HandleNoiseSignal(OnCameraNoiseSignalEvent evt)
     {
-        if(_playerDashAttack != null && _playerDashAttack.IsCharging)
+        switch (evt.channel)
+        {
+            case CameraNoiseChannel.Move:
+                _isMoveActive = evt.isActive;
+                _moveNormalized = evt.normalized;
+                break;
+
+            case CameraNoiseChannel.DashCharge:
+                _isChargeActive = evt.isActive;
+                _chargeNormalized = evt.normalized;
+                break;
+        }
+    }
+
+    private void UpdateNoiseByPriority()
+    {
+        // 우선순위: Charge > Move > Default
+        if (_isChargeActive)
         {
             SetActiveSetting(_chargeSetting);
+            return;
+        }
+
+        if (_isMoveActive)
+        {
+            SetActiveSetting(_moveSetting);
             return;
         }
 
@@ -62,6 +99,7 @@ public class PlayerCameraNoiseController : MonoBehaviour
         if (_perlin == null || setting == null) return;
 
         _currentSetting = setting;
+
         _perlin.NoiseProfile = setting.NoiseProfile;
         _perlin.PivotOffset = setting.PivotOffset;
         _perlin.AmplitudeGain = setting.AmplitudeGain;
@@ -73,22 +111,31 @@ public class PlayerCameraNoiseController : MonoBehaviour
 
     private void ApplyRuntimeBlend()
     {
-        float chargeNormalized = 0f;
-        bool isCharging = _playerDashAttack != null && _playerDashAttack.IsCharging;
+        float normalized = 1f;
+        bool isBlendingIn = false;
 
-        if (isCharging)
-            chargeNormalized = _playerDashAttack.ChargeNormalized;
+        if (_isChargeActive && _currentSetting == _chargeSetting)
+        {
+            normalized = _chargeNormalized;
+            isBlendingIn = true;
+        }
+        else if (_isMoveActive && _currentSetting == _moveSetting)
+        {
+            normalized = _moveNormalized;
+            isBlendingIn = true;
+        }
 
         float targetAmplitude = _currentSetting.AmplitudeGain;
         float targetFrequency = _currentSetting.FrequencyGain;
 
-        if(isCharging && _currentSetting == _chargeSetting)
+        // 활성 상태에서는 normalized 기반 스케일링
+        if (isBlendingIn)
         {
-            targetAmplitude *= Mathf.Lerp(0.35f, 1f, chargeNormalized);
-            targetFrequency *= Mathf.Lerp(0.8f, 1.15f, chargeNormalized);
+            targetAmplitude *= Mathf.Lerp(0.35f, 1f, normalized);
+            targetFrequency *= Mathf.Lerp(0.85f, 1.15f, normalized);
         }
 
-        float blendSpeed = isCharging ? _currentSetting.BlendInSpeed : _currentSetting.BlendOutSpeed;
+        float blendSpeed = isBlendingIn ? _currentSetting.BlendInSpeed : _currentSetting.BlendOutSpeed;
 
         _currentAmplitude = Mathf.Lerp(_currentAmplitude, targetAmplitude, blendSpeed * Time.deltaTime);
         _currentFrequency = Mathf.Lerp(_currentFrequency, targetFrequency, blendSpeed * Time.deltaTime);
