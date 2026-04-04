@@ -48,3 +48,19 @@ public struct OnDashEndedEvent : IEvent { }
 // 대시 공격 판정 실행
 public struct OnDashStrikeEvent : IEvent { }
 #endregion
+
+#region
+public enum LandingImpactType
+{
+    Small,
+    Medium,
+    Large
+}
+
+public struct OnPlayerLandedEvent : IEvent
+{
+    public LandingImpactType impactType;
+    public float downwardSpeed;
+    public float impulseStrength;
+}
+#endregion

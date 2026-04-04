@@ -45,6 +45,11 @@ GameObject:
   - component: {fileID: 5614986853067378888}
   - component: {fileID: 4300277925384823028}
   - component: {fileID: 7836380275553792151}
+  - component: {fileID: 7189260432602759941}
+  - component: {fileID: 4277949312628645359}
+  - component: {fileID: 3658294723421992413}
+  - component: {fileID: 3893876409255374167}
+  - component: {fileID: 240099202168502799}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -137,19 +142,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fc91ac49118823469b077cc00e536c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  _camera: {fileID: 0}
-  _playerMovement: {fileID: 7789416113155416252}
-  _playerLook: {fileID: 5614986853067378888}
-  _playerJump: {fileID: 7836380275553792151}
-  _characterController: {fileID: 4473312493581529772}
   _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
+  _sliceExecutor: {fileID: 0}
   _attackRange: 2
-  _minAttackRange: 2
-  _maxAttackRange: 10
-  _chargeSpeed: 3
-  _dashSpeed: 20
-  _dashTimeout: 1
-  _stopDistance: 1
 --- !u!114 &7836380275553792151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,6 +165,143 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
+--- !u!114 &7189260432602759941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c40d3aeb5ded9314dabf2a192ddc926f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSliceExecutor
+  _camera: {fileID: 0}
+--- !u!114 &4277949312628645359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d3e83900c0a9a47af79def945eff5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttack
+  _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
+  _data: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _playerMovement: {fileID: 7789416113155416252}
+  _playerLook: {fileID: 5614986853067378888}
+  _playerJump: {fileID: 7836380275553792151}
+  _characterController: {fileID: 4473312493581529772}
+  _sliceExecutor: {fileID: 7189260432602759941}
+  _currentStack: 0
+  _currentRange: 0
+--- !u!114 &3658294723421992413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce5d3899ff5f43749bcd42f30693e89d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttackUI
+  _playerDashAttack: {fileID: 4277949312628645359}
+  _dashAttackData: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _stackOffset: {x: 0, y: 60}
+  _stackRechargeBarOffset: {x: 0, y: 95}
+  _chargeGaugeOffset: {x: 0, y: 40}
+  _dashLabelOffset: {x: 0, y: -60}
+  _stackLabelWidth: 120
+  _stackLabelHeight: 30
+  _stackRechargeBarWidth: 80
+  _stackRechargeBarHeight: 6
+  _chargeGaugeWidth: 150
+  _chargeGaugeHeight: 10
+  _dashLabelWidth: 200
+  _dashLabelHeight: 40
+  _defaultCrosshairSize: 6
+  _maxChargeCrosshairSize: 10
+  _targetCrosshairSize: 14
+--- !u!114 &3893876409255374167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 515b6d79855822b42bf5df3ebe3d751e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLandingImpulse
+  _playerJump: {fileID: 7836380275553792151}
+  _impulseSource: {fileID: 240099202168502799}
+  _minAirTime: 0.1
+  _minLandingDownwardSpeed: 2
+  _mediumLandingSpeed: 6
+  _largeLandingSpeed: 10
+  _smallImpulseStrength: 0.35
+  _mediumImpulseStrength: 0.7
+  _largeImpulseStrength: 1.1
+--- !u!114 &240099202168502799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseSource
+  ImpulseDefinition:
+    ImpulseChannel: 1
+    ImpulseShape: 2
+    CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    ImpulseDuration: 0.2
+    ImpulseType: 0
+    DissipationRate: 0.25
+    RawSignal: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    RepeatMode: 0
+    Randomize: 1
+    TimeEnvelope:
+      AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      AttackTime: 0
+      SustainTime: 0.2
+      DecayTime: 0.7
+      ScaleWithImpact: 1
+      HoldForever: 0
+    ImpactRadius: 100
+    DirectionMode: 0
+    DissipationMode: 2
+    DissipationDistance: 100
+    PropagationSpeed: 343
+  DefaultVelocity: {x: 0, y: -1, z: 0}
 --- !u!1 &5303145746657048644
 GameObject:
   m_ObjectHideFlags: 0
