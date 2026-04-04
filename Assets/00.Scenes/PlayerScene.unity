@@ -639,6 +639,11 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
+--- !u!4 &559208206 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+  m_PrefabInstance: {fileID: 1010738141}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &621108262 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
@@ -901,6 +906,72 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1001 &1010738141
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.20839821
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 7.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495522459125631215, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3249691363035045160, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: TurretHead
+      value: 
+      objectReference: {fileID: 559208206}
+    - target: {fileID: 3670082174645521725, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_Name
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4581222689880557539, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4363646501422379772, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
 --- !u!1001 &1111737470
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -911,6 +982,14 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
@@ -1068,6 +1147,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDashAttackUI
   _playerDashAttack: {fileID: 1111737479}
   _dashAttackData: {fileID: 11400000, guid: e905eb5262447084684ec472d5f2fb99, type: 2}
+  _sliceExecutor: {fileID: 1111737477}
+  _basicAttackRange: 2
   _stackOffset: {x: 0, y: 60}
   _stackRechargeBarOffset: {x: 0, y: 95}
   _chargeGaugeOffset: {x: 0, y: 40}
@@ -2177,3 +2258,4 @@ SceneRoots:
   - {fileID: 1924702821}
   - {fileID: 1111737470}
   - {fileID: 1369151619}
+  - {fileID: 1010738141}

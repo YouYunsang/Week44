@@ -62,7 +62,7 @@ public class BulletMover : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other == null) return;
-        if (other.CompareTag("Turret")) return;
+        if (other.CompareTag("Enemy")) return;
 
         // 플레이어 태그 또는 플레이어 레이어가 아니면 무시
         if (!IsPlayer(other.gameObject)) return;

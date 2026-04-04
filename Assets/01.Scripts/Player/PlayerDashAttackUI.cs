@@ -5,6 +5,8 @@ public class PlayerDashAttackUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private PlayerDashAttack _playerDashAttack;
     [SerializeField] private DashAttackDataSO _dashAttackData;
+    [SerializeField] private PlayerSliceExecutor _sliceExecutor;
+    [SerializeField] private float _basicAttackRange = 2f;
 
     [Header("Layout")]
     [SerializeField] private Vector2 _stackOffset = new Vector2(0f, 60f);
@@ -32,6 +34,12 @@ public class PlayerDashAttackUI : MonoBehaviour
         // 같은 오브젝트 내부 참조 캐싱
         if (_playerDashAttack == null)
             _playerDashAttack = GetComponent<PlayerDashAttack>();
+    }
+
+    private bool IsBasicTargetInRange()
+    {
+        if(_sliceExecutor == null) return false;
+        return _sliceExecutor.TryGetSliceHit(_basicAttackRange, out _);
     }
 
     private void OnGUI()
@@ -122,8 +130,8 @@ public class PlayerDashAttackUI : MonoBehaviour
                 _chargeGaugeWidth,
                 _chargeGaugeHeight),
             Texture2D.whiteTexture);
-
-        GUI.color = _playerDashAttack.IsTargetInRange
+        
+        GUI.color = (_playerDashAttack.IsTargetInRange && !_playerDashAttack.IsTargetBullet)
             ? Color.red
             : Color.Lerp(Color.white, Color.yellow, progress);
 
@@ -162,36 +170,33 @@ public class PlayerDashAttackUI : MonoBehaviour
 
     private void DrawCrosshair(Vector2 center)
     {
-        float dotSize;
-        Color dotColor;
+        float dotSize = _defaultCrosshairSize;
+        Color dotColor = Color.white;
 
-        if (_playerDashAttack.IsCharging && _playerDashAttack.IsTargetInRange)
+        if(_playerDashAttack.IsCharging)
         {
-            // 차징 중 타겟 유효
-            dotSize = _targetCrosshairSize;
-            dotColor = Color.red;
-        }
-        else if (_playerDashAttack.IsCharging)
-        {
-            // 차징 중이지만 타겟은 없음
             dotSize = Mathf.Lerp(
-                _defaultCrosshairSize,
-                _maxChargeCrosshairSize,
-                _playerDashAttack.ChargeNormalized);
+            _defaultCrosshairSize,
+            _maxChargeCrosshairSize,
+            _playerDashAttack.ChargeNormalized);
 
-            dotColor = Color.white;
-        }
-        else if (_playerDashAttack.CurrentStack <= 0)
-        {
-            // 스택이 없으면 회색 표시
-            dotSize = _defaultCrosshairSize;
-            dotColor = Color.gray;
+            dotColor = (_playerDashAttack.IsTargetInRange && !_playerDashAttack.IsTargetBullet)
+            ? Color.red
+            : Color.white;
         }
         else
         {
-            // 기본 조준점
-            dotSize = _defaultCrosshairSize;
-            dotColor = Color.white;
+            if(_playerDashAttack.CurrentStack <= 0)
+            {
+                dotColor = Color.gray;
+            }
+            else
+            {
+                dotColor = IsBasicTargetInRange()
+                ? Color.red
+                : Color.white;    
+            }
+            
         }
 
         GUI.color = dotColor;

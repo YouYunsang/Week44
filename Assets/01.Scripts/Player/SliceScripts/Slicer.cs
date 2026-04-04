@@ -62,15 +62,15 @@ namespace Assets.Scripts.SliceScripts
             meshGameObject.AddComponent<MeshRenderer>();
             Sliceable sliceable = meshGameObject.AddComponent<Sliceable>();
 
-            sliceable.IsSolid = originalSliceable.IsSolid;
+            sliceable.IsSolid              = originalSliceable.IsSolid;
             sliceable.ReverseWireTriangles = originalSliceable.ReverseWireTriangles;
-            sliceable.UseGravity = originalSliceable.UseGravity;
+            sliceable.UseGravity           = originalSliceable.UseGravity;
 
             meshGameObject.GetComponent<MeshRenderer>().materials = originalMaterial;
 
             meshGameObject.transform.localScale = originalObject.transform.localScale;
-            meshGameObject.transform.rotation = originalObject.transform.rotation;
-            meshGameObject.transform.position = originalObject.transform.position;
+            meshGameObject.transform.rotation   = originalObject.transform.rotation;
+            meshGameObject.transform.position   = originalObject.transform.position;
 
             meshGameObject.tag = originalObject.tag;
 
@@ -92,9 +92,21 @@ namespace Assets.Scripts.SliceScripts
                 bounds.size.y > minSize &&
                 bounds.size.z > minSize)
             {
-                MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
-                meshCollider.sharedMesh = mesh;
-                meshCollider.convex = true;
+                //! 폴리곤 수가 너무 많으면 BoxCollider로 대체
+                //! convex MeshCollider 한계 == 255 폴리곤
+                if(mesh.triangles.Length / 3 <= 255)
+                {
+                    MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
+                    meshCollider.sharedMesh = mesh;
+                    meshCollider.convex = true;
+                }
+                else
+                {
+                    BoxCollider box = gameObject.AddComponent<BoxCollider>();
+                    box.center = bounds.center;
+                    box.size = bounds.size;    
+                }
+                
             }
             
             var rb = gameObject.AddComponent<Rigidbody>();

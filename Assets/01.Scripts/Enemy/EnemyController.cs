@@ -190,6 +190,8 @@ public class EnemyController : MonoBehaviour
     {
         if (Time.time < _nextFireTime) return;
 
+        if(FirePoint == null) return;
+
         if (BulletPrefab == null)
         {
             Debug.LogWarning("[EnemyController] bulletPrefab이 인스펙터에 할당되지 않았습니다.");
