@@ -60,6 +60,21 @@ public class PlayerMovement : MonoBehaviour
         {
             _isMoving = true;
             EventBus<OnPlayerMoveStartedEvent>.Publish(new OnPlayerMoveStartedEvent());
+
+            EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+            {
+                channel = CameraNoiseChannel.Move,
+                isActive = true,
+                normalized = 1f
+            });
+
+            EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+            {
+                channel = CameraFovChannel.Move,
+                isActive = true,
+                normalized = 1f
+            });
+
             return;
         }
 
@@ -67,6 +82,20 @@ public class PlayerMovement : MonoBehaviour
         {
             _isMoving = false;
             EventBus<OnPlayerMoveStoppedEvent>.Publish(new OnPlayerMoveStoppedEvent());
+
+            EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+            {
+                channel = CameraNoiseChannel.Move,
+                isActive = false,
+                normalized = 0f
+            });
+
+            EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+            {
+                channel = CameraFovChannel.Move,
+                isActive = false,
+                normalized = 0f
+            });
         }
     }
 

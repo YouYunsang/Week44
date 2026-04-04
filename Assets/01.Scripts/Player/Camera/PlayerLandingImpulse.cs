@@ -53,8 +53,6 @@ public class PlayerLandingImpulse : MonoBehaviour
         UpdateAirState();
         DetectLanding();
 
-       
-
         _wasGrounded = _playerJump.IsGrounded;
     }
 

@@ -1711,6 +1711,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1024703538004245521, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: _chargeSetting
+      value: 
+      objectReference: {fileID: 11400000, guid: 76f28230ee8006842931f2c15686d58e, type: 2}
+    - target: {fileID: 3157209166717324263, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: _chargeSetting
+      value: 
+      objectReference: {fileID: 11400000, guid: f06e6dd2627825348a3d43d4983a136c, type: 2}
     - target: {fileID: 6058297779998656747, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.47471
@@ -1755,6 +1763,10 @@ PrefabInstance:
       propertyPath: Target.TrackingTarget
       value: 
       objectReference: {fileID: 2040208908}
+    - target: {fileID: 6261954569534079821, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: NoiseProfile
+      value: 
+      objectReference: {fileID: 11400000, guid: fb6a6463ff936424ea1a040c1af6467b, type: 2}
     - target: {fileID: 7974083907948601543, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
       propertyPath: m_Name
       value: Cameras

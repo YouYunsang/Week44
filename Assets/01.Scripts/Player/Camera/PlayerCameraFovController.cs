@@ -3,64 +3,136 @@ using Unity.Cinemachine;
 
 public class PlayerCameraFovController : MonoBehaviour
 {
-    [Header("FOV Settings")]
-    [SerializeField] private float _defaultFov = 60f;
-    [SerializeField] private float _moveFov = 70f;
-    [SerializeField] private float _increaseSmoothTime = 0.5f;
-    [SerializeField] private float _decreaseSmoothTime = 0.15f;
+    [Header("Default Settings")]
+    [SerializeField] private CameraFovSettingSO _defaultSetting;
 
-    [SerializeField] private bool _isMoving;
+    [Header("Move Setting")]
+    [SerializeField] private CameraFovSettingSO _moveSetting;
+
+    [Header("Charge Setting")]
+    [SerializeField] private CameraFovSettingSO _chargeSetting;
 
     private CinemachineCamera _cinemachineCamera;
+    private CameraFovSettingSO _currentSetting;
+
+    private bool _isMoveActive = false;
+    private float _moveNormalized = 0f;
+
+    private bool _isChargeActive = false;
+    private float _chargeNormalized = 0f;
+
     private float _targetFov;
+    private float _currentBlendTime = 0.15f;
     private float _fovVelocity;
 
     private void Awake()
     {
         _cinemachineCamera = GetComponent<CinemachineCamera>();
 
-        _targetFov = _defaultFov;
-
-        if (_cinemachineCamera != null)
-            _cinemachineCamera.Lens.FieldOfView = _defaultFov;
+        ApplyImmediateSetting(_defaultSetting);
     }
 
     private void OnEnable()
     {
-        EventBus<OnPlayerMoveStartedEvent>.Subscribe(HandleMoveStarted);
-        EventBus<OnPlayerMoveStoppedEvent>.Subscribe(HandleMoveStopped);
+        EventBus<OnCameraFovSignalEvent>.Subscribe(HandleFovSignal);
     }
 
     private void OnDisable()
     {
-        EventBus<OnPlayerMoveStartedEvent>.Unsubscribe(HandleMoveStarted);
-        EventBus<OnPlayerMoveStoppedEvent>.Unsubscribe(HandleMoveStopped);
+        EventBus<OnCameraFovSignalEvent>.Unsubscribe(HandleFovSignal);
     }
 
     private void Update()
     {
-        if (_cinemachineCamera == null) return;
+        if (_cinemachineCamera == null || _currentSetting == null) return;
 
+        UpdateFovByPriority();
+        ApplyRuntimeBlend();
+    }
+
+    private void HandleFovSignal(OnCameraFovSignalEvent evt)
+    {
+        switch (evt.channel)
+        {
+            case CameraFovChannel.Move:
+                _isMoveActive = evt.isActive;
+                _moveNormalized = evt.normalized;
+                break;
+
+            case CameraFovChannel.DashCharge:
+                _isChargeActive = evt.isActive;
+                _chargeNormalized = evt.normalized;
+                break;
+        }
+    }
+
+    private void UpdateFovByPriority()
+    {
+        // 우선순위: Charge > Move > Default
+        if (_isChargeActive)
+        {
+            SetActiveSetting(_chargeSetting, true);
+            return;
+        }
+
+        if (_isMoveActive)
+        {
+            SetActiveSetting(_moveSetting, true);
+            return;
+        }
+
+        SetActiveSetting(_defaultSetting, false);
+    }
+
+    private void SetActiveSetting(CameraFovSettingSO setting, bool isBlendingIn)
+    {
+        if(setting == null) return;
+
+        if(_currentSetting != setting)
+            _currentSetting = setting;
+
+        _currentBlendTime = isBlendingIn ? _currentSetting.BlendInTime : _currentSetting.BlendOutTime;
+
+        _targetFov = EvaluateTargetFov(setting);
+    }
+
+    private float EvaluateTargetFov(CameraFovSettingSO setting)
+    {
+        float normalized = 1f;
+
+        if (_isChargeActive && setting == _chargeSetting)
+            normalized = _chargeNormalized;
+        else if (_isMoveActive && setting == _moveSetting)
+            normalized = _moveNormalized;
+
+        return Mathf.Lerp(_defaultSetting.TargetFov, setting.TargetFov, normalized);
+    }
+
+    private void ApplyImmediateSetting(CameraFovSettingSO setting)
+    {
+        if (_cinemachineCamera == null || setting == null)
+            return;
+
+        _currentSetting = setting;
+        _targetFov = setting.TargetFov;
+        _currentBlendTime = setting.BlendOutTime;
+
+        LensSettings lens = _cinemachineCamera.Lens;
+        lens.FieldOfView = setting.TargetFov;
+        _cinemachineCamera.Lens = lens;
+    }
+
+    private void ApplyRuntimeBlend()
+    {
         float currentFov = _cinemachineCamera.Lens.FieldOfView;
-
-        float smoothTime = _isMoving ? _increaseSmoothTime : _decreaseSmoothTime;
-
-        float nextFov = Mathf.SmoothDamp(currentFov, _targetFov, ref _fovVelocity, smoothTime);
+        float nextFov = Mathf.SmoothDamp(
+            currentFov,
+            _targetFov,
+            ref _fovVelocity,
+            _currentBlendTime);
 
         LensSettings lens = _cinemachineCamera.Lens;
         lens.FieldOfView = nextFov;
         _cinemachineCamera.Lens = lens;
-    }
-
-    private void HandleMoveStarted(OnPlayerMoveStartedEvent evt)
-    {
-        _isMoving = true;
-        _targetFov = _moveFov;
-    }
-
-    private void HandleMoveStopped(OnPlayerMoveStoppedEvent evt)
-    {
-        _isMoving = false;
-        _targetFov = _defaultFov;
     }
 }
