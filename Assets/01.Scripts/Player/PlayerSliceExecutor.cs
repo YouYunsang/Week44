@@ -48,7 +48,16 @@ public class PlayerSliceExecutor : MonoBehaviour
         //? StackedSliceable이 있으면 스택 누적
         //? 없으면 즉시 슬라이스
 
+        float angle = randomDir * 45f * Mathf.Deg2Rad;
+        Vector2 swingDir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+
+        EventBus<OnWeaponSwingEvent>.Publish(new OnWeaponSwingEvent
+        {
+           direction = swingDir 
+        });
+
         StackedSliceable stacked = hit.collider.gameObject.GetComponent<StackedSliceable>();
+        
         if(stacked != null)
         {
             // 슬라이스 평면을 로컬 좌표로 변환해서 전달
