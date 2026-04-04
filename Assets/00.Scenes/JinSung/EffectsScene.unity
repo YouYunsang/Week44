@@ -1053,7 +1053,7 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
-  _capMaterial: {fileID: 2100000, guid: e06756a369e347f4f9f54ab9ec421075, type: 2}
+  _capMaterial: {fileID: 2100000, guid: 97bf25032ea1eb74eb6e46343c4e7d3b, type: 2}
 --- !u!65 &1929479567
 BoxCollider:
   m_ObjectHideFlags: 0
