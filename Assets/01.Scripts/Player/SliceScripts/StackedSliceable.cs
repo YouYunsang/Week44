@@ -32,16 +32,6 @@ public class StackedSliceable : MonoBehaviour
     private int  _currentSliceCount = 0;
     private bool _isSliced          = false;
 
-    // ───────────────────────────── Unity Lifecycle ─────────────────────────────
-
-    private void Update()
-    {
-        if (_showDebugLog && Input.GetKeyDown(_debugTriggerKey))
-            ForceExecuteSlices();
-    }
-
-    // ───────────────────────────── Public API ─────────────────────────────
-
     /// <summary>
     /// PlayerSliceExecutor에서 슬라이스 요청 시 호출.
     /// planeOrigin : 슬라이스 평면의 월드 위치 (보통 hit.point)
@@ -59,22 +49,6 @@ public class StackedSliceable : MonoBehaviour
 
         if (_currentSliceCount >= _maxSliceCount)
             ExecuteAllSlices();
-    }
-
-    /// <summary>
-    /// 누적 횟수 무관하게 강제 실행 (디버그 키 / 외부 트리거)
-    /// </summary>
-    public void ForceExecuteSlices()
-    {
-        if (_isSliced) return;
-
-        if (_pendingSlices.Count == 0)
-        {
-            Debug.LogWarning("[StackedSliceable] 누적된 슬라이스가 없습니다.");
-            return;
-        }
-
-        ExecuteAllSlices();
     }
 
     // ───────────────────────────── Private Logic ─────────────────────────────

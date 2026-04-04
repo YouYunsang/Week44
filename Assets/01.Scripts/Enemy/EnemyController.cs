@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public enum EnemyType
@@ -15,6 +16,13 @@ public enum PatrolAxis
 
 public class EnemyController : MonoBehaviour
 {
+    [Header("시야 설정")]
+    [Tooltip("플레이어와 적 사이를 막는 레이어 (벽, 장애물 등)")]
+    public LayerMask ObstacleLayer;
+
+    [Tooltip("시야 높이 오프셋 (눈 위치 보정)")]
+    public float EyeHeight = 1f;
+
     [Header("적 종류")]
     public EnemyType EnemyType = EnemyType.Roaming;
 
@@ -41,6 +49,9 @@ public class EnemyController : MonoBehaviour
 
     [Tooltip("총알 속도")]
     public float BulletSpeed = 10f;
+
+    [Tooltip("플레이어 감지 후 첫 발사까지 선딜레이 (초)")]
+    public float FirstfireDelay = 2f;      
 
     [Header("포탑 회전 설정")]
     [Tooltip("포탑 머리 부분 Transform (없으면 오브젝트 자체가 회전)")]
@@ -71,6 +82,7 @@ public class EnemyController : MonoBehaviour
     private Vector3 _patrolOrigin;
     private int _patrolDirection = 1;
     private Vector3 _patrolDir; // 실제 사용할 정규화된 순찰 방향
+    private bool _isFiringDelayed = false;      //선딜레이 코루틴 실행 중 여부
 
     // ─────────────────────────────────────────────
     private void Start()
@@ -124,9 +136,7 @@ public class EnemyController : MonoBehaviour
     // ── 플레이어 감지 ──────────────────────────────
     private void DetectPlayer()
     {   //만약 어그로 상태면 감지범위가 AggroDetectionRange로 바뀜
-        float currentRange = (_isAggroed)
-            ? AggroDetectionRange
-            : DetectionRange;
+        float currentRange = _isAggroed ? AggroDetectionRange : DetectionRange;
 
         // 플레이어 레이어가 있으면 범위안에 플레이어 레이어만 찾음 아니면 전체 다 찾음, 전체 다 찾으면 성능 많이 먹음
         Collider[] hits = PlayerLayer != 0
@@ -139,16 +149,17 @@ public class EnemyController : MonoBehaviour
         /// 매 프레임 초기화후 탐색 player태그 가진 오브젝트 찾으면 저장하고 루프 종료 Enemy는 어그로 상태로 변경
         foreach (Collider col in hits)
         {
-            if (col.CompareTag("Player"))
-            {
-                _player = col.transform;
-                _playerInRange = true;
+            if (!col.CompareTag("Player")) continue;
 
-                if (!_isAggroed)
-                    _isAggroed = true;
+            if(!HasLineOfSight(col.transform)) continue;
 
-                break;
-            }
+            _player = col.transform;
+            _playerInRange = true;
+
+            if(!_isAggroed)
+                _isAggroed = true;
+            
+            break;
         }
 
         //어그로 해제 조건
@@ -162,10 +173,42 @@ public class EnemyController : MonoBehaviour
             bool stillInAggro = false;
             foreach (Collider col in aggroHits)
             {
-                if (col.CompareTag("Player")) { stillInAggro = true; break; }
+                if (!col.CompareTag("Player")) continue;
+
+                if(HasLineOfSight(col.transform))
+                {
+                    stillInAggro = true;
+                    break;
+                }
             }
 
             if (!stillInAggro) _isAggroed = false;
+        }
+    }
+
+    // 플레이어와 적 사이에 장애물잉 없는지 확인
+    private bool HasLineOfSight(Transform target)
+    {
+        //눈 위치 보정
+        Vector3 eyePos = transform.position + Vector3.up * EyeHeight;
+        Vector3 targetPos = target.position + Vector3.up * EyeHeight;
+        Vector3 direction = (targetPos - eyePos).normalized;
+        float distance = Vector3.Distance(eyePos, targetPos);
+
+        //장애물 레이어가 설정되어 있으면 해당 레이어만 체크
+        //없으면 모든 레이어 체크
+        if(ObstacleLayer != 0)
+        {
+            return !Physics.Raycast(eyePos, direction, distance, ObstacleLayer);
+        }
+        else
+        {
+            //ObstacleLayer 미설정 시 플레이어 레이어 제외하고 체크
+            if(Physics.Raycast(eyePos, direction, out RaycastHit hit, distance))
+            {
+                return hit.collider.CompareTag("Player");
+            }
+            return true;
         }
     }
 
@@ -197,19 +240,31 @@ public class EnemyController : MonoBehaviour
             Debug.LogWarning("[EnemyController] bulletPrefab이 인스펙터에 할당되지 않았습니다.");
             return;
         }
+        
+        if(_isFiringDelayed) return;
+        StartCoroutine(FireWithDelay());
+    }
 
-        // FirePoint 세팅과 무관하게 플레이어를 직접 겨냥하는 방향 계산
-        Vector3 aimDir = (_player.position - FirePoint.position).normalized;
+    private System.Collections.IEnumerator FireWithDelay()
+    {
+        _isFiringDelayed = true;
 
-        //총알 프리팹 생성
-        GameObject bullet = Instantiate(BulletPrefab, FirePoint.position, FirePoint.rotation);
+        //선딜레이 대기
+        yield return new WaitForSeconds(FirstfireDelay);
 
-        if (!bullet.TryGetComponent(out BulletMover mover))
-            mover = bullet.AddComponent<BulletMover>();
-
-        mover.Initialize(aimDir, BulletSpeed);
-
-        _nextFireTime = Time.time + 1f / FireRate;
+        // 딜레이 후 플레이어가 여전히 범위 안에 있는지 확인
+        if(_playerInRange && _player != null)
+        {
+            Vector3 aimDir = (_player.position - FirePoint.position).normalized;
+            GameObject bullet = Instantiate(BulletPrefab, FirePoint.position, FirePoint.rotation);
+        
+            if(!bullet.TryGetComponent(out BulletMover mover))
+                mover = bullet.AddComponent<BulletMover>();
+            
+            mover.Initialize(aimDir, BulletSpeed);
+            _nextFireTime = Time.time + 1f / FireRate;
+        }
+        _isFiringDelayed = false;
     }
 
     // ── Roaming 전용: 순찰 ─────────────────────────
@@ -251,6 +306,13 @@ public class EnemyController : MonoBehaviour
                 origin + dir * PatrolDistance,
                 origin - dir * PatrolDistance
             );
+        }
+
+        if(_player != null && Application.isPlaying)
+        {
+            Vector3 eyePos = transform.position + Vector3.up * EyeHeight;
+            Gizmos.color   = _playerInRange ? Color.green : Color.red;
+            Gizmos.DrawLine(eyePos, _player.position + Vector3.up * EyeHeight);
         }
     }
 }
