@@ -728,7 +728,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1938699422782994211, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
   m_PrefabInstance: {fileID: 2446687495028581305}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1735430169}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8da63350b991af34699f45faf2dddf0e, type: 3}
@@ -1160,32 +1160,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1735430169 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6836810534995814093, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
-  m_PrefabInstance: {fileID: 2446687495028581305}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1735430179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1735430169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd599b65898c40a4ba06c957569d8983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SwingCameraReactionExtension
-  _normalPitchAmount: 2
-  _normalYawAmount: 1.8
-  _normalRollAmount: 0.4
-  _normalDuration: 0.5
-  _dashPitchAmount: 3.3
-  _dashYawAmount: 2.8
-  _dashRollAmount: 0.9
-  _dashDuration: 0.8
-  _attackRatio: 0.28
 --- !u!1 &1751144976
 GameObject:
   m_ObjectHideFlags: 0
@@ -1788,10 +1762,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6836810534995814093, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1735430179}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
