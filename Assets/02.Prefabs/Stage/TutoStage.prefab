@@ -370,6 +370,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5269390612050042980}
     m_Modifications:
+    - target: {fileID: 3127712255149307483, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 21.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 5299421769229011692, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7800030324576655975, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 172.26225
@@ -415,7 +423,14 @@ PrefabInstance:
       value: FallingDownTuto
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8759745212490799556, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
+    - {fileID: 5673930404565215099, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
+    - {fileID: 7222142674415085037, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
+    - {fileID: 7475843942514671369, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
+    - {fileID: 7616884342100889114, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
+    - {fileID: 6776772656876190409, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
+    - {fileID: 591309726463145593, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 855816415141453977, guid: 4f6e1dde0e3f42242bd2fdc32c86bf3b, type: 3}
