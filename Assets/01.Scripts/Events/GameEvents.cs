@@ -88,6 +88,20 @@ public struct OnCameraMotionBlurSignalEvent : IEvent
 }
 #endregion
 
+#region Camera Chromatic Channel
+public enum CameraChromaticChannel
+{
+    Dash
+}
+
+public struct OnCameraChromaticSignalEvent : IEvent
+{
+    public CameraChromaticChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
 #region Player Move
 public struct OnPlayerMoveStartedEvent : IEvent { }
 public struct OnPlayerMoveStoppedEvent : IEvent { }
