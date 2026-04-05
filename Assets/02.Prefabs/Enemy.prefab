@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 1644984257430518898}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.78900003}
+  m_LocalPosition: {x: 0, y: 0, z: 0.651}
   m_LocalScale: {x: 0.4165808, y: 0.4165808, z: 0.4165808}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -157,6 +157,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1fe1e6c0941f346ae177aa16d51bcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
+  ObstacleLayer:
+    serializedVersion: 2
+    m_Bits: 16
+  EyeHeight: 1
   EnemyType: 1
   DetectionRange: 10
   PlayerLayer:
@@ -167,7 +171,8 @@ MonoBehaviour:
   FirePoint: {fileID: 1293661640610492387}
   FireRate: 1
   BulletSpeed: 10
-  TurretHead: {fileID: 0}
+  FirstfireDelay: 2
+  TurretHead: {fileID: 2495522459125631215}
   RotationSpeed: 5
   PatrolAxis: 0
   CustomPatrolDirection: {x: 1, y: 0, z: 0}
@@ -186,7 +191,6 @@ GameObject:
   - component: {fileID: 5232362388053492456}
   - component: {fileID: 742128741461004051}
   - component: {fileID: 3821667436544965399}
-  - component: {fileID: 4363646501422379772}
   m_Layer: 0
   m_Name: EnemyBase
   m_TagString: Enemy
@@ -286,27 +290,9 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 1.3927336}
+  m_Center: {x: 0, y: 0, z: 0.19636679}
 --- !u!114 &3821667436544965399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4581222689880557539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b42ab45ad6fa044486c1ef6eeb22f55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Sliceable
-  _isSolid: 1
-  _reverseWindTriangles: 0
-  _useGravity: 1
-  _shareVertices: 0
-  _smoothVertices: 0
-  _capMaterial: {fileID: 0}
---- !u!114 &4363646501422379772
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

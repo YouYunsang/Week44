@@ -112,6 +112,6 @@ public class PlayerSliceExecutor : MonoBehaviour
 
         // 절단 조각에 힘 부여
         Vector3 force = transformedNormal + Vector3.up * 2f;
-        slices[0].GetComponent<Rigidbody>().AddForce(force * 3f, ForceMode.Impulse);
+        slices[0].GetComponent<Rigidbody>().AddForce(force * 1.2f, ForceMode.Impulse);
     }
 }
