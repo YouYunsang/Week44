@@ -43,7 +43,6 @@ public class PlayerSliceExecutor : MonoBehaviour
         if (sliceable == null) return;
 
         int randomDir = GetRandomDir(hit.collider);
-
         float angle = randomDir * 45f * Mathf.Deg2Rad;
         Vector2 swingDir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
 
@@ -54,7 +53,20 @@ public class PlayerSliceExecutor : MonoBehaviour
         });
 
         Vector3 normal = GetSliceNormal(randomDir);
-        SliceObject(hit.collider.gameObject, hit.point, normal);
+
+        StackedSliceable stacked = hit.collider.gameObject.GetComponent<StackedSliceable>();
+
+        if(stacked != null)
+        {
+            Vector3 transformedNormal =
+                ((Vector3)(hit.collider.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+            Vector3 transformedPoint = 
+                hit.collider.transform.InverseTransformPoint(hit.point);
+
+            stacked.RequestSlice(transformedPoint, transformedNormal);
+        }
+        else    SliceObject(hit.collider.gameObject, hit.point, normal);
     }
 
     public Vector3 GetCameraForward()

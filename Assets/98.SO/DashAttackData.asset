@@ -18,5 +18,5 @@ MonoBehaviour:
   _maxAttackRange: 10
   _chargeSpeed: 15
   _dashSpeed: 40
-  _dashTimeout: 0.5
+  _dashTimeout: 0.2
   _stopDistance: 1.5

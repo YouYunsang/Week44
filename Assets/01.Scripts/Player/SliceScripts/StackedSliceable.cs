@@ -65,6 +65,8 @@ public class StackedSliceable : MonoBehaviour
 
     private IEnumerator SliceSequence()
     {
+        Vector3 originPos = transform.position;
+
         GameObject currentTarget = gameObject;
         List<GameObject> allSlicedPieces = new();
 
@@ -102,18 +104,15 @@ public class StackedSliceable : MonoBehaviour
                 continue;
             }
 
-            GameObject positive = pieces[0]; // positive side
-            GameObject negative = pieces[1]; // negative side
-
-            allSlicedPieces.Add(positive);
-            allSlicedPieces.Add(negative);
+            allSlicedPieces.Add(pieces[0]);
+            allSlicedPieces.Add(pieces[1]);
 
             // 원본이 아닌 중간 조각은 제거
             if (currentTarget != gameObject)
                 Destroy(currentTarget);
 
             // 다음 슬라이스는 negative 조각에 이어서 적용
-            currentTarget = negative;
+            currentTarget = pieces[1];
 
             yield return null; // 프레임 분산
         }
@@ -122,10 +121,10 @@ public class StackedSliceable : MonoBehaviour
         Destroy(gameObject);
 
         // 조각들에 폭발력 적용
-        ApplyExplosionForce(allSlicedPieces);
+        ApplyExplosionForce(allSlicedPieces, originPos);
     }
 
-    private void ApplyExplosionForce(List<GameObject> pieces)
+    private void ApplyExplosionForce(List<GameObject> pieces, Vector3 originPos)
     {
         foreach (GameObject piece in pieces)
         {
@@ -133,7 +132,7 @@ public class StackedSliceable : MonoBehaviour
             if (!piece.TryGetComponent<Rigidbody>(out Rigidbody rb)) continue;
 
             Vector3 randomDir = (
-                piece.transform.position - transform.position
+                piece.transform.position - originPos
                 + Random.insideUnitSphere * _explosionRadius
             ).normalized;
 
