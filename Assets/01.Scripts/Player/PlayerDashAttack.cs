@@ -283,6 +283,13 @@ public class PlayerDashAttack : MonoBehaviour
             normalized = 1f
         });
 
+        EventBus<OnCameraChromaticSignalEvent>.Publish(new OnCameraChromaticSignalEvent
+        {
+            channel = CameraChromaticChannel.Dash,
+            isActive = true,
+            normalized = 1f
+        });
+
         // 대시 시작 이벤트 발행
         EventBus<OnDashStartedEvent>.Publish(new OnDashStartedEvent());
 
@@ -333,6 +340,13 @@ public class PlayerDashAttack : MonoBehaviour
         EventBus<OnCameraMotionBlurSignalEvent>.Publish(new OnCameraMotionBlurSignalEvent
         {
             channel = CameraMotionBlurChannel.Dash,
+            isActive = false,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraChromaticSignalEvent>.Publish(new OnCameraChromaticSignalEvent
+        {
+            channel = CameraChromaticChannel.Dash,
             isActive = false,
             normalized = 0f
         });

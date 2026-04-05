@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeb80991022ee3543bd520de61c5441f, type: 3}
   m_Name: Dutch_Charge
   m_EditorClassIdentifier: Assembly-CSharp::CameraDutchSettingSO
-  _targetDutch: 1
+  _targetDutch: 0.5
   _blendInSpeed: 6
   _blendOutSpeed: 10
