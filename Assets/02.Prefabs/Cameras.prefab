@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3695494674225381157}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.47471, y: 0.42869008, z: 0.65702}
+  m_LocalPosition: {x: -2.0923, y: 1.7, z: -2.45413}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -149,7 +149,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -186,6 +186,7 @@ GameObject:
   - component: {fileID: 3157209166717324263}
   - component: {fileID: 1024703538004245521}
   - component: {fileID: 14815735766210777}
+  - component: {fileID: 5272155380467087171}
   - component: {fileID: 6945136048099934120}
   - component: {fileID: 1938699422782994211}
   - component: {fileID: 479034154097133273}
@@ -205,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 6836810534995814093}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.47471, y: 0.42869008, z: 0.65702}
+  m_LocalPosition: {x: -2.0923, y: 1.7, z: -2.45413}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -327,6 +328,7 @@ MonoBehaviour:
   _defaultSetting: {fileID: 11400000, guid: 9f5066fc68f3c644995c6e4991c23b64, type: 2}
   _moveSetting: {fileID: 11400000, guid: c8d3bdba9f6a00d48b7e69f35b9f2433, type: 2}
   _chargeSetting: {fileID: 11400000, guid: 76f28230ee8006842931f2c15686d58e, type: 2}
+  _dashSetting: {fileID: 11400000, guid: 7196c56cc5bee5a4bb064ca27322b89d, type: 2}
 --- !u!114 &14815735766210777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,6 +345,21 @@ MonoBehaviour:
   _chargeSetting: {fileID: 11400000, guid: f6fe6b9a6d83e674489e50b6aa800348, type: 2}
   _chargeOscillationSpeed: 10
   _chargeEndAmplitudeMultiplier: 0.15
+--- !u!114 &5272155380467087171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6836810534995814093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aad60802a2ec844c9725046a52f8602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraDistortionController
+  _volume: {fileID: 0}
+  _defaultSetting: {fileID: 11400000, guid: ee82c981e34e3dd46826a51e08b74dc9, type: 2}
+  _dashSetting: {fileID: 11400000, guid: fc2f2f8ab60df4f40a97e4776c7271a3, type: 2}
 --- !u!114 &6945136048099934120
 MonoBehaviour:
   m_ObjectHideFlags: 0

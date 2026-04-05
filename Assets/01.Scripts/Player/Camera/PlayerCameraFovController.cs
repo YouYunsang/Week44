@@ -12,6 +12,9 @@ public class PlayerCameraFovController : MonoBehaviour
     [Header("Charge Setting")]
     [SerializeField] private CameraFovSettingSO _chargeSetting;
 
+    [Header("Dash Setting")]
+    [SerializeField] private CameraFovSettingSO _dashSetting;
+
     private CinemachineCamera _cinemachineCamera;
     private CameraFovSettingSO _currentSetting;
 
@@ -24,6 +27,9 @@ public class PlayerCameraFovController : MonoBehaviour
     private float _targetFov;
     private float _currentBlendTime = 0.15f;
     private float _fovVelocity;
+
+    private bool _isDashActive = false;
+    private float _dashNormalized = 0f;
 
     private void Awake()
     {
@@ -63,12 +69,23 @@ public class PlayerCameraFovController : MonoBehaviour
                 _isChargeActive = evt.isActive;
                 _chargeNormalized = evt.normalized;
                 break;
+
+            case CameraFovChannel.Dash:
+                _isDashActive = evt.isActive;
+                _dashNormalized = evt.normalized;
+                break;
         }
     }
 
     private void UpdateFovByPriority()
     {
-        // 우선순위: Charge > Move > Default
+        // 우선순위: Dash > Charge > Move > Default
+        if (_isDashActive)
+        {
+            SetActiveSetting(_dashSetting, true);
+            return;
+        }
+
         if (_isChargeActive)
         {
             SetActiveSetting(_chargeSetting, true);
@@ -100,7 +117,9 @@ public class PlayerCameraFovController : MonoBehaviour
     {
         float normalized = 1f;
 
-        if (_isChargeActive && setting == _chargeSetting)
+        if (_isDashActive && setting == _dashSetting)
+            normalized = _dashNormalized;
+        else if (_isChargeActive && setting == _chargeSetting)
             normalized = _chargeNormalized;
         else if (_isMoveActive && setting == _moveSetting)
             normalized = _moveNormalized;
