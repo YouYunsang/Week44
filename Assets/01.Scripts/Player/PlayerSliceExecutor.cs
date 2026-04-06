@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using Assets.Scripts.SliceScripts;
 using Random = UnityEngine.Random;
@@ -98,8 +99,25 @@ public class PlayerSliceExecutor : MonoBehaviour
         GameObject[] slices = Slicer.Slice(plane, target);
         Destroy(target);
 
-        // 절단 조각에 힘 부여
-        Vector3 force = transformedNormal + Vector3.up * 2f;
-        slices[0].GetComponent<Rigidbody>().AddForce(force * 3f, ForceMode.Impulse);
+        // 슬라이스 노멀(월드 기준)으로 두 조각을 반대 방향으로 날림
+        // normal: 월드 공간 슬라이스 평면 노멀
+        Vector3 flyN = normal.normalized;
+        var rb0 = slices[0].GetComponent<Rigidbody>();
+        var rb1 = slices[1].GetComponent<Rigidbody>();
+        if (rb0 != null) rb0.AddForce(( flyN + Vector3.up * 1.5f) * 14f, ForceMode.Impulse);
+        if (rb1 != null) rb1.AddForce((-flyN + Vector3.up * 1.5f) * 14f, ForceMode.Impulse);
+
+        // 생성 직후 0.5초간 콜라이더 비활성화 (관통 방지)
+        foreach (var slice in slices)
+            StartCoroutine(DisableCollidersTemporarily(slice, 0.5f));
+    }
+
+    private IEnumerator DisableCollidersTemporarily(GameObject obj, float duration)
+    {
+        var colliders = obj.GetComponentsInChildren<Collider>();
+        foreach (var c in colliders) c.enabled = false;
+        yield return new WaitForSeconds(duration);
+        if (obj != null)
+            foreach (var c in colliders) if (c != null) c.enabled = true;
     }
 }
