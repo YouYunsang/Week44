@@ -1086,14 +1086,6 @@ PrefabInstance:
       propertyPath: _volume
       value: 
       objectReference: {fileID: 8723670236150394853}
-    - target: {fileID: 3157209166717324263, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
-      propertyPath: _bossStompSetting
-      value: 
-      objectReference: {fileID: 11400000, guid: 65d1d5a906ac50d48998975aeaeacb1c, type: 2}
-    - target: {fileID: 4655495409240351683, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6022937862770723922, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
       propertyPath: _slowBlackAndWhiteVolume
       value: 
@@ -1142,10 +1134,6 @@ PrefabInstance:
       propertyPath: Target.TrackingTarget
       value: 
       objectReference: {fileID: 1318673417}
-    - target: {fileID: 6438579494185613277, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
-      propertyPath: m_RenderPostProcessing
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7974083907948601543, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
       propertyPath: m_Name
       value: Cameras
@@ -2287,38 +2275,6 @@ PrefabInstance:
       propertyPath: _landingExtension
       value: 
       objectReference: {fileID: 907901957}
-    - target: {fileID: 3716099222957492391, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      propertyPath: _largeLandingSpeed
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 3716099222957492391, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      propertyPath: _mediumLandingSpeed
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 3716099222957492391, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      propertyPath: _largeImpulseDuration
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3716099222957492391, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      propertyPath: _largeImpulseStrength
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3716099222957492391, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      propertyPath: _smallImpulseDuration
-      value: 1.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3716099222957492391, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      propertyPath: _mediumImpulseDuration
-      value: 1.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3716099222957492391, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      propertyPath: _mediumImpulseStrength
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 3716099222957492391, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      propertyPath: _minLandingDownwardSpeed
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 4892192173532715127, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3286,14 +3242,6 @@ PrefabInstance:
     - target: {fileID: 312707875442035231, guid: 7391d5510f96b994482a8ac76f87eb5f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 669147401038074336, guid: 7391d5510f96b994482a8ac76f87eb5f, type: 3}
-      propertyPath: weight
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6244292875145986268, guid: 7391d5510f96b994482a8ac76f87eb5f, type: 3}
-      propertyPath: weight
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8766716071266828133, guid: 7391d5510f96b994482a8ac76f87eb5f, type: 3}
       propertyPath: m_Name

@@ -456,6 +456,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraNoiseController
   _defaultSetting: {fileID: 11400000, guid: 0808e868acb8e0444ab06af25249f3f2, type: 2}
   _moveSetting: {fileID: 11400000, guid: 06dba5a6c645bcf4db6356fa95c87156, type: 2}
+  _bossStompSetting: {fileID: 11400000, guid: 65d1d5a906ac50d48998975aeaeacb1c, type: 2}
 --- !u!114 &1024703538004245521
 MonoBehaviour:
   m_ObjectHideFlags: 0
