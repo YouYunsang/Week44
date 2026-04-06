@@ -39,9 +39,13 @@ public class PlayerCameraChromaticController : MonoBehaviour
 
     private void Update()
     {
-        float target = _isDash ? _dashSetting.Intensity * _normalized : _defaultSetting.Intensity;
+        float target = _isDash
+            ? _dashSetting.Intensity * _normalized
+            : _defaultSetting.Intensity;
 
-        float speed = _isDash ? _dashSetting.BlendInSpeed : _dashSetting.BlendOutSpeed;
+        float speed = _isDash
+            ? _dashSetting.BlendInSpeed
+            : _dashSetting.BlendOutSpeed;
 
         _currentIntensity = Mathf.Lerp(_currentIntensity, target, speed * Time.deltaTime);
 

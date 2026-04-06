@@ -13,11 +13,16 @@ public class LandingReactionExtension : CinemachineExtension
     [SerializeField] private float _rollMedium = 0.5f;
     [SerializeField] private float _rollLarge = 1.2f;
 
+    [Header("Duration")]
+    [SerializeField] private float _durationSmall = 0.10f;
+    [SerializeField] private float _durationMedium = 0.14f;
+    [SerializeField] private float _durationLarge = 0.18f;
+
     [Header("Timing")]
-    [SerializeField] private float _duration = 0.14f;
     [SerializeField] private float _attackRatio = 0.25f;
 
     private float _timer = 0f;
+    private float _currentDuration = 0.14f;
     private float _targetPitch = 0f;
     private float _targetRoll = 0f;
     private bool _isPlaying = false;
@@ -32,16 +37,25 @@ public class LandingReactionExtension : CinemachineExtension
             case LandingImpactType.Small:
                 _targetPitch = _pitchSmall;
                 _targetRoll = _rollSmall;
+                _currentDuration = _durationSmall;
                 break;
 
             case LandingImpactType.Medium:
                 _targetPitch = _pitchMedium;
                 _targetRoll = _rollMedium;
+                _currentDuration = _durationMedium;
                 break;
 
             case LandingImpactType.Large:
                 _targetPitch = _pitchLarge;
                 _targetRoll = _rollLarge;
+                _currentDuration = _durationLarge;
+                break;
+
+            default:
+                _targetPitch = _pitchSmall;
+                _targetRoll = _rollSmall;
+                _currentDuration = _durationSmall;
                 break;
         }
     }
@@ -52,15 +66,15 @@ public class LandingReactionExtension : CinemachineExtension
         ref CameraState state,
         float deltaTime)
     {
-        if (!_isPlaying)
-            return;
+        if (!_isPlaying) return;
 
-        if (stage != CinemachineCore.Stage.Aim)
-            return;
+        if (stage != CinemachineCore.Stage.Aim) return;
+
+        if (deltaTime < 0f) return;
 
         _timer += deltaTime;
 
-        float normalizedTime = _timer / _duration;
+        float normalizedTime = _currentDuration > 0f ? _timer / _currentDuration : 1f;
 
         if (normalizedTime >= 1f)
         {

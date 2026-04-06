@@ -187,6 +187,7 @@ GameObject:
   - component: {fileID: 1024703538004245521}
   - component: {fileID: 14815735766210777}
   - component: {fileID: 5272155380467087171}
+  - component: {fileID: 2928780569970266690}
   - component: {fileID: 6945136048099934120}
   - component: {fileID: 1938699422782994211}
   - component: {fileID: 479034154097133273}
@@ -295,8 +296,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBasicMultiChannelPerlin
   NoiseProfile: {fileID: 11400000, guid: fb6a6463ff936424ea1a040c1af6467b, type: 2}
   PivotOffset: {x: 0, y: 0, z: 0}
-  AmplitudeGain: 1
-  FrequencyGain: 1
+  AmplitudeGain: 0.06000005
+  FrequencyGain: 2.999997
   m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!114 &3157209166717324263
 MonoBehaviour:
@@ -313,6 +314,8 @@ MonoBehaviour:
   _defaultSetting: {fileID: 11400000, guid: 0808e868acb8e0444ab06af25249f3f2, type: 2}
   _moveSetting: {fileID: 11400000, guid: 06dba5a6c645bcf4db6356fa95c87156, type: 2}
   _chargeSetting: {fileID: 11400000, guid: f06e6dd2627825348a3d43d4983a136c, type: 2}
+  targetAmplitudeValue: 0.1
+  targetFrequencyValue: 3
 --- !u!114 &1024703538004245521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,7 +347,7 @@ MonoBehaviour:
   _defaultSetting: {fileID: 11400000, guid: 24073cbd29b220840b613700a6eb41eb, type: 2}
   _chargeSetting: {fileID: 11400000, guid: f6fe6b9a6d83e674489e50b6aa800348, type: 2}
   _chargeOscillationSpeed: 10
-  _chargeEndAmplitudeMultiplier: 0.15
+  _chargeEndAmplitudeMultiplier: 0.1
 --- !u!114 &5272155380467087171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,6 +363,21 @@ MonoBehaviour:
   _volume: {fileID: 0}
   _defaultSetting: {fileID: 11400000, guid: ee82c981e34e3dd46826a51e08b74dc9, type: 2}
   _dashSetting: {fileID: 11400000, guid: fc2f2f8ab60df4f40a97e4776c7271a3, type: 2}
+--- !u!114 &2928780569970266690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6836810534995814093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67881ca2ccabf684a95f0c13ad7d64d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraChromaticController
+  _volume: {fileID: 0}
+  _defaultSetting: {fileID: 11400000, guid: 2f93780f66a0e1144af7018ca0ca3510, type: 2}
+  _dashSetting: {fileID: 11400000, guid: 8910b5c1324f6da4fbd3d371ae284d4b, type: 2}
 --- !u!114 &6945136048099934120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,13 +414,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8da63350b991af34699f45faf2dddf0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LandingReactionExtension
-  _pitchSmall: 1.5
+  _pitchSmall: 0.7
   _pitchMedium: 3
   _pitchLarge: 5
-  _rollSmall: 0.5
+  _rollSmall: 0.3
   _rollMedium: 1
   _rollLarge: 1.5
-  _duration: 0.5
+  _durationSmall: 0.5
+  _durationMedium: 0.6
+  _durationLarge: 0.7
   _attackRatio: 0.25
 --- !u!114 &479034154097133273
 MonoBehaviour:

@@ -110,7 +110,6 @@ public class PlayerCameraDutchController : MonoBehaviour
         else
         {
             targetDutch = _defaultSetting != null ? _defaultSetting.TargetDutch : 0f;
-            Debug.LogFormat("{0}", _defaultSetting == null);
             blendSpeed = _currentSetting.BlendInSpeed;
         }
 

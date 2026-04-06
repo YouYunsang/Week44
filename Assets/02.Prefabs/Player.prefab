@@ -5209,12 +5209,15 @@ MonoBehaviour:
   _impulseSource: {fileID: 669810063876823436}
   _landingExtension: {fileID: 0}
   _minAirTime: 0.1
-  _minLandingDownwardSpeed: 2
+  _minLandingDownwardSpeed: 3
   _mediumLandingSpeed: 6
   _largeLandingSpeed: 10
-  _smallImpulseStrength: 0.35
-  _mediumImpulseStrength: 0.7
-  _largeImpulseStrength: 1.1
+  _smallImpulseStrength: 0.25
+  _mediumImpulseStrength: 0.5
+  _largeImpulseStrength: 0.9
+  _smallImpulseDuration: 1
+  _mediumImpulseDuration: 1.5
+  _largeImpulseDuration: 2
 --- !u!114 &669810063876823436
 MonoBehaviour:
   m_ObjectHideFlags: 0

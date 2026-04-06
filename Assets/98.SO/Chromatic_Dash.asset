@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraChromaticSettingSO
   _intensity: 1
   _blendInSpeed: 20
-  _blendOutSpeed: 15
+  _blendOutSpeed: 5
