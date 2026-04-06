@@ -12,6 +12,8 @@ public class PlayerCameraNoiseController : MonoBehaviour
 
     [Header("Charge Settings")]
     [SerializeField] private CameraNoiseSettingSO _chargeSetting;
+    [SerializeField] private float targetAmplitudeValue = 0.3f;
+    [SerializeField] private float targetFrequencyValue = 2f;
 
     private CinemachineBasicMultiChannelPerlin _perlin;
     private CameraNoiseSettingSO _currentSetting;
@@ -134,8 +136,8 @@ public class PlayerCameraNoiseController : MonoBehaviour
             if (_currentSetting == _chargeSetting)
             {
                 // 시작할 때 가장 강하고 점점 약해짐
-                targetAmplitude *= Mathf.Lerp(1f, 0.5f, normalized);
-                targetFrequency *= Mathf.Lerp(1.15f, 0.9f, normalized);
+                targetAmplitude *= Mathf.Lerp(2f, targetAmplitudeValue, normalized);
+                targetFrequency *= Mathf.Lerp(1f, targetFrequencyValue, normalized);
             }
             else
             {

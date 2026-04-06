@@ -167,35 +167,38 @@ public class PlayerDashAttackUI : MonoBehaviour
         GUI.Label(dashRect, "DASH!", style);
     }
 
+    private bool IsDashTargetInRange()
+    {
+        if(_sliceExecutor == null) return false;
+        if(_playerDashAttack.CurrentStack <= 0) return false;
+
+        if(!_sliceExecutor.TryGetSliceHit(_dashAttackData.MaxAttackRange, out RaycastHit hit))
+            return false;
+        
+        return !hit.collider.CompareTag("Bullet");
+    }
+
     private void DrawCrosshair(Vector2 center)
     {
         float dotSize = _defaultCrosshairSize;
         Color dotColor = Color.white;
 
-        if(_playerDashAttack.IsCharging)
+        if(IsBasicTargetInRange())
         {
-            dotSize = Mathf.Lerp(
-            _defaultCrosshairSize,
-            _maxChargeCrosshairSize,
-            _playerDashAttack.ChargeNormalized);
-
-            dotColor = (_playerDashAttack.IsTargetInRange && !_playerDashAttack.IsTargetBullet)
-            ? Color.red
-            : Color.white;
+            dotColor = Color.red;
+        }
+        else if(_playerDashAttack.CurrentStack <= 0)
+        {
+            //스택 없으면 회색
+            dotColor = Color.gray;
+        }
+        else if (IsDashTargetInRange())
+        {
+            dotColor = Color.yellow;
         }
         else
         {
-            if(_playerDashAttack.CurrentStack <= 0)
-            {
-                dotColor = Color.gray;
-            }
-            else
-            {
-                dotColor = IsBasicTargetInRange()
-                ? Color.red
-                : Color.white;    
-            }
-            
+            dotColor = Color.white;
         }
 
         GUI.color = dotColor;

@@ -104,7 +104,13 @@ public struct OnCameraChromaticSignalEvent : IEvent
 
 #region Player Move
 public struct OnPlayerMoveStartedEvent : IEvent { }
+
 public struct OnPlayerMoveStoppedEvent : IEvent { }
+
+public struct OnPlayerGroundedChangedEvent : IEvent
+{
+    public bool isGrounded;
+}
 #endregion
 
 #region Player Dash Attack
@@ -151,6 +157,7 @@ public struct OnPlayerLandedEvent : IEvent
     public LandingImpactType impactType;
     public float downwardSpeed;
     public float impulseStrength;
+    public float impulseDuration;
 }
 #endregion
 

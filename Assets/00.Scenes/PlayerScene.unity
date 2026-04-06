@@ -3449,6 +3449,18 @@ PrefabInstance:
       propertyPath: _landingExtension
       value: 
       objectReference: {fileID: 697202240}
+    - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _attackRange
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _attackCooldown
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _slowAttackCooldown
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4892192173532715127, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.81
