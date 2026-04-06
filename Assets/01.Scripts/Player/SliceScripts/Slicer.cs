@@ -85,7 +85,8 @@ namespace Assets.Scripts.SliceScripts
                 capMaterial
             };
 
-            meshGameObject.transform.localScale = originalObject.transform.localScale;
+            // lossyScale: 부모 포함 월드 스케일 → 새 오브젝트는 부모 없으므로 localScale에 그대로 적용
+            meshGameObject.transform.localScale = originalObject.transform.lossyScale;
             meshGameObject.transform.rotation   = originalObject.transform.rotation;
             meshGameObject.transform.position   = originalObject.transform.position;
             meshGameObject.transform.rotation = originalObject.transform.rotation;
