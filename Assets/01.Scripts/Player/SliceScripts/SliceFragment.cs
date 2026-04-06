@@ -10,7 +10,7 @@ using UnityEngine;
 public class SliceFragment : MonoBehaviour
 {
     [Header("Lifetime")]
-    [SerializeField] private float destroyDelay = 3f;
+    [SerializeField] private float destroyDelay = 2f;
     [SerializeField] private float fadeDuration = 0.5f;
 
     [Header("Physics")]
@@ -25,10 +25,10 @@ public class SliceFragment : MonoBehaviour
 
     [Header("Cap Hologram Fade (Slot 1)")]
     [SerializeField] private float startBaseEmission = 0f;
-    [SerializeField] private float endBaseEmission = 1f;
-    [SerializeField] private float startRimIntensity = 1f;
-    [SerializeField] private float endRimIntensity = 2f;
-    [SerializeField] private float flickerStrength = 0.35f;
+    [SerializeField] private float endBaseEmission = 0.3f;
+    [SerializeField] private float startRimIntensity = 0.8f;
+    [SerializeField] private float endRimIntensity = 1.3f;
+    [SerializeField] private float flickerStrength = 0.25f;
     [SerializeField] private float flickerSpeed = 26f;
 
     [Header("Shader Property Names")]

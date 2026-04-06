@@ -5,6 +5,7 @@ public class WeaponSwingController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] Transform _weaponPivot;
+    [SerializeField] GameObject _trailObject;
 
     [Header("Swing Settings")]
     [SerializeField] float _swingAngle    = 180f;
@@ -17,6 +18,9 @@ public class WeaponSwingController : MonoBehaviour
     {
         if (_weaponPivot != null)
             _restLocalRot = _weaponPivot.localRotation;
+
+        if (_trailObject != null)
+            _trailObject.SetActive(false);
     }
 
     void OnEnable()  => EventBus<OnWeaponSwingEvent>.Subscribe(OnWeaponSwing);
@@ -31,6 +35,8 @@ public class WeaponSwingController : MonoBehaviour
 
     IEnumerator SwingRoutine(Vector2 swingDir)
     {
+        if (_trailObject != null) _trailObject.SetActive(true);
+
         // 1. Z축으로 시작 방향 초기화 (이미 잘 됨)
         float      zAngle   = Mathf.Atan2(swingDir.y, swingDir.x) * Mathf.Rad2Deg;
         Quaternion startRot = _restLocalRot * Quaternion.Euler(0f, 0f, zAngle);
@@ -57,6 +63,8 @@ public class WeaponSwingController : MonoBehaviour
         _weaponPivot.localRotation = Quaternion.AngleAxis(_swingAngle, swingAxis) * startRot;
 
         _weaponPivot.localRotation = _restLocalRot;
+
+        if (_trailObject != null) _trailObject.SetActive(false);
         _swingRoutine = null;
     }
 }
