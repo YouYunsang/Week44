@@ -3,45 +3,45 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.SliceScripts;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-/// <summary>
-/// 슬라이스 요청을 누적하고, 설정된 횟수에 도달하면 한꺼번에 잘리는 컴포넌트.
-/// Sliceable 컴포넌트가 반드시 같이 있어야 함.
-/// PlayerSliceExecutor 쪽에서 RequestSlice()를 호출하면 됨.
-/// </summary>
 [RequireComponent(typeof(Sliceable))]
 public class StackedSliceable : MonoBehaviour
 {
-    // ───────────────────────────── Inspector ─────────────────────────────
-
     [Header("Slice Settings")]
     [SerializeField] private int _maxSliceCount = 8;
 
     [Header("Physics")]
-    [SerializeField] private float _sliceForce      = 3f;
-    [SerializeField] private float _explosionRadius = 0.5f;
+    [SerializeField] private float _sliceForce = 8f;
+    [SerializeField] private float _separateForceRatio = 0.55f;
+    [SerializeField] private float _torqueForceRatio = 0.3f;
 
     [Header("Debug")]
-    [SerializeField] private bool    _showDebugLog    = true;
+    [SerializeField] private bool _showDebugLog = true;
     [SerializeField] private KeyCode _debugTriggerKey = KeyCode.X;
 
-    // ───────────────────────────── Private ─────────────────────────────
-
     private readonly List<SlicePlaneData> _pendingSlices = new();
-    private int  _currentSliceCount = 0;
-    private bool _isSliced          = false;
+    private int _currentSliceCount = 0;
+    private bool _isSliced = false;
 
-    /// <summary>
-    /// PlayerSliceExecutor에서 슬라이스 요청 시 호출.
-    /// planeOrigin : 슬라이스 평면의 월드 위치 (보통 hit.point)
-    /// planeNormal : 슬라이스 평면의 법선 벡터 (보통 카메라 업 벡터 등)
-    /// </summary>
-    public void RequestSlice(Vector3 planeOrigin, Vector3 planeNormal)
+    private void Update()
+    {
+        if (_showDebugLog && Input.GetKeyDown(_debugTriggerKey))
+            ForceExecuteSlices();
+    }
+
+    public void RequestSlice(Vector3 planeOrigin, Vector3 planeNormal, Vector3 sliceDirection)
     {
         if (_isSliced) return;
 
-        _pendingSlices.Add(new SlicePlaneData(planeOrigin, planeNormal));
+        Vector3 safeNormal = planeNormal.sqrMagnitude > 0.0001f
+            ? planeNormal.normalized
+            : Vector3.up;
+
+        Vector3 safeDirection = sliceDirection.sqrMagnitude > 0.0001f
+            ? sliceDirection.normalized
+            : Vector3.right;
+
+        _pendingSlices.Add(new SlicePlaneData(planeOrigin, safeNormal, safeDirection));
         _currentSliceCount++;
 
         if (_showDebugLog)
@@ -51,7 +51,27 @@ public class StackedSliceable : MonoBehaviour
             ExecuteAllSlices();
     }
 
-    // ───────────────────────────── Private Logic ─────────────────────────────
+    public void RequestSlice(Vector3 planeOrigin, Vector3 planeNormal)
+    {
+        Vector3 fallbackDirection = Vector3.Cross(planeNormal.normalized, Vector3.up);
+        if (fallbackDirection.sqrMagnitude <= 0.0001f)
+            fallbackDirection = Vector3.right;
+
+        RequestSlice(planeOrigin, planeNormal, fallbackDirection.normalized);
+    }
+
+    public void ForceExecuteSlices()
+    {
+        if (_isSliced) return;
+
+        if (_pendingSlices.Count == 0)
+        {
+            Debug.LogWarning("[StackedSliceable] 누적된 슬라이스가 없습니다.");
+            return;
+        }
+
+        ExecuteAllSlices();
+    }
 
     private void ExecuteAllSlices()
     {
@@ -65,27 +85,21 @@ public class StackedSliceable : MonoBehaviour
 
     private IEnumerator SliceSequence()
     {
-        Vector3 originPos = transform.position;
-
         GameObject currentTarget = gameObject;
-        List<GameObject> allSlicedPieces = new();
 
         foreach (SlicePlaneData slice in _pendingSlices)
         {
             if (currentTarget == null) break;
 
-            // new Plane(법선, 평면 위의 점) 으로 커스텀 Slicer에 전달
             Plane plane = new Plane(slice.Normal, slice.Origin);
 
             GameObject[] pieces;
             try
             {
-                // 커스텀 Slicer.Slice — 내부에서 Collider/Rigidbody/SliceFragment 자동 세팅
                 pieces = Slicer.Slice(plane, currentTarget);
             }
             catch (NotSupportedException e)
             {
-                // Sliceable 컴포넌트 누락 시
                 if (_showDebugLog)
                     Debug.LogWarning($"[StackedSliceable] 슬라이스 실패 — Sliceable 없음: {e.Message}");
                 break;
@@ -104,43 +118,41 @@ public class StackedSliceable : MonoBehaviour
                 continue;
             }
 
-            allSlicedPieces.Add(pieces[0]);
-            allSlicedPieces.Add(pieces[1]);
+            GameObject positive = pieces[0];
+            GameObject negative = pieces[1];
 
-            // 원본이 아닌 중간 조각은 제거
+            ApplySliceForce(positive, negative, slice);
+
             if (currentTarget != gameObject)
                 Destroy(currentTarget);
 
-            // 다음 슬라이스는 negative 조각에 이어서 적용
-            currentTarget = pieces[1];
-
-            yield return null; // 프레임 분산
+            currentTarget = negative;
+            yield return null;
         }
 
-        // 원본 오브젝트 제거
         Destroy(gameObject);
-
-        // 조각들에 폭발력 적용
-        ApplyExplosionForce(allSlicedPieces, originPos);
     }
 
-    private void ApplyExplosionForce(List<GameObject> pieces, Vector3 originPos)
+    private void ApplySliceForce(GameObject positive, GameObject negative, SlicePlaneData slice)
     {
-        foreach (GameObject piece in pieces)
-        {
-            if (piece == null) continue;
-            if (!piece.TryGetComponent<Rigidbody>(out Rigidbody rb)) continue;
+        Vector3 positiveDir = (slice.Direction + slice.Normal * _separateForceRatio).normalized;
+        Vector3 negativeDir = (slice.Direction - slice.Normal * _separateForceRatio).normalized;
 
-            Vector3 randomDir = (
-                piece.transform.position - originPos
-                + Random.insideUnitSphere * _explosionRadius
-            ).normalized;
-
-            rb.AddForce(randomDir * _sliceForce, ForceMode.Impulse);
-        }
+        ApplyForceToPiece(positive, positiveDir, slice.Normal);
+        ApplyForceToPiece(negative, negativeDir, -slice.Normal);
     }
 
-    // ───────────────────────────── Gizmos ─────────────────────────────
+    private void ApplyForceToPiece(GameObject piece, Vector3 forceDir, Vector3 normalDir)
+    {
+        if (piece == null) return;
+        if (!piece.TryGetComponent<Rigidbody>(out Rigidbody rb)) return;
+
+        rb.AddForce(forceDir * _sliceForce, ForceMode.VelocityChange);
+
+        Vector3 torqueAxis = Vector3.Cross(normalDir, forceDir);
+        if (torqueAxis.sqrMagnitude > 0.0001f)
+            rb.AddTorque(torqueAxis.normalized * (_sliceForce * _torqueForceRatio), ForceMode.VelocityChange);
+    }
 
     private void OnDrawGizmosSelected()
     {
@@ -149,20 +161,24 @@ public class StackedSliceable : MonoBehaviour
         {
             Gizmos.DrawLine(slice.Origin, slice.Origin + slice.Normal * 0.5f);
             Gizmos.DrawWireSphere(slice.Origin, 0.05f);
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(slice.Origin, slice.Origin + slice.Direction * 0.5f);
+            Gizmos.color = Color.cyan;
         }
     }
 }
-
-// ─────────────────────────────────────────────────────────────────────
 
 public readonly struct SlicePlaneData
 {
     public readonly Vector3 Origin;
     public readonly Vector3 Normal;
+    public readonly Vector3 Direction;
 
-    public SlicePlaneData(Vector3 origin, Vector3 normal)
+    public SlicePlaneData(Vector3 origin, Vector3 normal, Vector3 direction)
     {
         Origin = origin;
-        Normal = normal;
+        Normal = normal.normalized;
+        Direction = direction.normalized;
     }
 }
