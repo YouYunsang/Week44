@@ -5,18 +5,13 @@ namespace Assets.Scripts.SliceScripts
 {
     class Slicer
     {
-        /// <summary>
-        /// Slice the object by the plane
-        /// </summary>
         public static GameObject[] Slice(Plane plane, GameObject objectToCut)
         {
             Mesh mesh = objectToCut.GetComponent<MeshFilter>().mesh;
             Sliceable sliceable = objectToCut.GetComponent<Sliceable>();
 
             if (sliceable == null)
-            {
                 throw new NotSupportedException("Cannot slice non-sliceable object. Add Sliceable component first.");
-            }
 
             SlicesMetadata slicesMeta = new SlicesMetadata(
                 plane,
@@ -39,9 +34,9 @@ namespace Assets.Scripts.SliceScripts
             positiveObject.GetComponent<MeshFilter>().mesh = positiveSideMeshData;
             negativeObject.GetComponent<MeshFilter>().mesh = negativeSideMeshData;
 
-            float destroyDelay = 1.5f;
+            float destroyDelay = 3f;
             SliceConfig config = objectToCut.GetComponent<SliceConfig>();
-            if(config != null)
+            if (config != null)
                 destroyDelay = config.FragmentDestroyDelay;
 
             SetupCollidersAndRigidBodys(ref positiveObject, positiveSideMeshData, sliceable.UseGravity, destroyDelay);
@@ -50,26 +45,28 @@ namespace Assets.Scripts.SliceScripts
             return new GameObject[] { positiveObject, negativeObject };
         }
 
-        /// <summary>
-        /// Creates the sliced mesh object with 2 materials:
-        /// [0] original surface material
-        /// [1] cap material
-        /// </summary>
         private static GameObject CreateMeshGameObject(GameObject originalObject)
         {
             MeshRenderer originalRenderer = originalObject.GetComponent<MeshRenderer>();
             Sliceable originalSliceable = originalObject.GetComponent<Sliceable>();
+            SliceConfig originalConfig = originalObject.GetComponent<SliceConfig>();
 
-            Material[] originalMaterials = originalRenderer.materials;
-            Material surfaceMaterial = originalMaterials.Length > 0 ? originalMaterials[0] : null;
+            Material[] originalSharedMaterials = originalRenderer != null
+                ? originalRenderer.sharedMaterials
+                : Array.Empty<Material>();
+
+            Material surfaceMaterial = originalSharedMaterials != null && originalSharedMaterials.Length > 0
+                ? originalSharedMaterials[0]
+                : null;
+
             Material capMaterial = originalSliceable.CapMaterial != null
                 ? originalSliceable.CapMaterial
                 : surfaceMaterial;
 
-            GameObject meshGameObject = new GameObject();
+            GameObject meshGameObject = new GameObject(originalObject.name + "_slicePiece");
 
             meshGameObject.AddComponent<MeshFilter>();
-            meshGameObject.AddComponent<MeshRenderer>();
+            MeshRenderer newRenderer = meshGameObject.AddComponent<MeshRenderer>();
 
             Sliceable sliceable = meshGameObject.AddComponent<Sliceable>();
             sliceable.IsSolid = originalSliceable.IsSolid;
@@ -79,26 +76,31 @@ namespace Assets.Scripts.SliceScripts
             sliceable.SmoothVertices = originalSliceable.SmoothVertices;
             sliceable.CapMaterial = originalSliceable.CapMaterial;
 
-            meshGameObject.GetComponent<MeshRenderer>().materials = new Material[]
+            if (originalConfig != null)
             {
-                capMaterial,
+                SliceConfig copiedConfig = meshGameObject.AddComponent<SliceConfig>();
+                CopyComponentFields(originalConfig, copiedConfig);
+            }
+
+            newRenderer.sharedMaterials = new Material[]
+            {
+                surfaceMaterial,
                 capMaterial
             };
 
-            // lossyScale: 부모 포함 월드 스케일 → 새 오브젝트는 부모 없으므로 localScale에 그대로 적용
-            meshGameObject.transform.localScale = originalObject.transform.lossyScale;
-            meshGameObject.transform.rotation   = originalObject.transform.rotation;
-            meshGameObject.transform.position   = originalObject.transform.position;
-            meshGameObject.transform.rotation = originalObject.transform.rotation;
-            meshGameObject.transform.position = originalObject.transform.position;
+            Transform originalTransform = originalObject.transform;
+            Transform newTransform = meshGameObject.transform;
+
+            newTransform.position = originalTransform.position;
+            newTransform.rotation = originalTransform.rotation;
+            newTransform.localScale = originalTransform.lossyScale;
+
             meshGameObject.tag = originalObject.tag;
+            meshGameObject.layer = originalObject.layer;
 
             return meshGameObject;
         }
 
-        /// <summary>
-        /// Add mesh collider and rigid body to game object
-        /// </summary>
         private static void SetupCollidersAndRigidBodys(ref GameObject gameObject, Mesh mesh, bool useGravity, float destroyDelay)
         {
             Bounds bounds = mesh.bounds;
@@ -108,9 +110,7 @@ namespace Assets.Scripts.SliceScripts
                 bounds.size.y > minSize &&
                 bounds.size.z > minSize)
             {
-                //! 폴리곤 수가 너무 많으면 BoxCollider로 대체
-                //! convex MeshCollider 한계 == 255 폴리곤
-                if(mesh.triangles.Length / 3 <= 255)
+                if (mesh.triangles.Length / 3 <= 255)
                 {
                     MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
                     meshCollider.sharedMesh = mesh;
@@ -120,16 +120,32 @@ namespace Assets.Scripts.SliceScripts
                 {
                     BoxCollider box = gameObject.AddComponent<BoxCollider>();
                     box.center = bounds.center;
-                    box.size = bounds.size;    
+                    box.size = bounds.size;
                 }
-                
             }
 
             Rigidbody rb = gameObject.AddComponent<Rigidbody>();
             rb.useGravity = useGravity;
 
-            SliceFragment fragment = gameObject.AddComponent<SliceFragment>();
+            SliceFragment fragment = gameObject.GetComponent<SliceFragment>();
+            if (fragment == null)
+                fragment = gameObject.AddComponent<SliceFragment>();
+
             fragment.Init(destroyDelay);
+        }
+
+        private static void CopyComponentFields<T>(T source, T destination) where T : Component
+        {
+            var type = typeof(T);
+            var flags = System.Reflection.BindingFlags.Instance |
+                        System.Reflection.BindingFlags.Public |
+                        System.Reflection.BindingFlags.NonPublic;
+
+            foreach (var field in type.GetFields(flags))
+            {
+                if (field.IsStatic) continue;
+                field.SetValue(destination, field.GetValue(source));
+            }
         }
     }
 }
