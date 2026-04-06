@@ -5152,7 +5152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerJump
   _jumpForce: 5
-  _gravity: -9.81
+  _ascendGravity: -9.81
+  _fallGravity: -24
   _groundCheck: {fileID: 3922754328167922926}
   _groundCheckRadius: 0.2
   _groundLayer:
@@ -5209,15 +5210,15 @@ MonoBehaviour:
   _impulseSource: {fileID: 669810063876823436}
   _landingExtension: {fileID: 0}
   _minAirTime: 0.1
-  _minLandingDownwardSpeed: 3
-  _mediumLandingSpeed: 6
-  _largeLandingSpeed: 10
+  _minLandingDownwardSpeed: 7
+  _mediumLandingSpeed: 16
+  _largeLandingSpeed: 25
   _smallImpulseStrength: 0.25
-  _mediumImpulseStrength: 0.5
-  _largeImpulseStrength: 0.9
-  _smallImpulseDuration: 1
-  _mediumImpulseDuration: 1.5
-  _largeImpulseDuration: 2
+  _mediumImpulseStrength: 0.7
+  _largeImpulseStrength: 1.5
+  _smallImpulseDuration: 1.2
+  _mediumImpulseDuration: 1.6
+  _largeImpulseDuration: 3
 --- !u!114 &669810063876823436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5341,6 +5342,7 @@ MonoBehaviour:
   _sliceExecutor: {fileID: 816522476539103241}
   _currentStack: 0
   _currentRange: 0
+  _dashDelay: 0.5
 --- !u!114 &4890925015378917910
 MonoBehaviour:
   m_ObjectHideFlags: 0
