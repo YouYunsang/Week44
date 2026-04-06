@@ -47,8 +47,8 @@ Material:
     - _NoiseScale: 8
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RimIntensity: 0.2
-    - _RimPower: 2
+    - _RimIntensity: 0.15
+    - _RimPower: 1.4
     m_Colors:
     - _BaseColor: {r: 0.25490198, g: 0.25490198, b: 0.25490198, a: 1}
     - _RimColor: {r: 0.2093272, g: 0.9056606, b: 0.8857654, a: 1}
