@@ -1831,6 +1831,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+--- !u!4 &1510724050 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4892192173532715127, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+  m_PrefabInstance: {fileID: 1510724049}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1510724053 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3659662980472643730, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
@@ -2494,6 +2499,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 3.25626
       objectReference: {fileID: 0}
+    - target: {fileID: 5871761468590680550, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5871761468590680550, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6022937862770723922, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
       propertyPath: _slowBlackAndWhiteVolume
       value: 
@@ -2557,6 +2570,18 @@ PrefabInstance:
     - target: {fileID: 9150327674121331263, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
       propertyPath: m_LocalPosition.z
       value: 3.25626
+      objectReference: {fileID: 0}
+    - target: {fileID: 9150327674121331263, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9150327674121331263, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9150327674121331263, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3549,6 +3574,10 @@ PrefabInstance:
       propertyPath: _capMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 8cca18d0bcade6e42adb110717160a47, type: 2}
+    - target: {fileID: 5542878583395258625, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
+      propertyPath: _player
+      value: 
+      objectReference: {fileID: 1510724050}
     - target: {fileID: 5566787834850887598, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
       propertyPath: _capMaterial
       value: 
