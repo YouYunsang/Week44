@@ -44,6 +44,64 @@ public struct OnSlowGaugeChangedEvent : IEvent
 public struct OnMenuOpenEvent  : IEvent { }
 public struct OnMenuCloseEvent : IEvent { }
 
+#region Camera Noise Control
+public enum CameraNoiseChannel
+{
+    Move,
+    DashCharge
+}
+public struct OnCameraNoiseSignalEvent : IEvent
+{
+    public CameraNoiseChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
+#region Camera Fov Control
+public enum CameraFovChannel
+{
+    Move,
+    DashCharge,
+    Dash
+}
+
+public struct OnCameraFovSignalEvent : IEvent
+{
+    public CameraFovChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
+#region Camera Motion Blur
+public enum CameraMotionBlurChannel
+{
+    Dash
+}
+
+public struct OnCameraMotionBlurSignalEvent : IEvent
+{
+    public CameraMotionBlurChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
+#region Camera Chromatic Channel
+public enum CameraChromaticChannel
+{
+    Dash
+}
+
+public struct OnCameraChromaticSignalEvent : IEvent
+{
+    public CameraChromaticChannel channel;
+    public bool isActive;
+    public float normalized;
+}
+#endregion
+
 #region Player Move
 public struct OnPlayerMoveStartedEvent : IEvent { }
 public struct OnPlayerMoveStoppedEvent : IEvent { }
@@ -64,6 +122,20 @@ public struct OnDashEndedEvent : IEvent { }
 
 // 대시 공격 판정 실행
 public struct OnDashStrikeEvent : IEvent { }
+#endregion
+
+#region Dutch Control
+public enum CameraDutchChannel
+{
+    DashCharge
+}
+
+public struct OnCameraDutchSignalEvent : IEvent
+{
+    public CameraDutchChannel channel;
+    public bool isActive;
+    public float normalized;
+}
 #endregion
 
 #region Landing
@@ -110,9 +182,16 @@ public struct OnBossDiedEvent : IEvent { }
 #endregion
 
 #region Weapon Swing
+public enum WeaponSwingType
+{
+    NormalAttack,
+    DashAttack
+}
+
 // 무기 휘두르기 (슬라이스 방향 기반)
 public struct OnWeaponSwingEvent : IEvent
 {
     public Vector2 direction; // 카메라 공간 기준 정규화된 스윙 방향
+    public WeaponSwingType swingType;
 }
 #endregion

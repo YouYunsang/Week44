@@ -24,19 +24,18 @@ public class PlayerSliceExecutor : MonoBehaviour
 
         if(!Physics.Raycast(ray, out hit, range)) return false;
 
-        Sliceable sliceable = hit.collider.GetComponent<Sliceable>();
-        return sliceable != null;
+        return hit.collider.GetComponent<Sliceable>() != null;
     }
 
-    public bool TrySliceAtCrosshair(float range)
+    public bool TrySliceAtCrosshair(float range, WeaponSwingType swingType)
     {
         if(!TryGetSliceHit(range, out RaycastHit hit)) return false;
 
-        ExecuteSlice(hit);
+        ExecuteSlice(hit, swingType);
         return true;
     }
 
-    public void ExecuteSlice(RaycastHit hit)
+    public void ExecuteSlice(RaycastHit hit, WeaponSwingType swingType)
     {
         if(hit.collider == null ||hit.collider.gameObject == null) return;
 
@@ -45,12 +44,16 @@ public class PlayerSliceExecutor : MonoBehaviour
 
         int randomDir = GetRandomDir(hit.collider);
 
-        float angle    = randomDir * 45f * Mathf.Deg2Rad;
+        float angle = randomDir * 45f * Mathf.Deg2Rad;
         Vector2 swingDir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-        EventBus<OnWeaponSwingEvent>.Publish(new OnWeaponSwingEvent { direction = swingDir });
+
+        EventBus<OnWeaponSwingEvent>.Publish(new OnWeaponSwingEvent
+        {
+            direction = swingDir,
+            swingType = swingType
+        });
 
         Vector3 normal = GetSliceNormal(randomDir);
-
         SliceObject(hit.collider.gameObject, hit.point, normal);
     }
 

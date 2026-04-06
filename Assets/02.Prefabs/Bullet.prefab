@@ -130,3 +130,4 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
+  _capMaterial: {fileID: 0}

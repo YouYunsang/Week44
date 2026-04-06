@@ -111,6 +111,27 @@ public class PlayerDashAttack : MonoBehaviour
 
         // 차징 시작 이벤트 발행
         EventBus<OnDashChargeStartedEvent>.Publish(new OnDashChargeStartedEvent());
+
+        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+        {
+            channel = CameraNoiseChannel.DashCharge,
+            isActive = true,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.DashCharge,
+            isActive = true,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
+        {
+            channel = CameraDutchChannel.DashCharge,
+            isActive = true,
+            normalized = 0f
+        });
     }
 
     private void HandleDashAttackReleased()
@@ -127,6 +148,27 @@ public class PlayerDashAttack : MonoBehaviour
             // 실패 시 차징 취소 이벤트 발행
             EventBus<OnDashChargeCanceledEvent>.Publish(new OnDashChargeCanceledEvent());
         }
+
+        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+        {
+            channel = CameraNoiseChannel.DashCharge,
+            isActive = false,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.DashCharge,
+            isActive = false,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
+        {
+            channel = CameraDutchChannel.DashCharge,
+            isActive = false,
+            normalized = 0f
+        });
 
         _isTargetInRange = false;
     }
@@ -167,6 +209,27 @@ public class PlayerDashAttack : MonoBehaviour
             _isTargetInRange = false;
             IsTargetBullet = false;
         }
+
+        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+        {
+            channel = CameraNoiseChannel.DashCharge,
+            isActive = true,
+            normalized = ChargeNormalized
+        });
+
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.DashCharge,
+            isActive = true,
+            normalized = ChargeNormalized
+        });
+
+        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
+        {
+            channel = CameraDutchChannel.DashCharge,
+            isActive = true,
+            normalized = ChargeNormalized
+        });
     }
 
     private bool TryDashAndSlice()
@@ -206,6 +269,30 @@ public class PlayerDashAttack : MonoBehaviour
         // 대시 시작 이벤트 발행
         EventBus<OnDashStartedEvent>.Publish(new OnDashStartedEvent());
 
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.Dash,
+            isActive = true,
+            normalized = 1f
+        });
+
+        EventBus<OnCameraMotionBlurSignalEvent>.Publish(new OnCameraMotionBlurSignalEvent
+        {
+            channel = CameraMotionBlurChannel.Dash,
+            isActive = true,
+            normalized = 1f
+        });
+
+        EventBus<OnCameraChromaticSignalEvent>.Publish(new OnCameraChromaticSignalEvent
+        {
+            channel = CameraChromaticChannel.Dash,
+            isActive = true,
+            normalized = 1f
+        });
+
+        // 대시 시작 이벤트 발행
+        EventBus<OnDashStartedEvent>.Publish(new OnDashStartedEvent());
+
         // 조작 잠금
         if (_playerMovement != null)
             _playerMovement.SetMoveEnabled(false);
@@ -240,13 +327,35 @@ public class PlayerDashAttack : MonoBehaviour
         }
 
         // 대시 종료 이벤트 발행
+        // 대시 종료 이벤트 발행
         EventBus<OnDashEndedEvent>.Publish(new OnDashEndedEvent());
+
+        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        {
+            channel = CameraFovChannel.Dash,
+            isActive = false,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraMotionBlurSignalEvent>.Publish(new OnCameraMotionBlurSignalEvent
+        {
+            channel = CameraMotionBlurChannel.Dash,
+            isActive = false,
+            normalized = 0f
+        });
+
+        EventBus<OnCameraChromaticSignalEvent>.Publish(new OnCameraChromaticSignalEvent
+        {
+            channel = CameraChromaticChannel.Dash,
+            isActive = false,
+            normalized = 0f
+        });
 
         // 공격 실행 이벤트 발행
         EventBus<OnDashStrikeEvent>.Publish(new OnDashStrikeEvent());
 
         // 실제 슬라이스 실행
-        _sliceExecutor.ExecuteSlice(hit);
+        _sliceExecutor.ExecuteSlice(hit, WeaponSwingType.DashAttack);
 
         // 조작 복구
         if (_playerMovement != null)

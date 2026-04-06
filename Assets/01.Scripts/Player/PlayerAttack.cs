@@ -51,6 +51,6 @@ public class PlayerAttack : MonoBehaviour
         if (Time.time - _lastAttackTime < cooldown) return;
 
         _lastAttackTime = Time.time;
-        _sliceExecutor.TrySliceAtCrosshair(_attackRange);
+        _sliceExecutor.TrySliceAtCrosshair(_attackRange, WeaponSwingType.NormalAttack);
     }
 }
