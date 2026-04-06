@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DashAttackData
   m_EditorClassIdentifier: Assembly-CSharp::DashAttackDataSO
   _maxStack: 3
-  _stackRechargeTime: 3
+  _stackRechargeTime: 2
   _minAttackRange: 2
   _maxAttackRange: 20
   _chargeSpeed: 15

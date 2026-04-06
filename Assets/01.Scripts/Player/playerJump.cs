@@ -14,10 +14,14 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private InputSO _input;
 
+    [Header("Coyote Time")]
+    [SerializeField] private float _coyoteTime = 0.15f;
+
     private CharacterController _characterController;
     private float _verticalVelocity = 0f;
     private bool _isGrounded = false;
     private bool _previousGrounded = false;
+    private float _coyoteTimeCounter = 0f;
 
     public bool IsGrounded => _isGrounded;
     public float VerticalVelocity => _verticalVelocity;
@@ -58,8 +62,7 @@ public class PlayerJump : MonoBehaviour
 
     private void HandleJump()
     {
-        // 착지 상태일 때만 점프 속도 부여
-        if (_isGrounded)
+        if (_coyoteTimeCounter > 0f)
             _verticalVelocity = _jumpForce;
     }
 
@@ -68,12 +71,16 @@ public class PlayerJump : MonoBehaviour
         if (_groundCheck == null)
             return;
 
-        // Overlap 체크로 지면 판별
         _isGrounded = Physics.CheckSphere(
             _groundCheck.position,
             _groundCheckRadius,
             _groundLayer
         );
+
+        if (_isGrounded)
+            _coyoteTimeCounter = _coyoteTime;
+        else
+            _coyoteTimeCounter -= Time.deltaTime;
     }
 
     private void PublishGroundedChangedIfNeeded()

@@ -5162,6 +5162,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
+  _coyoteTime: 0.15
 --- !u!114 &8660926531628516582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5194,6 +5195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSwingController
   _weaponPivot: {fileID: 5303599924952213551}
+  _trailObject: {fileID: 199595722147716480}
   _swingAngle: 200
   _swingDuration: 0.1
 --- !u!114 &3716099222957492391
