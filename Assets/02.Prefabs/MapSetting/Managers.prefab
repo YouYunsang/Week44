@@ -673,10 +673,11 @@ MonoBehaviour:
   bgmLayerStartDelay: 0
   bgmFadeDuration: 1
   pauseBgmVolumeMult: 0.3
-  slowBgmVolumeMult: 0.5
-  slowBgmPitch: 0.7
+  slowBgmVolumeMult: 0.8
+  slowBgmPitch: 0.8
   slowLowPassCutoff: 800
   slowLowPassResonance: 1
+  slowLowPassLerpDuration: 0.3
 --- !u!1 &3071883608473294510
 GameObject:
   m_ObjectHideFlags: 0

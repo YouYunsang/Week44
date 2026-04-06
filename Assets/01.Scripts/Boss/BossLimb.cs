@@ -14,6 +14,8 @@ public class BossLimb : MonoBehaviour
     bool      _watching;
 
     public bool IsSliced => _sliced;
+    bool _isAppQuitting;
+    void OnApplicationQuit() => _isAppQuitting = true;
 
     static readonly bool[] _isArm = new bool[]
     {
@@ -42,7 +44,8 @@ public class BossLimb : MonoBehaviour
 
     void OnDestroy()
     {
-        if (!gameObject.scene.isLoaded) return;
+        if (_isAppQuitting || !gameObject.scene.isLoaded) return;
+        if (_sliceable != null) return;
         Notify();
     }
 
