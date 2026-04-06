@@ -20,6 +20,11 @@ public class BossStompCameraImpulseController : MonoBehaviour
 
     private Coroutine _bossStompNoiseRoutine;
 
+    private void Awake()
+    {
+        _player = FindFirstObjectByType<PlayerMovement>().transform;
+    }
+
     private void OnEnable()
     {
         EventBus<OnBossStompImpactEvent>.Subscribe(OnStompImpact);
