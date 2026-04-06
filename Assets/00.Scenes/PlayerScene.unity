@@ -489,6 +489,8 @@ GameObject:
   - component: {fileID: 322742058}
   - component: {fileID: 322742057}
   - component: {fileID: 322742056}
+  - component: {fileID: 322742062}
+  - component: {fileID: 322742063}
   m_Layer: 0
   m_Name: Cube (4)
   m_TagString: Untagged
@@ -607,6 +609,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 39201173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &322742062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322742055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3986457296efba045886aa6b3ffe987b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StackedSliceable
+  _maxSliceCount: 8
+  _sliceForce: 3
+  _explosionRadius: 0.5
+  _showDebugLog: 1
+  _debugTriggerKey: 120
+--- !u!114 &322742063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322742055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116ff60857fb1dd44a7bd7b9bde1c6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SliceConfig
+  _fragmentDestroyDelay: 1.5
 --- !u!1 &330014451
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,6 +788,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330014451}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &400441306 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4581222689880557539, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+  m_PrefabInstance: {fileID: 1010738141}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &400441313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400441306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116ff60857fb1dd44a7bd7b9bde1c6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SliceConfig
+  _fragmentDestroyDelay: 3
 --- !u!1 &436347766
 GameObject:
   m_ObjectHideFlags: 0
@@ -1980,6 +2030,7 @@ GameObject:
   - component: {fileID: 744681731}
   - component: {fileID: 744681730}
   - component: {fileID: 744681729}
+  - component: {fileID: 744681734}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -2098,6 +2149,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 39201173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &744681734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744681727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116ff60857fb1dd44a7bd7b9bde1c6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SliceConfig
+  _fragmentDestroyDelay: 5
 --- !u!1001 &747949001
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3062,7 +3126,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4581222689880557539, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 400441313}
   m_SourcePrefab: {fileID: 100100000, guid: e692e42fb92596841b5a97982fb4927a, type: 3}
 --- !u!1 &1074793745
 GameObject:
@@ -3382,6 +3449,18 @@ PrefabInstance:
       propertyPath: _landingExtension
       value: 
       objectReference: {fileID: 697202240}
+    - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _attackRange
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _attackCooldown
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300277925384823028, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _slowAttackCooldown
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4892192173532715127, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.81
@@ -4329,6 +4408,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401290664}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1454018527 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7275778872664837536, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+  m_PrefabInstance: {fileID: 2036955140}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1454018534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1454018527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116ff60857fb1dd44a7bd7b9bde1c6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SliceConfig
+  _fragmentDestroyDelay: 3
 --- !u!1 &1551809158
 GameObject:
   m_ObjectHideFlags: 0
@@ -4736,6 +4833,7 @@ GameObject:
   - component: {fileID: 1662481826}
   - component: {fileID: 1662481825}
   - component: {fileID: 1662481824}
+  - component: {fileID: 1662481829}
   m_Layer: 0
   m_Name: Cube (5)
   m_TagString: Untagged
@@ -4854,6 +4952,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 39201173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1662481829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662481823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116ff60857fb1dd44a7bd7b9bde1c6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SliceConfig
+  _fragmentDestroyDelay: 4
 --- !u!1 &1791674995
 GameObject:
   m_ObjectHideFlags: 0
@@ -5564,6 +5675,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2010047675}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &2036955140
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.124743
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.78
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345322177681656973, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7702665109848770958, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      propertyPath: m_Name
+      value: Enemy2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7275778872664837536, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1454018534}
+  m_SourcePrefab: {fileID: 100100000, guid: 3a967eb0fbeb0a34688456a203d7b703, type: 3}
 --- !u!1 &2062048549
 GameObject:
   m_ObjectHideFlags: 0
@@ -5775,6 +5946,8 @@ GameObject:
   - component: {fileID: 2108840604}
   - component: {fileID: 2108840603}
   - component: {fileID: 2108840602}
+  - component: {fileID: 2108840608}
+  - component: {fileID: 2108840609}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -5893,6 +6066,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 39201173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2108840608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2108840601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3986457296efba045886aa6b3ffe987b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StackedSliceable
+  _maxSliceCount: 8
+  _sliceForce: 3
+  _explosionRadius: 0.5
+  _showDebugLog: 1
+  _debugTriggerKey: 120
+--- !u!114 &2108840609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2108840601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116ff60857fb1dd44a7bd7b9bde1c6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SliceConfig
+  _fragmentDestroyDelay: 5
 --- !u!1 &2112516581
 GameObject:
   m_ObjectHideFlags: 0
@@ -11086,3 +11289,4 @@ SceneRoots:
   - {fileID: 747949001}
   - {fileID: 1551809162}
   - {fileID: 2077856037}
+  - {fileID: 2036955140}

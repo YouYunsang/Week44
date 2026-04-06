@@ -6,10 +6,11 @@ using UnityEngine;
     /// </summary>
 public class SliceFragment : MonoBehaviour
 {
-    private const float DESTROY_DELAY = 1.5f;
+    private float _destroyDelay = 3f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Init(float delay)
     {
-        Destroy(gameObject, DESTROY_DELAY);
+        _destroyDelay = delay;
+        Destroy(gameObject, _destroyDelay);
     }
 }
