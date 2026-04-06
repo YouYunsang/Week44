@@ -48,6 +48,7 @@ public struct OnMenuCloseEvent : IEvent { }
 public enum CameraNoiseChannel
 {
     Move,
+    BossStomp
 }
 public struct OnCameraNoiseSignalEvent : IEvent
 {
@@ -168,6 +169,12 @@ public struct OnBossAttackHitEvent : IEvent
 {
     public Vector3 direction;
     public float   force;
+}
+
+//보스 Jump Stomp 공격 임팩트
+public struct OnBossStompImpactEvent : IEvent
+{
+    public Vector3 position;
 }
 
 // 보스 사망 (토르소 파괴)
