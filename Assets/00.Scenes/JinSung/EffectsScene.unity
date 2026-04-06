@@ -2052,6 +2052,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5325060359221905237, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _dashDelay
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 6419762708283706503, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: ShapeModule.m_Scale.x
       value: 0.1
@@ -2133,6 +2137,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2928780569970266690, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: _volume
+      value: 
+      objectReference: {fileID: 1189881848}
     - target: {fileID: 5272155380467087171, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
       propertyPath: _volume
       value: 
