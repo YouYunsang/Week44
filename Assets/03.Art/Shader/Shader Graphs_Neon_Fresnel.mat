@@ -39,11 +39,16 @@ Material:
     m_Ints: []
     m_Floats:
     - _BaseEmission: 0
+    - _DissolveAmount: 0
+    - _EdgeEmissionBoost: 2
+    - _EdgeWidth: 0.05
+    - _FragmentAlpha: 1
     - _InvertRim: 0
+    - _NoiseScale: 8
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RimIntensity: 1
-    - _RimPower: 1
+    - _RimIntensity: 0.2
+    - _RimPower: 2
     m_Colors:
     - _BaseColor: {r: 0.25490198, g: 0.25490198, b: 0.25490198, a: 1}
     - _RimColor: {r: 0.2093272, g: 0.9056606, b: 0.8857654, a: 1}
