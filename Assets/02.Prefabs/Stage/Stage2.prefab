@@ -369,8 +369,8 @@ Transform:
   - {fileID: 967500382916288819}
   - {fileID: 273401102734898240}
   - {fileID: 7433051077542309952}
-  - {fileID: 7801688551219232359}
   - {fileID: 7024535103923325293}
+  - {fileID: 7801688551219232359}
   - {fileID: 812385998138743943}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6448,6 +6448,7 @@ MonoBehaviour:
   _useGravity: 0
   _shareVertices: 0
   _smoothVertices: 0
+  _capMaterial: {fileID: 0}
 --- !u!1001 &7536219982171713269
 PrefabInstance:
   m_ObjectHideFlags: 0
