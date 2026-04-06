@@ -140,6 +140,40 @@ public struct OnPlayerLandedEvent : IEvent
 }
 #endregion
 
+#region Boss
+public enum LimbType  { Head, LeftArm, RightArm, LeftLeg, RightLeg, Torso }
+public enum BossPhase { FullBody, ArmsOnly, CoreOnly }
+
+// 팔다리가 잘렸을 때
+public struct OnBossLimbSlicedEvent : IEvent
+{
+    public LimbType limb;
+}
+
+// 페이즈 전환
+public struct OnBossPhaseChangedEvent : IEvent
+{
+    public BossPhase phase;
+}
+
+// 보스 공격 타이밍 (히트 여부 무관, 공격 모션 절정 시점)
+public enum BossAttackType { Kick, JumpStomp, ArmSwing, ArmSlam, Roll }
+public struct OnBossAttackEvent : IEvent
+{
+    public BossAttackType attackType;
+}
+
+// 보스 공격 히트 (플레이어 넉백 등에 사용)
+public struct OnBossAttackHitEvent : IEvent
+{
+    public Vector3 direction;
+    public float   force;
+}
+
+// 보스 사망 (토르소 파괴)
+public struct OnBossDiedEvent : IEvent { }
+#endregion
+
 #region Weapon Swing
 public enum WeaponSwingType
 {
