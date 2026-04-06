@@ -51,16 +51,26 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BaseColorTintStrength: 0.15
+    - _BaseEmission: 0
+    - _ClipSoftness: 0
+    - _ClipThreshold: 0
     - _DarkenBetweenLines: 1
+    - _DissolveAmount: 0
+    - _EmissionMaster: 0.35
+    - _FragmentAlpha: 1
     - _GirdTiling: 1
-    - _GridIntensity: 1.5
+    - _GridIntensity: 0.8
     - _LineWidth: 0.04
     - _Metallic: 0
+    - _NoiseScale: 20
+    - _NoiseStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _RimIntensity: 0
     - _RimPower: 0
     - _Smotthness: 0.5
+    - _SurfaceFadeAlpha: 1
     m_Colors:
     - _BaseColor: {r: 0.25471696, g: 0.25471696, b: 0.25471696, a: 1}
     - _GridColor: {r: 0.2093272, g: 0.9056606, b: 0.8857654, a: 1}

@@ -5361,10 +5361,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossController
   _player: {fileID: 0}
-  _detectionRange: 36
+  _detectionRange: 50
   _attackFacingAngle: 10
-  _debugStartNoLegs: 1
-  _debugStartHeadOnly: 1
+  _debugStartNoLegs: 0
+  _debugStartHeadOnly: 0
 --- !u!114 &7124962896313298122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5410,7 +5410,7 @@ MonoBehaviour:
   _kickSwingTime: 0.1
   _kickReturnTime: 0.4
   _kickForce: 11
-  _kickSize: {x: 2, y: 6.79, z: 17}
+  _kickSize: {x: 2, y: 6.79, z: 18}
   _kickOffset: {x: 0, y: 0, z: -6.56}
   _stompAttackRange: 24
   _jumpHeight: 3

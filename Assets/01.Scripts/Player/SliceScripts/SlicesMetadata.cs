@@ -27,18 +27,12 @@ namespace Assets.Scripts.SliceScripts
         private List<Vector3> _negativeSideNormals;
 
         private readonly List<Vector3> _pointsAlongPlane;
-        private Plane _plane;
-        private Mesh _mesh;
-        private bool _isSolid;
-        private bool _useSharedVertices = false;
-        private bool _smoothVertices = false;
-        private bool _createReverseTriangleWindings = false;
-
-        public bool IsSolid
-        {
-            get { return _isSolid; }
-            set { _isSolid = value; }
-        }
+        private readonly Plane _plane;
+        private readonly Mesh _mesh;
+        private readonly bool _isSolid;
+        private readonly bool _useSharedVertices;
+        private readonly bool _smoothVertices;
+        private readonly bool _createReverseTriangleWindings;
 
         public Mesh PositiveSideMesh
         {
@@ -64,7 +58,13 @@ namespace Assets.Scripts.SliceScripts
             }
         }
 
-        public SlicesMetadata(Plane plane, Mesh mesh, bool isSolid, bool createReverseTriangleWindings, bool shareVertices, bool smoothVertices)
+        public SlicesMetadata(
+            Plane plane,
+            Mesh mesh,
+            bool isSolid,
+            bool createReverseTriangleWindings,
+            bool shareVertices,
+            bool smoothVertices)
         {
             _positiveSideTriangles = new List<int>();
             _positiveSideCapTriangles = new List<int>();
@@ -95,7 +95,8 @@ namespace Assets.Scripts.SliceScripts
             Vector3 vertex1, Vector3? normal1, Vector2 uv1,
             Vector3 vertex2, Vector3? normal2, Vector2 uv2,
             Vector3 vertex3, Vector3? normal3, Vector2 uv3,
-            bool shareVertices, bool isCap)
+            bool shareVertices,
+            bool isCap)
         {
             if (side == MeshSide.Positive)
             {
@@ -136,7 +137,8 @@ namespace Assets.Scripts.SliceScripts
             Vector3 vertex1, Vector3? normal1, Vector2 uv1,
             Vector3 vertex2, Vector3? normal2, Vector2 uv2,
             Vector3 vertex3, Vector3? normal3, Vector2 uv3,
-            bool shareVertices, bool isCap)
+            bool shareVertices,
+            bool isCap)
         {
             List<int> targetTriangles = isCap ? capTriangles : triangles;
 
@@ -160,9 +162,15 @@ namespace Assets.Scripts.SliceScripts
         {
             if (shareVertices)
             {
+                Vector3 safeNormal = normal ?? Vector3.up;
+
                 for (int i = 0; i < vertices.Count; i++)
                 {
-                    if (vertices[i] == vertex && uvs[i] == uv)
+                    bool samePos = (vertices[i] - vertex).sqrMagnitude < 0.0000001f;
+                    bool sameUv = (uvs[i] - uv).sqrMagnitude < 0.0000001f;
+                    bool sameNormal = (normals[i] - safeNormal).sqrMagnitude < 0.0001f;
+
+                    if (samePos && sameUv && sameNormal)
                         return i;
                 }
             }
@@ -206,9 +214,6 @@ namespace Assets.Scripts.SliceScripts
             }
         }
 
-        /// <summary>
-        /// 단면 UV를 평면 탄젠트 기저로 플래너 매핑
-        /// </summary>
         private Vector2 GetCutFaceUv(Vector3 point)
         {
             Vector3 n = _plane.normal.normalized;
@@ -219,82 +224,110 @@ namespace Assets.Scripts.SliceScripts
 
         private void JoinPointsAlongPlane()
         {
-            Vector3 halfway = GetHalfwayPoint(out float distance);
+            List<Vector3> orderedPoints = BuildOrderedCutPolygon();
+            if (orderedPoints.Count < 3)
+                return;
 
-            for (int i = 0; i < _pointsAlongPlane.Count; i += 2)
+            Vector3 center = Vector3.zero;
+            for (int i = 0; i < orderedPoints.Count; i++)
+                center += orderedPoints[i];
+            center /= orderedPoints.Count;
+
+            Vector2 uvCenter = GetCutFaceUv(center);
+
+            for (int i = 0; i < orderedPoints.Count; i++)
             {
-                Vector3 firstVertex = _pointsAlongPlane[i];
-                Vector3 secondVertex = _pointsAlongPlane[i + 1];
+                Vector3 firstVertex = orderedPoints[i];
+                Vector3 secondVertex = orderedPoints[(i + 1) % orderedPoints.Count];
 
-                Vector2 uvHalf = GetCutFaceUv(halfway);
                 Vector2 uvFirst = GetCutFaceUv(firstVertex);
                 Vector2 uvSecond = GetCutFaceUv(secondVertex);
 
-                Vector3 normal3 = ComputeNormal(halfway, secondVertex, firstVertex);
-                normal3.Normalize();
+                Vector3 capNormal = ComputeNormal(center, secondVertex, firstVertex).normalized;
+                float direction = Vector3.Dot(capNormal, _plane.normal);
 
-                float direction = Vector3.Dot(normal3, _plane.normal);
-
-                if (direction > 0)
+                if (direction > 0f)
                 {
                     AddTrianglesNormalAndUvs(
                         MeshSide.Positive,
-                        halfway, -normal3, uvHalf,
-                        firstVertex, -normal3, uvFirst,
-                        secondVertex, -normal3, uvSecond,
+                        center, -capNormal, uvCenter,
+                        firstVertex, -capNormal, uvFirst,
+                        secondVertex, -capNormal, uvSecond,
                         false, true);
 
                     AddTrianglesNormalAndUvs(
                         MeshSide.Negative,
-                        halfway, normal3, uvHalf,
-                        secondVertex, normal3, uvSecond,
-                        firstVertex, normal3, uvFirst,
+                        center, capNormal, uvCenter,
+                        secondVertex, capNormal, uvSecond,
+                        firstVertex, capNormal, uvFirst,
                         false, true);
                 }
                 else
                 {
                     AddTrianglesNormalAndUvs(
                         MeshSide.Positive,
-                        halfway, normal3, uvHalf,
-                        secondVertex, normal3, uvSecond,
-                        firstVertex, normal3, uvFirst,
+                        center, capNormal, uvCenter,
+                        secondVertex, capNormal, uvSecond,
+                        firstVertex, capNormal, uvFirst,
                         false, true);
 
                     AddTrianglesNormalAndUvs(
                         MeshSide.Negative,
-                        halfway, -normal3, uvHalf,
-                        firstVertex, -normal3, uvFirst,
-                        secondVertex, -normal3, uvSecond,
+                        center, -capNormal, uvCenter,
+                        firstVertex, -capNormal, uvFirst,
+                        secondVertex, -capNormal, uvSecond,
                         false, true);
                 }
             }
         }
 
-        private Vector3 GetHalfwayPoint(out float distance)
+        private List<Vector3> BuildOrderedCutPolygon()
         {
-            if (_pointsAlongPlane.Count > 0)
-            {
-                Vector3 firstPoint = _pointsAlongPlane[0];
-                Vector3 furthestPoint = Vector3.zero;
-                distance = 0f;
+            List<Vector3> uniquePoints = new List<Vector3>();
+            const float epsilon = 0.0001f;
 
-                foreach (Vector3 point in _pointsAlongPlane)
+            for (int i = 0; i < _pointsAlongPlane.Count; i++)
+            {
+                Vector3 p = _pointsAlongPlane[i];
+                bool exists = false;
+
+                for (int j = 0; j < uniquePoints.Count; j++)
                 {
-                    float currentDistance = Vector3.Distance(firstPoint, point);
-                    if (currentDistance > distance)
+                    if ((uniquePoints[j] - p).sqrMagnitude < epsilon * epsilon)
                     {
-                        distance = currentDistance;
-                        furthestPoint = point;
+                        exists = true;
+                        break;
                     }
                 }
 
-                return Vector3.Lerp(firstPoint, furthestPoint, 0.5f);
+                if (!exists)
+                    uniquePoints.Add(p);
             }
-            else
+
+            if (uniquePoints.Count < 3)
+                return uniquePoints;
+
+            Vector3 center = Vector3.zero;
+            for (int i = 0; i < uniquePoints.Count; i++)
+                center += uniquePoints[i];
+            center /= uniquePoints.Count;
+
+            Vector3 n = _plane.normal.normalized;
+            Vector3 axisX = Vector3.Cross(n, Mathf.Abs(n.y) < 0.99f ? Vector3.up : Vector3.right).normalized;
+            Vector3 axisY = Vector3.Cross(n, axisX).normalized;
+
+            uniquePoints.Sort((a, b) =>
             {
-                distance = 0;
-                return Vector3.zero;
-            }
+                Vector3 da = a - center;
+                Vector3 db = b - center;
+
+                float angleA = Mathf.Atan2(Vector3.Dot(da, axisY), Vector3.Dot(da, axisX));
+                float angleB = Mathf.Atan2(Vector3.Dot(db, axisY), Vector3.Dot(db, axisX));
+
+                return angleA.CompareTo(angleB);
+            });
+
+            return uniquePoints;
         }
 
         private void SetMeshData(MeshSide side)
@@ -338,150 +371,178 @@ namespace Assets.Scripts.SliceScripts
 
         private void ComputeNewMeshes()
         {
-            int[] meshTriangles = _mesh.triangles;
             Vector3[] meshVerts = _mesh.vertices;
             Vector3[] meshNormals = _mesh.normals;
             Vector2[] meshUvs = _mesh.uv;
 
-            var vertIndexMap = new Dictionary<Vector3, int>();
-            for (int i = 0; i < meshVerts.Length; i++)
+            bool hasNormals = meshNormals != null && meshNormals.Length == meshVerts.Length;
+            bool hasUvs = meshUvs != null && meshUvs.Length == meshVerts.Length;
+
+            int subMeshCount = Mathf.Max(1, _mesh.subMeshCount);
+
+            for (int subMeshIndex = 0; subMeshIndex < subMeshCount; subMeshIndex++)
             {
-                if (!vertIndexMap.ContainsKey(meshVerts[i]))
-                    vertIndexMap[meshVerts[i]] = i;
-            }
+                int[] meshTriangles = _mesh.GetTriangles(subMeshIndex);
+                bool sourceIsCap = (subMeshIndex == 1);
 
-            for (int i = 0; i < meshTriangles.Length; i += 3)
-            {
-                Vector3 vert1 = meshVerts[meshTriangles[i]];
-                int vert1Index = vertIndexMap.TryGetValue(vert1, out int idx1) ? idx1 : 0;
-                Vector2 uv1 = meshUvs[vert1Index];
-                Vector3 normal1 = meshNormals[vert1Index];
-                bool vert1Side = _plane.GetSide(vert1);
-
-                Vector3 vert2 = meshVerts[meshTriangles[i + 1]];
-                int vert2Index = vertIndexMap.TryGetValue(vert2, out int idx2) ? idx2 : 0;
-                Vector2 uv2 = meshUvs[vert2Index];
-                Vector3 normal2 = meshNormals[vert2Index];
-                bool vert2Side = _plane.GetSide(vert2);
-
-                Vector3 vert3 = meshVerts[meshTriangles[i + 2]];
-                int vert3Index = vertIndexMap.TryGetValue(vert3, out int idx3) ? idx3 : 0;
-                Vector3 normal3 = meshNormals[vert3Index];
-                Vector2 uv3 = meshUvs[vert3Index];
-                bool vert3Side = _plane.GetSide(vert3);
-
-                if (vert1Side == vert2Side && vert2Side == vert3Side)
+                for (int i = 0; i < meshTriangles.Length; i += 3)
                 {
-                    MeshSide side = vert1Side ? MeshSide.Positive : MeshSide.Negative;
-                    AddTrianglesNormalAndUvs(
-                        side,
-                        vert1, normal1, uv1,
-                        vert2, normal2, uv2,
-                        vert3, normal3, uv3,
-                        true,
-                        false);
-                }
-                else
-                {
-                    Vector3 intersection1;
-                    Vector3 intersection2;
+                    int vert1Index = meshTriangles[i];
+                    int vert2Index = meshTriangles[i + 1];
+                    int vert3Index = meshTriangles[i + 2];
 
-                    Vector2 intersection1Uv;
-                    Vector2 intersection2Uv;
+                    Vector3 vert1 = meshVerts[vert1Index];
+                    Vector3 vert2 = meshVerts[vert2Index];
+                    Vector3 vert3 = meshVerts[vert3Index];
 
-                    MeshSide side1 = vert1Side ? MeshSide.Positive : MeshSide.Negative;
-                    MeshSide side2 = vert1Side ? MeshSide.Negative : MeshSide.Positive;
+                    Vector2 uv1 = hasUvs ? meshUvs[vert1Index] : Vector2.zero;
+                    Vector2 uv2 = hasUvs ? meshUvs[vert2Index] : Vector2.zero;
+                    Vector2 uv3 = hasUvs ? meshUvs[vert3Index] : Vector2.zero;
 
-                    if (vert1Side == vert2Side)
+                    Vector3 normal1 = hasNormals ? meshNormals[vert1Index] : Vector3.up;
+                    Vector3 normal2 = hasNormals ? meshNormals[vert2Index] : Vector3.up;
+                    Vector3 normal3 = hasNormals ? meshNormals[vert3Index] : Vector3.up;
+
+                    bool vert1Side = _plane.GetSide(vert1);
+                    bool vert2Side = _plane.GetSide(vert2);
+                    bool vert3Side = _plane.GetSide(vert3);
+
+                    if (vert1Side == vert2Side && vert2Side == vert3Side)
                     {
-                        intersection1 = GetRayPlaneIntersectionPointAndUv(vert2, uv2, vert3, uv3, out intersection1Uv);
-                        intersection2 = GetRayPlaneIntersectionPointAndUv(vert3, uv3, vert1, uv1, out intersection2Uv);
+                        MeshSide side = vert1Side ? MeshSide.Positive : MeshSide.Negative;
 
                         AddTrianglesNormalAndUvs(
-                            side1,
-                            vert1, null, uv1,
-                            vert2, null, uv2,
-                            intersection1, null, intersection1Uv,
-                            _useSharedVertices,
-                            false);
-
-                        AddTrianglesNormalAndUvs(
-                            side1,
-                            vert1, null, uv1,
-                            intersection1, null, intersection1Uv,
-                            intersection2, null, intersection2Uv,
-                            _useSharedVertices,
-                            false);
-
-                        AddTrianglesNormalAndUvs(
-                            side2,
-                            intersection1, null, intersection1Uv,
-                            vert3, null, uv3,
-                            intersection2, null, intersection2Uv,
-                            _useSharedVertices,
-                            false);
-                    }
-                    else if (vert1Side == vert3Side)
-                    {
-                        intersection1 = GetRayPlaneIntersectionPointAndUv(vert1, uv1, vert2, uv2, out intersection1Uv);
-                        intersection2 = GetRayPlaneIntersectionPointAndUv(vert2, uv2, vert3, uv3, out intersection2Uv);
-
-                        AddTrianglesNormalAndUvs(
-                            side1,
-                            vert1, null, uv1,
-                            intersection1, null, intersection1Uv,
-                            vert3, null, uv3,
-                            _useSharedVertices,
-                            false);
-
-                        AddTrianglesNormalAndUvs(
-                            side1,
-                            intersection1, null, intersection1Uv,
-                            intersection2, null, intersection2Uv,
-                            vert3, null, uv3,
-                            _useSharedVertices,
-                            false);
-
-                        AddTrianglesNormalAndUvs(
-                            side2,
-                            intersection1, null, intersection1Uv,
-                            vert2, null, uv2,
-                            intersection2, null, intersection2Uv,
-                            _useSharedVertices,
-                            false);
+                            side,
+                            vert1, normal1, uv1,
+                            vert2, normal2, uv2,
+                            vert3, normal3, uv3,
+                            true,
+                            sourceIsCap);
                     }
                     else
                     {
-                        intersection1 = GetRayPlaneIntersectionPointAndUv(vert1, uv1, vert2, uv2, out intersection1Uv);
-                        intersection2 = GetRayPlaneIntersectionPointAndUv(vert1, uv1, vert3, uv3, out intersection2Uv);
+                        Vector3 intersection1;
+                        Vector3 intersection2;
+                        Vector2 intersection1Uv;
+                        Vector2 intersection2Uv;
+                        Vector3 intersection1Normal;
+                        Vector3 intersection2Normal;
 
-                        AddTrianglesNormalAndUvs(
-                            side1,
-                            vert1, null, uv1,
-                            intersection1, null, intersection1Uv,
-                            intersection2, null, intersection2Uv,
-                            _useSharedVertices,
-                            false);
+                        MeshSide side1 = vert1Side ? MeshSide.Positive : MeshSide.Negative;
+                        MeshSide side2 = vert1Side ? MeshSide.Negative : MeshSide.Positive;
 
-                        AddTrianglesNormalAndUvs(
-                            side2,
-                            intersection1, null, intersection1Uv,
-                            vert2, null, uv2,
-                            vert3, null, uv3,
-                            _useSharedVertices,
-                            false);
+                        if (vert1Side == vert2Side)
+                        {
+                            intersection1 = GetRayPlaneIntersectionPointAndUvAndNormal(
+                                vert2, uv2, normal2,
+                                vert3, uv3, normal3,
+                                out intersection1Uv, out intersection1Normal);
 
-                        AddTrianglesNormalAndUvs(
-                            side2,
-                            intersection1, null, intersection1Uv,
-                            vert3, null, uv3,
-                            intersection2, null, intersection2Uv,
-                            _useSharedVertices,
-                            false);
+                            intersection2 = GetRayPlaneIntersectionPointAndUvAndNormal(
+                                vert3, uv3, normal3,
+                                vert1, uv1, normal1,
+                                out intersection2Uv, out intersection2Normal);
+
+                            AddTrianglesNormalAndUvs(
+                                side1,
+                                vert1, normal1, uv1,
+                                vert2, normal2, uv2,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                _useSharedVertices,
+                                sourceIsCap);
+
+                            AddTrianglesNormalAndUvs(
+                                side1,
+                                vert1, normal1, uv1,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                intersection2, intersection2Normal, intersection2Uv,
+                                _useSharedVertices,
+                                sourceIsCap);
+
+                            AddTrianglesNormalAndUvs(
+                                side2,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                vert3, normal3, uv3,
+                                intersection2, intersection2Normal, intersection2Uv,
+                                _useSharedVertices,
+                                sourceIsCap);
+                        }
+                        else if (vert1Side == vert3Side)
+                        {
+                            intersection1 = GetRayPlaneIntersectionPointAndUvAndNormal(
+                                vert1, uv1, normal1,
+                                vert2, uv2, normal2,
+                                out intersection1Uv, out intersection1Normal);
+
+                            intersection2 = GetRayPlaneIntersectionPointAndUvAndNormal(
+                                vert2, uv2, normal2,
+                                vert3, uv3, normal3,
+                                out intersection2Uv, out intersection2Normal);
+
+                            AddTrianglesNormalAndUvs(
+                                side1,
+                                vert1, normal1, uv1,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                vert3, normal3, uv3,
+                                _useSharedVertices,
+                                sourceIsCap);
+
+                            AddTrianglesNormalAndUvs(
+                                side1,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                intersection2, intersection2Normal, intersection2Uv,
+                                vert3, normal3, uv3,
+                                _useSharedVertices,
+                                sourceIsCap);
+
+                            AddTrianglesNormalAndUvs(
+                                side2,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                vert2, normal2, uv2,
+                                intersection2, intersection2Normal, intersection2Uv,
+                                _useSharedVertices,
+                                sourceIsCap);
+                        }
+                        else
+                        {
+                            intersection1 = GetRayPlaneIntersectionPointAndUvAndNormal(
+                                vert1, uv1, normal1,
+                                vert2, uv2, normal2,
+                                out intersection1Uv, out intersection1Normal);
+
+                            intersection2 = GetRayPlaneIntersectionPointAndUvAndNormal(
+                                vert1, uv1, normal1,
+                                vert3, uv3, normal3,
+                                out intersection2Uv, out intersection2Normal);
+
+                            AddTrianglesNormalAndUvs(
+                                side1,
+                                vert1, normal1, uv1,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                intersection2, intersection2Normal, intersection2Uv,
+                                _useSharedVertices,
+                                sourceIsCap);
+
+                            AddTrianglesNormalAndUvs(
+                                side2,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                vert2, normal2, uv2,
+                                vert3, normal3, uv3,
+                                _useSharedVertices,
+                                sourceIsCap);
+
+                            AddTrianglesNormalAndUvs(
+                                side2,
+                                intersection1, intersection1Normal, intersection1Uv,
+                                vert3, normal3, uv3,
+                                intersection2, intersection2Normal, intersection2Uv,
+                                _useSharedVertices,
+                                sourceIsCap);
+                        }
+
+                        _pointsAlongPlane.Add(intersection1);
+                        _pointsAlongPlane.Add(intersection2);
                     }
-
-                    _pointsAlongPlane.Add(intersection1);
-                    _pointsAlongPlane.Add(intersection2);
                 }
             }
 
@@ -494,26 +555,26 @@ namespace Assets.Scripts.SliceScripts
                 SmoothVertices();
         }
 
-        private Vector3 GetRayPlaneIntersectionPointAndUv(Vector3 vertex1, Vector2 vertex1Uv, Vector3 vertex2, Vector2 vertex2Uv, out Vector2 uv)
+        private Vector3 GetRayPlaneIntersectionPointAndUvAndNormal(
+            Vector3 vertex1, Vector2 vertex1Uv, Vector3 normal1,
+            Vector3 vertex2, Vector2 vertex2Uv, Vector3 normal2,
+            out Vector2 uv,
+            out Vector3 normal)
         {
             float distance = GetDistanceRelativeToPlane(vertex1, vertex2, out Vector3 pointOfIntersection);
-            uv = InterpolateUvs(vertex1Uv, vertex2Uv, distance);
+            uv = Vector2.Lerp(vertex1Uv, vertex2Uv, distance);
+            normal = Vector3.Lerp(normal1, normal2, distance).normalized;
             return pointOfIntersection;
         }
 
-        private float GetDistanceRelativeToPlane(Vector3 vertex1, Vector3 vertex2, out Vector3 pointOfintersection)
+        private float GetDistanceRelativeToPlane(Vector3 vertex1, Vector3 vertex2, out Vector3 pointOfIntersection)
         {
             Ray ray = new Ray(vertex1, vertex2 - vertex1);
             _plane.Raycast(ray, out float distance);
-            pointOfintersection = ray.GetPoint(distance);
+            pointOfIntersection = ray.GetPoint(distance);
 
             float edgeLength = Vector3.Distance(vertex1, vertex2);
             return edgeLength > 0f ? distance / edgeLength : 0f;
-        }
-
-        private Vector2 InterpolateUvs(Vector2 uv1, Vector2 uv2, float distance)
-        {
-            return Vector2.Lerp(uv1, uv2, distance);
         }
 
         private Vector3 ComputeNormal(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)

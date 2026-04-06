@@ -98,7 +98,6 @@ public class PlayerJump : MonoBehaviour
 
         // 중력 누적 적용
         _verticalVelocity += currentGravity * Time.deltaTime;
-        //Debug.LogFormat("verticalVelocity = {0}",_verticalVelocity);
 
         // 수직 이동 적용
         _characterController.Move(Vector3.up * _verticalVelocity * Time.deltaTime);
