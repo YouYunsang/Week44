@@ -52,14 +52,12 @@ public class MobSpawnPoint : MonoBehaviour
                 var limbs = mob.spawnedMob.GetComponentsInChildren<BossLimb>();
                 if (limbs.Length > 0)
                 {
-                    // 보스 계열: 자식 BossLimb 전부 마킹 후 즉시 제거
                     foreach (var limb in limbs)
                         limb.MarkForRespawn();
                     DestroyImmediate(mob.spawnedMob);
                 }
                 else
                 {
-                    // 일반 몹: 그냥 제거
                     Destroy(mob.spawnedMob);
                 }
                 mob.spawnedMob = null;
