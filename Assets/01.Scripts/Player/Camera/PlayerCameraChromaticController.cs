@@ -48,6 +48,7 @@ public class PlayerCameraChromaticController : MonoBehaviour
             : _dashSetting.BlendOutSpeed;
 
         _currentIntensity = Mathf.Lerp(_currentIntensity, target, speed * Time.deltaTime);
+        Debug.LogFormat("{0}", _currentIntensity);
 
         _chromatic.intensity.value = _currentIntensity;
     }
