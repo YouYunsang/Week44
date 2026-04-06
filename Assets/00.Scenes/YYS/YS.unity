@@ -1154,137 +1154,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8da63350b991af34699f45faf2dddf0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LandingReactionExtension
---- !u!1 &911643130 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1476941199003381863, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-  m_PrefabInstance: {fileID: 1532304005}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &911643137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 911643130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseSource
-  ImpulseDefinition:
-    ImpulseChannel: 1
-    ImpulseShape: 0
-    CustomImpulseShape:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: -0.03184244
-        outSlope: -0.03184244
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.047983304
-      - serializedVersion: 3
-        time: 0.2
-        value: 0.6
-        inSlope: -0.10415
-        outSlope: -0.10415
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.4
-        value: 0.8
-        inSlope: 0.94279826
-        outSlope: 0.94279826
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.6
-        value: 0.4
-        inSlope: 0.063822314
-        outSlope: 0.063822314
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.8
-        value: 0.6
-        inSlope: -0.39180863
-        outSlope: -0.39180863
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: -3.1073005
-        outSlope: -3.1073005
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.024339557
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    ImpulseDuration: 0.2
-    ImpulseType: 0
-    DissipationRate: 0.25
-    RawSignal: {fileID: 0}
-    AmplitudeGain: 1
-    FrequencyGain: 1
-    RepeatMode: 0
-    Randomize: 1
-    TimeEnvelope:
-      AttackShape:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      DecayShape:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      AttackTime: 0
-      SustainTime: 0.2
-      DecayTime: 0.7
-      ScaleWithImpact: 1
-      HoldForever: 0
-    ImpactRadius: 100
-    DirectionMode: 0
-    DissipationMode: 2
-    DissipationDistance: 100
-    PropagationSpeed: 343
-  DefaultVelocity: {x: 0, y: -1, z: 0}
---- !u!114 &911643138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 911643130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e9679cf6deca214ab290f50df17f1fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossStompCameraImpulseController
-  _impulseSource: {fileID: 911643137}
-  _player: {fileID: 1442533611}
-  _maxStrength: 2.5
-  _minStrength: 0.3
-  _minDistance: 12
-  _maxDistance: 25
-  _bossStompNoiseDuration: 1
 --- !u!1 &995592353
 GameObject:
   m_ObjectHideFlags: 0
@@ -2866,22 +2735,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boss
       objectReference: {fileID: 0}
-    - target: {fileID: 1476941199003381863, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5439551233431080963, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      propertyPath: _debugStartNoLegs
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5439551233431080963, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      propertyPath: _debugStartHeadOnly
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7124962896313298122, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      propertyPath: _rollHeadY
-      value: 1
-      objectReference: {fileID: 0}
+    - target: {fileID: 5542878583395258625, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
+      propertyPath: _player
+      value: 
+      objectReference: {fileID: 1442533611}
     - target: {fileID: 8440111393602398749, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.483996
@@ -2925,13 +2782,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1476941199003381863, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 911643138}
-    - targetCorrespondingSourceObject: {fileID: 1476941199003381863, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 911643137}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
 --- !u!1 &1901588440
 GameObject:
