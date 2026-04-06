@@ -5,7 +5,8 @@ public class PlayerJump : MonoBehaviour
 {
     [Header("Jump Settings")]
     [SerializeField] private float _jumpForce = 5f;
-    [SerializeField] private float _gravity = -9.81f;
+    [SerializeField] private float _ascendGravity = -9.81f;
+    [SerializeField] private float _fallGravity = -24f;
 
     [Header("Ground Check")]
     [SerializeField] private Transform _groundCheck;
@@ -93,8 +94,11 @@ public class PlayerJump : MonoBehaviour
         if (_isGrounded && _verticalVelocity < 0f)
             _verticalVelocity = -2f;
 
+        float currentGravity = _verticalVelocity > 0 ? _ascendGravity : _fallGravity;
+
         // 중력 누적 적용
-        _verticalVelocity += _gravity * Time.deltaTime;
+        _verticalVelocity += currentGravity * Time.deltaTime;
+        Debug.LogFormat("verticalVelocity = {0}",_verticalVelocity);
 
         // 수직 이동 적용
         _characterController.Move(Vector3.up * _verticalVelocity * Time.deltaTime);
