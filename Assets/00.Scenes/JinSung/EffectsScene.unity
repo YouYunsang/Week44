@@ -268,7 +268,7 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
-  _capMaterial: {fileID: 2100000, guid: e06756a369e347f4f9f54ab9ec421075, type: 2}
+  _capMaterial: {fileID: 2100000, guid: 5546b142db8a00a4ba2ac225ee1fcca3, type: 2}
 --- !u!65 &217041680
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -315,7 +315,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e06756a369e347f4f9f54ab9ec421075, type: 2}
+  - {fileID: 2100000, guid: 3b400e37ad495e9458ff78c30e7b4883, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -553,7 +553,7 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
-  _capMaterial: {fileID: 2100000, guid: 97bf25032ea1eb74eb6e46343c4e7d3b, type: 2}
+  _capMaterial: {fileID: 2100000, guid: 5546b142db8a00a4ba2ac225ee1fcca3, type: 2}
 --- !u!65 &513827209
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -600,7 +600,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e06756a369e347f4f9f54ab9ec421075, type: 2}
+  - {fileID: 2100000, guid: 3b400e37ad495e9458ff78c30e7b4883, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -816,7 +816,7 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
-  _capMaterial: {fileID: 2100000, guid: e06756a369e347f4f9f54ab9ec421075, type: 2}
+  _capMaterial: {fileID: 2100000, guid: 5546b142db8a00a4ba2ac225ee1fcca3, type: 2}
 --- !u!65 &720867973
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -863,7 +863,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e06756a369e347f4f9f54ab9ec421075, type: 2}
+  - {fileID: 2100000, guid: 3b400e37ad495e9458ff78c30e7b4883, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1106,7 +1106,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e06756a369e347f4f9f54ab9ec421075, type: 2}
+  - {fileID: 2100000, guid: 3b400e37ad495e9458ff78c30e7b4883, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1832,6 +1832,7 @@ GameObject:
   - component: {fileID: 1929479568}
   - component: {fileID: 1929479567}
   - component: {fileID: 1929479566}
+  - component: {fileID: 1929479571}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -1856,7 +1857,7 @@ MonoBehaviour:
   _useGravity: 1
   _shareVertices: 0
   _smoothVertices: 0
-  _capMaterial: {fileID: 2100000, guid: 3b400e37ad495e9458ff78c30e7b4883, type: 2}
+  _capMaterial: {fileID: 2100000, guid: 5546b142db8a00a4ba2ac225ee1fcca3, type: 2}
 --- !u!65 &1929479567
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1950,6 +1951,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1929479571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929479565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3986457296efba045886aa6b3ffe987b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StackedSliceable
+  _maxSliceCount: 1
+  _sliceForce: 20
+  _separateForceRatio: 0.55
+  _torqueForceRatio: 0.3
+  _showDebugLog: 0
+  _debugTriggerKey: 120
 --- !u!1001 &2057478439
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1958,6 +1977,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 816522476539103241, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _sliceForce
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 816522476539103241, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _forwardForceBias
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 816522476539103241, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _torqueForceRatio
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 816522476539103241, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
+      propertyPath: _separateForceRatio
+      value: 0.55
+      objectReference: {fileID: 0}
     - target: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: m_Name
       value: Player
