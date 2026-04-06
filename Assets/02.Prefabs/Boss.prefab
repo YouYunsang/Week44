@@ -5363,8 +5363,8 @@ MonoBehaviour:
   _player: {fileID: 0}
   _detectionRange: 36
   _attackFacingAngle: 10
-  _debugStartNoLegs: 1
-  _debugStartHeadOnly: 1
+  _debugStartNoLegs: 0
+  _debugStartHeadOnly: 0
 --- !u!114 &7124962896313298122
 MonoBehaviour:
   m_ObjectHideFlags: 0
