@@ -15,8 +15,8 @@ MonoBehaviour:
   _maxStack: 3
   _stackRechargeTime: 3
   _minAttackRange: 2
-  _maxAttackRange: 10
+  _maxAttackRange: 20
   _chargeSpeed: 15
-  _dashSpeed: 40
-  _dashTimeout: 0.5
+  _dashSpeed: 100
+  _dashTimeout: 0.2
   _stopDistance: 1.5

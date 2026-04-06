@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14fd02a259b055d4e995dbd552369fa4, type: 3}
   m_Name: Chromatic_Dash
   m_EditorClassIdentifier: Assembly-CSharp::CameraChromaticSettingSO
-  _intensity: 1
+  _intensity: 1.5
   _blendInSpeed: 20
-  _blendOutSpeed: 15
+  _blendOutSpeed: 5

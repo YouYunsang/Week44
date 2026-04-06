@@ -17,14 +17,16 @@ public class PlayerDashAttack : MonoBehaviour
     [SerializeField] private int _currentStack = 0;
     [SerializeField] private float _currentRange = 0f;
 
+    [Header("DashDelay")]
+    [SerializeField] private float _dashDelay = 0.5f;
+
     private float _rechargeTimer = 0f;
-    private bool _isCharging = false;
     private bool _isDashing = false;
+    private bool _isDelay = false;
     private bool _isTargetInRange = false;
 
     public int CurrentStack => _currentStack;
     public float CurrentRange => _currentRange;
-    public bool IsCharging => _isCharging;
     public bool IsDashing => _isDashing;
     public bool IsTargetInRange => _isTargetInRange;
     public bool IsTargetBullet {get; private set;}
@@ -34,13 +36,6 @@ public class PlayerDashAttack : MonoBehaviour
         _data == null || _data.StackRechargeTime <= 0f
             ? 0f
             : Mathf.Clamp01(_rechargeTimer / _data.StackRechargeTime);
-
-    public float ChargeNormalized =>
-        _data == null || Mathf.Approximately(_data.MaxAttackRange, _data.MinAttackRange)
-            ? 0f
-            : Mathf.Clamp01(
-                (_currentRange - _data.MinAttackRange) /
-                (_data.MaxAttackRange - _data.MinAttackRange));
     #endregion
 
     private void Awake()
@@ -96,80 +91,34 @@ public class PlayerDashAttack : MonoBehaviour
             return;
 
         RechargeStack();
-        UpdateCharge();
     }
 
     private void HandleDashAttackPressed()
     {
         // 대시 중이거나 스택이 없으면 시작 불가
-        if (_isDashing || _currentStack <= 0)
+        if (_isDashing || _currentStack <= 0 || _isDelay)
             return;
 
-        _isCharging = true;
-        _currentRange = _data.MinAttackRange;
-        _isTargetInRange = false;
+        _currentRange = _data.MaxAttackRange;
 
-        // 차징 시작 이벤트 발행
-        EventBus<OnDashChargeStartedEvent>.Publish(new OnDashChargeStartedEvent());
-
-        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+        if(!_sliceExecutor.TryGetSliceHit(_currentRange, out RaycastHit hit))
         {
-            channel = CameraNoiseChannel.DashCharge,
-            isActive = true,
-            normalized = 0f
-        });
+            _currentRange = _data.MinAttackRange;
+            return;
+        }
 
-        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        if(hit.collider.CompareTag("Bullet"))
         {
-            channel = CameraFovChannel.DashCharge,
-            isActive = true,
-            normalized = 0f
-        });
+            _currentRange = _data.MinAttackRange;
+            return;
+        }
 
-        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
-        {
-            channel = CameraDutchChannel.DashCharge,
-            isActive = true,
-            normalized = 0f
-        });
+        ConsumeStack();
+        StartCoroutine(DashAndSlice(hit));
     }
 
     private void HandleDashAttackReleased()
     {
-        // 차징 상태일 때만 release 처리
-        if (!_isCharging)
-            return;
-
-        _isCharging = false;
-
-        bool success = TryDashAndSlice();
-        if (!success)
-        {
-            // 실패 시 차징 취소 이벤트 발행
-            EventBus<OnDashChargeCanceledEvent>.Publish(new OnDashChargeCanceledEvent());
-        }
-
-        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
-        {
-            channel = CameraNoiseChannel.DashCharge,
-            isActive = false,
-            normalized = 0f
-        });
-
-        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
-        {
-            channel = CameraFovChannel.DashCharge,
-            isActive = false,
-            normalized = 0f
-        });
-
-        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
-        {
-            channel = CameraDutchChannel.DashCharge,
-            isActive = false,
-            normalized = 0f
-        });
-
         _isTargetInRange = false;
     }
 
@@ -188,78 +137,25 @@ public class PlayerDashAttack : MonoBehaviour
         }
     }
 
-    private void UpdateCharge()
-    {
-        if (!_isCharging || _sliceExecutor == null)
-            return;
-
-        // 홀드 중 사거리 충전
-        _currentRange = Mathf.Min(
-            _currentRange + _data.ChargeSpeed * Time.deltaTime,
-            _data.MaxAttackRange);
-
-        // 현재 충전 사거리 내 타겟 존재 여부 확인
-       if(_sliceExecutor.TryGetSliceHit(_currentRange, out RaycastHit hit))
-        {
-            _isTargetInRange = true;
-            IsTargetBullet = hit.collider.CompareTag("Bullet");
-        }
-        else
-        {
-            _isTargetInRange = false;
-            IsTargetBullet = false;
-        }
-
-        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
-        {
-            channel = CameraNoiseChannel.DashCharge,
-            isActive = true,
-            normalized = ChargeNormalized
-        });
-
-        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
-        {
-            channel = CameraFovChannel.DashCharge,
-            isActive = true,
-            normalized = ChargeNormalized
-        });
-
-        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
-        {
-            channel = CameraDutchChannel.DashCharge,
-            isActive = true,
-            normalized = ChargeNormalized
-        });
-    }
 
     private bool TryDashAndSlice()
     {
-        if (_sliceExecutor == null)
-            return false;
-
-        // release 시점의 유효 타겟 확인
-        if (!_sliceExecutor.TryGetSliceHit(_currentRange, out RaycastHit hit))
-        {
-            _currentRange = _data.MinAttackRange;
-            return false;
-        }
-
-        if(hit.collider.CompareTag("Bullet"))
-        {
-            _currentRange = _data.MinAttackRange;
-            return false;
-        }
-
-        ConsumeStack();
-        StartCoroutine(DashAndSlice(hit));
-        return true;
+        return false;
     }
 
     private void ConsumeStack()
     {
-        // 스택 소비 후 충전 타이머 초기화
+        // 스택 소비
         _currentStack = Mathf.Max(_currentStack - 1, 0);
-        _rechargeTimer = 0f;
+    }
+
+    private IEnumerator DashDelay()
+    {
+        _isDelay = true;
+
+        yield return new WaitForSeconds(_dashDelay);
+
+        _isDelay = false;
     }
 
     private IEnumerator DashAndSlice(RaycastHit hit)
@@ -369,5 +265,7 @@ public class PlayerDashAttack : MonoBehaviour
 
         _currentRange = _data.MinAttackRange;
         _isDashing = false;
+
+        StartCoroutine(DashDelay());
     }
 }

@@ -39,8 +39,13 @@ namespace Assets.Scripts.SliceScripts
             positiveObject.GetComponent<MeshFilter>().mesh = positiveSideMeshData;
             negativeObject.GetComponent<MeshFilter>().mesh = negativeSideMeshData;
 
-            SetupCollidersAndRigidBodys(ref positiveObject, positiveSideMeshData, sliceable.UseGravity);
-            SetupCollidersAndRigidBodys(ref negativeObject, negativeSideMeshData, sliceable.UseGravity);
+            float destroyDelay = 1.5f;
+            SliceConfig config = objectToCut.GetComponent<SliceConfig>();
+            if(config != null)
+                destroyDelay = config.FragmentDestroyDelay;
+
+            SetupCollidersAndRigidBodys(ref positiveObject, positiveSideMeshData, sliceable.UseGravity, destroyDelay);
+            SetupCollidersAndRigidBodys(ref negativeObject, negativeSideMeshData, sliceable.UseGravity, destroyDelay);
 
             return new GameObject[] { positiveObject, negativeObject };
         }
@@ -94,7 +99,7 @@ namespace Assets.Scripts.SliceScripts
         /// <summary>
         /// Add mesh collider and rigid body to game object
         /// </summary>
-        private static void SetupCollidersAndRigidBodys(ref GameObject gameObject, Mesh mesh, bool useGravity)
+        private static void SetupCollidersAndRigidBodys(ref GameObject gameObject, Mesh mesh, bool useGravity, float destroyDelay)
         {
             Bounds bounds = mesh.bounds;
             float minSize = 0.01f;
@@ -123,7 +128,8 @@ namespace Assets.Scripts.SliceScripts
             Rigidbody rb = gameObject.AddComponent<Rigidbody>();
             rb.useGravity = useGravity;
 
-            gameObject.AddComponent<SliceFragment>();
+            SliceFragment fragment = gameObject.AddComponent<SliceFragment>();
+            fragment.Init(destroyDelay);
         }
     }
 }

@@ -21,9 +21,16 @@ public class PlayerLandingImpulse : MonoBehaviour
     [SerializeField] private float _mediumImpulseStrength = 0.7f;
     [SerializeField] private float _largeImpulseStrength = 1.1f;
 
+    [Header("Impulse Duration")]
+    [SerializeField] private float _smallImpulseDuration = 0.10f;
+    [SerializeField] private float _mediumImpulseDuration = 0.14f;
+    [SerializeField] private float _largeImpulseDuration = 0.18f;
+
     private bool _wasGrounded = true;
     private float _airTime = 0f;
     private float _lastDownwardSpeed = 0f;
+
+    private float _defaultImpulseDuration;
 
     private void Awake()
     {
@@ -33,10 +40,7 @@ public class PlayerLandingImpulse : MonoBehaviour
         if (_impulseSource == null)
             _impulseSource = GetComponent<CinemachineImpulseSource>();
 
-        if (_landingExtension == null)
-        {
-            _landingExtension = FindFirstObjectByType<LandingReactionExtension>();
-        }
+        CacheDefaultImpulseSettings();
     }
 
     private void Start()
@@ -58,15 +62,12 @@ public class PlayerLandingImpulse : MonoBehaviour
 
     private void UpdateAirState()
     {
-        if (!_playerJump.IsGrounded)
-        {
-            _airTime += Time.deltaTime;
+        if (_playerJump.IsGrounded) return;
 
-            if(_playerJump.VerticalVelocity < 0f)
-            {
-                _lastDownwardSpeed = _playerJump.VerticalVelocity;
-            }
-        }
+        _airTime += Time.deltaTime;
+
+        if(_playerJump.VerticalVelocity < 0f)
+            _lastDownwardSpeed = _playerJump.VerticalVelocity;
     }
 
     private void DetectLanding()
@@ -91,12 +92,23 @@ public class PlayerLandingImpulse : MonoBehaviour
 
         LandingImpactType impactType = EvaluateImpactType(downwardSpeed);
         float impulseStrength = GetImpulseStrength(impactType);
+        float impulseDuration = GetImpulseDuration(impactType);
 
-        GenerateLandingImpulse(impulseStrength);
-        //_landingExtension.PlayLanding(impactType);
+        GenerateLandingImpulse(impulseStrength, impulseDuration);
+
+        if(_landingExtension != null)
+            _landingExtension.PlayLanding(impactType);
+
         PublishLandingEvent(impactType, downwardSpeed, impulseStrength);
 
         ResetAirState();
+    }
+
+    private void CacheDefaultImpulseSettings()
+    {
+        if (_impulseSource == null || _impulseSource.ImpulseDefinition == null) return;
+
+        _defaultImpulseDuration = _impulseSource.ImpulseDefinition.ImpulseDuration;
     }
 
     private LandingImpactType EvaluateImpactType(float downwardSpeed)
@@ -123,11 +135,43 @@ public class PlayerLandingImpulse : MonoBehaviour
         }
     }
 
-    private void GenerateLandingImpulse(float impulseStrength)
+    private float GetImpulseDuration(LandingImpactType impactType)
     {
-        if (_impulseSource == null) return;
+        switch (impactType)
+        {
+            case LandingImpactType.Large:
+                return _largeImpulseDuration;
 
-        _impulseSource.GenerateImpulse(impulseStrength);
+            case LandingImpactType.Medium:
+                return _mediumImpulseDuration;
+
+            default:
+                return _smallImpulseDuration;
+        }
+    }
+
+    private void GenerateLandingImpulse(float impulseStrength, float impulseDuration)
+    {
+        if (_impulseSource == null || _impulseSource.ImpulseDefinition == null) return;
+
+        ApplyImpulseDuration(impulseDuration);
+
+        _impulseSource.GenerateImpulseWithForce(impulseStrength);
+
+        RestoreDefaultImpulseSettings();
+    }
+
+    private void ApplyImpulseDuration(float impulseDuration)
+    {
+        CinemachineImpulseDefinition definition = _impulseSource.ImpulseDefinition;
+
+        definition.ImpulseDuration = impulseDuration;
+    }
+
+    private void RestoreDefaultImpulseSettings()
+    {
+        CinemachineImpulseDefinition definition = _impulseSource.ImpulseDefinition;
+        definition.ImpulseDuration = _defaultImpulseDuration;
     }
 
     private void PublishLandingEvent(LandingImpactType impactType, float downwardSpeed, float impulseStrength)
@@ -136,7 +180,7 @@ public class PlayerLandingImpulse : MonoBehaviour
         {
             impactType = impactType,
             downwardSpeed = downwardSpeed,
-            impulseStrength = impulseStrength
+            impulseStrength = impulseStrength,
         });
     }
 

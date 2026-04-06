@@ -6,15 +6,16 @@ using UnityEngine;
 /// </summary>
 public class SliceFragment : MonoBehaviour
 {
-    private const float DESTROY_DELAY = 6f;
+    private float _destroyDelay = 3f;
     [SerializeField] float _extraGravityMultiplier = 3f;
 
     Rigidbody _rb;
 
-    void Start()
+    public void Init(float delay)
     {
         _rb = GetComponent<Rigidbody>();
-        Destroy(gameObject, DESTROY_DELAY);
+        _destroyDelay = delay;
+        Destroy(gameObject, _destroyDelay);
     }
 
     void FixedUpdate()

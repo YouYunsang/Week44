@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1293661640610492387}
   - component: {fileID: 4864774354717597806}
   - component: {fileID: 867438738777094330}
-  - component: {fileID: 4311410747898818111}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Enemy
@@ -28,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1644984257430518898}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.78900003}
+  m_LocalPosition: {x: 0, y: 0, z: 0.651}
   m_LocalScale: {x: 0.4165808, y: 0.4165808, z: 0.4165808}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -91,27 +90,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4311410747898818111
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1644984257430518898}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3670082174645521725
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,6 +135,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1fe1e6c0941f346ae177aa16d51bcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
+  ObstacleLayer:
+    serializedVersion: 2
+    m_Bits: 16
+  EyeHeight: 1
   EnemyType: 1
   DetectionRange: 10
   PlayerLayer:
@@ -167,7 +149,8 @@ MonoBehaviour:
   FirePoint: {fileID: 1293661640610492387}
   FireRate: 1
   BulletSpeed: 10
-  TurretHead: {fileID: 0}
+  FirstfireDelay: 2
+  TurretHead: {fileID: 2495522459125631215}
   RotationSpeed: 5
   PatrolAxis: 0
   CustomPatrolDirection: {x: 1, y: 0, z: 0}
@@ -185,8 +168,8 @@ GameObject:
   - component: {fileID: 3350692607125369408}
   - component: {fileID: 5232362388053492456}
   - component: {fileID: 742128741461004051}
+  - component: {fileID: 5411456451005839189}
   - component: {fileID: 3821667436544965399}
-  - component: {fileID: 4363646501422379772}
   m_Layer: 0
   m_Name: EnemyBase
   m_TagString: Enemy
@@ -288,25 +271,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3821667436544965399
-MonoBehaviour:
+--- !u!65 &5411456451005839189
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4581222689880557539}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b42ab45ad6fa044486c1ef6eeb22f55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Sliceable
-  _isSolid: 1
-  _reverseWindTriangles: 0
-  _useGravity: 1
-  _shareVertices: 0
-  _smoothVertices: 0
-  _capMaterial: {fileID: 0}
---- !u!114 &4363646501422379772
+  serializedVersion: 3
+  m_Size: {x: 0.4205122, y: 0.42831993, z: 0.36010933}
+  m_Center: {x: -0.007104516, y: 0.013933539, z: 0.6849003}
+--- !u!114 &3821667436544965399
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
