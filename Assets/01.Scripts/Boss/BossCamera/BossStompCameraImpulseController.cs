@@ -70,6 +70,7 @@ public class BossStompCameraImpulseController : MonoBehaviour
         if (_player == null) return 0f;
 
         float distance = Vector3.Distance(_player.position, stomPos);
+        Debug.LogFormat("{0}", distance);
 
         if (distance >= _maxDistance) return 0f;
 

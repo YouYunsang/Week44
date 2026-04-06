@@ -1275,8 +1275,8 @@ MonoBehaviour:
   _player: {fileID: 1442533611}
   _maxStrength: 2.5
   _minStrength: 0.3
-  _minDistance: 2
-  _maxDistance: 20
+  _minDistance: 12
+  _maxDistance: 25
   _bossStompNoiseDuration: 1
 --- !u!1 &995592353
 GameObject:

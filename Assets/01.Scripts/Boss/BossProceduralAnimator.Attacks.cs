@@ -300,6 +300,11 @@ public partial class BossProceduralAnimator
 
         // 3. 착지 고정 후 충격 연출
         transform.position = landPos;
+        EventBus<OnBossStompImpactEvent>.Publish(new OnBossStompImpactEvent
+        {
+            position = transform.position
+        });
+
         _rangeIndicator?.Hide(SLOT_SLAM);
         if (_body) StartCoroutine(ImpactSquash());
 
