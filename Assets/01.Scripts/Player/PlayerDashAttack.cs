@@ -18,13 +18,11 @@ public class PlayerDashAttack : MonoBehaviour
     [SerializeField] private float _currentRange = 0f;
 
     private float _rechargeTimer = 0f;
-    private bool _isCharging = false;
     private bool _isDashing = false;
     private bool _isTargetInRange = false;
 
     public int CurrentStack => _currentStack;
     public float CurrentRange => _currentRange;
-    public bool IsCharging => _isCharging;
     public bool IsDashing => _isDashing;
     public bool IsTargetInRange => _isTargetInRange;
     public bool IsTargetBullet {get; private set;}
@@ -34,13 +32,6 @@ public class PlayerDashAttack : MonoBehaviour
         _data == null || _data.StackRechargeTime <= 0f
             ? 0f
             : Mathf.Clamp01(_rechargeTimer / _data.StackRechargeTime);
-
-    public float ChargeNormalized =>
-        _data == null || Mathf.Approximately(_data.MaxAttackRange, _data.MinAttackRange)
-            ? 0f
-            : Mathf.Clamp01(
-                (_currentRange - _data.MinAttackRange) /
-                (_data.MaxAttackRange - _data.MinAttackRange));
     #endregion
 
     private void Awake()
@@ -124,27 +115,6 @@ public class PlayerDashAttack : MonoBehaviour
 
     private void HandleDashAttackReleased()
     {
-        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
-        {
-            channel = CameraNoiseChannel.DashCharge,
-            isActive = false,
-            normalized = 0f
-        });
-
-        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
-        {
-            channel = CameraFovChannel.DashCharge,
-            isActive = false,
-            normalized = 0f
-        });
-
-        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
-        {
-            channel = CameraDutchChannel.DashCharge,
-            isActive = false,
-            normalized = 0f
-        });
-
         _isTargetInRange = false;
     }
 

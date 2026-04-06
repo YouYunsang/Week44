@@ -10,11 +10,6 @@ public class PlayerCameraNoiseController : MonoBehaviour
     [Header("Move Settings")]
     [SerializeField] private CameraNoiseSettingSO _moveSetting;
 
-    [Header("Charge Settings")]
-    [SerializeField] private CameraNoiseSettingSO _chargeSetting;
-    [SerializeField] private float targetAmplitudeValue = 0.3f;
-    [SerializeField] private float targetFrequencyValue = 2f;
-
     private CinemachineBasicMultiChannelPerlin _perlin;
     private CameraNoiseSettingSO _currentSetting;
 
@@ -23,9 +18,6 @@ public class PlayerCameraNoiseController : MonoBehaviour
 
     private bool _isMoveActive = false;
     private float _moveNormalized = 0f;
-
-    private bool _isChargeActive = false;
-    private float _chargeNormalized = 0f;
 
     private void Awake()
     {
@@ -60,23 +52,11 @@ public class PlayerCameraNoiseController : MonoBehaviour
                 _isMoveActive = evt.isActive;
                 _moveNormalized = evt.normalized;
                 break;
-
-            case CameraNoiseChannel.DashCharge:
-                _isChargeActive = evt.isActive;
-                _chargeNormalized = evt.normalized;
-                break;
         }
     }
 
     private void UpdateNoiseByPriority()
     {
-        // 우선순위: Charge > Move > Default
-        if (_isChargeActive)
-        {
-            SetActiveSetting(_chargeSetting);
-            return;
-        }
-
         if (_isMoveActive)
         {
             SetActiveSetting(_moveSetting);
@@ -116,12 +96,7 @@ public class PlayerCameraNoiseController : MonoBehaviour
         float normalized = 1f;
         bool isBlendingIn = false;
 
-        if (_isChargeActive && _currentSetting == _chargeSetting)
-        {
-            normalized = _chargeNormalized;
-            isBlendingIn = true;
-        }
-        else if (_isMoveActive && _currentSetting == _moveSetting)
+        if (_isMoveActive && _currentSetting == _moveSetting)
         {
             normalized = _moveNormalized;
             isBlendingIn = true;
@@ -131,20 +106,10 @@ public class PlayerCameraNoiseController : MonoBehaviour
         float targetFrequency = _currentSetting.FrequencyGain;
 
         // 활성 상태에서는 normalized 기반 스케일링
-        if (isBlendingIn)
+        if (isBlendingIn && _currentSetting == _moveSetting)
         {
-            if (_currentSetting == _chargeSetting)
-            {
-                // 시작할 때 가장 강하고 점점 약해짐
-                targetAmplitude *= Mathf.Lerp(2f, targetAmplitudeValue, normalized);
-                targetFrequency *= Mathf.Lerp(1f, targetFrequencyValue, normalized);
-            }
-            else
-            {
-                // move는 기존처럼 활성될수록 살아나는 구조 유지
-                targetAmplitude *= Mathf.Lerp(0.35f, 1f, normalized);
-                targetFrequency *= Mathf.Lerp(0.85f, 1.15f, normalized);
-            }
+            targetAmplitude *= Mathf.Lerp(0.35f, 1f, normalized);
+            targetFrequency *= Mathf.Lerp(0.85f, 1.15f, normalized);
         }
 
         float blendSpeed = isBlendingIn ? _currentSetting.BlendInSpeed : _currentSetting.BlendOutSpeed;
