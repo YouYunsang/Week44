@@ -15,19 +15,17 @@ public class BossController : MonoBehaviour
     [SerializeField] Transform _player;
 
     [Header("Range")]
-    [SerializeField] float _detectionRange = 14f;
-    [SerializeField] float _attackRange    = 2.4f;
+    [SerializeField] float _detectionRange  = 14f;
+    [SerializeField] float _attackFacingAngle = 40f; // 공격 허용 전방 각도 (±)
 
-    [Header("Attack Cooldown")]
-    [SerializeField] float _phase1Cooldown = 5f;  // FullBody (발차기/점프밟기)
-    [SerializeField] float _phase2Cooldown = 6f;  // ArmsOnly (팔 슬램)
-    [SerializeField] float _phase3Cooldown = 4f;  // CoreOnly (박치기)
+    [Header("Debug Start State")]
+    [SerializeField] bool _debugStartNoLegs;
+    [SerializeField] bool _debugStartHeadOnly;
 
-    BossPhaseHandler      _phaseHandler;
+    BossPhaseHandler       _phaseHandler;
     BossProceduralAnimator _animator;
 
     BossState _state = BossState.Idle;
-    float     _lastAttackTime = -999f;
 
     // ── 초기화 ────────────────────────────────────────────────────────────
     void Awake()
@@ -41,7 +39,8 @@ public class BossController : MonoBehaviour
             if (obj != null) _player = obj.transform;
         }
 
-        if (_player != null) _animator.SetTarget(_player);
+        if (_player != null)
+            _animator.SetTarget(_player);
     }
 
     void OnEnable()
@@ -58,8 +57,30 @@ public class BossController : MonoBehaviour
     void OnBossDied(OnBossDiedEvent e)
     {
         StopAllCoroutines();
-        _state = BossState.PhaseTransition; // 더 이상 공격/추적 안 함
+        _state = BossState.PhaseTransition;
         _animator.SetMoving(false);
+    }
+
+    void Start()
+    {
+        if (_debugStartNoLegs || _debugStartHeadOnly)
+            StartCoroutine(DebugInitRoutine());
+    }
+
+    IEnumerator DebugInitRoutine()
+    {
+        yield return null; // 한 프레임 대기 — 모든 컴포넌트 초기화 완료 후 발행
+
+        if (_debugStartHeadOnly)
+        {
+            EventBus<OnBossLimbSlicedEvent>.Publish(new OnBossLimbSlicedEvent { limb = LimbType.LeftArm });
+            EventBus<OnBossLimbSlicedEvent>.Publish(new OnBossLimbSlicedEvent { limb = LimbType.RightArm });
+        }
+        else if (_debugStartNoLegs)
+        {
+            EventBus<OnBossLimbSlicedEvent>.Publish(new OnBossLimbSlicedEvent { limb = LimbType.LeftLeg });
+            EventBus<OnBossLimbSlicedEvent>.Publish(new OnBossLimbSlicedEvent { limb = LimbType.RightLeg });
+        }
     }
 
     // ── 메인 루프 ──────────────────────────────────────────────────────────
@@ -85,7 +106,8 @@ public class BossController : MonoBehaviour
     {
         _animator.SetMoving(true);
 
-        if (DistToPlayer() <= _attackRange && CanAttack())
+        // 범위 안 + 쿨다운 완료 + 전방 각도 내에 있을 때 공격 시작
+        if (DistToPlayer() <= _animator.CurrentAttackRange && _animator.CanAttack() && IsFacingPlayer())
             StartCoroutine(AttackRoutine());
     }
 
@@ -98,8 +120,7 @@ public class BossController : MonoBehaviour
 
     IEnumerator AttackRoutine()
     {
-        _state            = BossState.Attack;
-        _lastAttackTime   = Time.time;
+        _state = BossState.Attack;
         _animator.SetMoving(false);
 
         yield return _animator.PlayAttack(_phaseHandler.CurrentPhase);
@@ -125,24 +146,27 @@ public class BossController : MonoBehaviour
     }
 
     // ── 유틸 ──────────────────────────────────────────────────────────────
-    bool CanAttack()
-    {
-        float cooldown = _phaseHandler.CurrentPhase switch
-        {
-            BossPhase.FullBody => _phase1Cooldown,
-            BossPhase.ArmsOnly => _phase2Cooldown,
-            BossPhase.CoreOnly => _phase3Cooldown,
-            _                  => _phase1Cooldown
-        };
-        return Time.time - _lastAttackTime >= cooldown;
-    }
     float DistToPlayer() => Vector3.Distance(transform.position, _player.position);
+
+    bool IsFacingPlayer()
+    {
+        if (_phaseHandler.CurrentPhase == BossPhase.CoreOnly) return true;
+
+        Vector3 dir = _player.position - transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.01f) return true;
+        return Vector3.Angle(transform.forward, dir.normalized) <= _attackFacingAngle;
+    }
 
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, _detectionRange);
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _attackRange);
+
+        if (_animator != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, _animator.CurrentAttackRange);
+        }
     }
 }

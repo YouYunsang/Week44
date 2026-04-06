@@ -93,7 +93,7 @@ public class PlayerLandingImpulse : MonoBehaviour
         float impulseStrength = GetImpulseStrength(impactType);
 
         GenerateLandingImpulse(impulseStrength);
-        _landingExtension.PlayLanding(impactType);
+        //_landingExtension.PlayLanding(impactType);
         PublishLandingEvent(impactType, downwardSpeed, impulseStrength);
 
         ResetAirState();

@@ -18,6 +18,11 @@ public class BossPhaseHandler : MonoBehaviour
 
     public BossPhase CurrentPhase => _phase;
 
+    public int  LegsCut     => (_leftLegCut  ? 1 : 0) + (_rightLegCut  ? 1 : 0);
+    public int  ArmsCut     => (_leftArmCut  ? 1 : 0) + (_rightArmCut  ? 1 : 0);
+    public bool LeftArmCut  => _leftArmCut;
+    public bool RightArmCut => _rightArmCut;
+
     void OnEnable()  => EventBus<OnBossLimbSlicedEvent>.Subscribe(OnLimbSliced);
     void OnDisable() => EventBus<OnBossLimbSlicedEvent>.Unsubscribe(OnLimbSliced);
 
@@ -30,7 +35,13 @@ public class BossPhaseHandler : MonoBehaviour
             case LimbType.LeftArm:  _leftArmCut  = true; break;
             case LimbType.RightArm: _rightArmCut = true; break;
             case LimbType.Torso:
-                Debug.Log("[Boss] 토르소 파괴 → 사망");
+                if (_phase == BossPhase.CoreOnly) return;
+                _phase = BossPhase.CoreOnly;
+                Debug.Log("[Boss] 몸통 파괴 → CoreOnly 전환");
+                EventBus<OnBossPhaseChangedEvent>.Publish(new OnBossPhaseChangedEvent { phase = _phase });
+                return;
+            case LimbType.Head:
+                Debug.Log("[Boss] 머리 파괴 → 사망");
                 EventBus<OnBossDiedEvent>.Publish(new OnBossDiedEvent());
                 return;
         }

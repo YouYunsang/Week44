@@ -170,6 +170,13 @@ public struct OnBossPhaseChangedEvent : IEvent
     public BossPhase phase;
 }
 
+// 보스 공격 타이밍 (히트 여부 무관, 공격 모션 절정 시점)
+public enum BossAttackType { Kick, JumpStomp, ArmSwing, ArmSlam, Roll }
+public struct OnBossAttackEvent : IEvent
+{
+    public BossAttackType attackType;
+}
+
 // 보스 공격 히트 (플레이어 넉백 등에 사용)
 public struct OnBossAttackHitEvent : IEvent
 {
