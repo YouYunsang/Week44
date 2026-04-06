@@ -11,7 +11,6 @@ public class PlayerDashAttackUI : MonoBehaviour
     [Header("Layout")]
     [SerializeField] private Vector2 _stackOffset = new Vector2(0f, 60f);
     [SerializeField] private Vector2 _stackRechargeBarOffset = new Vector2(0f, 95f);
-    [SerializeField] private Vector2 _chargeGaugeOffset = new Vector2(0f, 40f);
     [SerializeField] private Vector2 _dashLabelOffset = new Vector2(0f, -60f);
 
     [Header("Sizes")]
@@ -19,14 +18,11 @@ public class PlayerDashAttackUI : MonoBehaviour
     [SerializeField] private float _stackLabelHeight = 30f;
     [SerializeField] private float _stackRechargeBarWidth = 80f;
     [SerializeField] private float _stackRechargeBarHeight = 6f;
-    [SerializeField] private float _chargeGaugeWidth = 150f;
-    [SerializeField] private float _chargeGaugeHeight = 10f;
     [SerializeField] private float _dashLabelWidth = 200f;
     [SerializeField] private float _dashLabelHeight = 40f;
 
     [Header("Crosshair")]
     [SerializeField] private float _defaultCrosshairSize = 6f;
-    [SerializeField] private float _maxChargeCrosshairSize = 10f;
 
     private void Awake()
     {
@@ -49,7 +45,6 @@ public class PlayerDashAttackUI : MonoBehaviour
         Vector2 center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
 
         DrawStackUI(center);
-        DrawChargeGauge(center);
         DrawDashLabel(center);
         DrawCrosshair(center);
     }
@@ -109,37 +104,6 @@ public class PlayerDashAttackUI : MonoBehaviour
                 center.y + _stackRechargeBarOffset.y,
                 _stackRechargeBarWidth * rechargeProgress,
                 _stackRechargeBarHeight),
-            Texture2D.whiteTexture);
-
-        GUI.color = Color.white;
-    }
-
-    private void DrawChargeGauge(Vector2 center)
-    {
-        if (!_playerDashAttack.IsCharging)
-            return;
-
-        float progress = _playerDashAttack.ChargeNormalized;
-
-        GUI.color = Color.gray;
-        GUI.DrawTexture(
-            new Rect(
-                center.x - _chargeGaugeWidth * 0.5f + _chargeGaugeOffset.x,
-                center.y + _chargeGaugeOffset.y,
-                _chargeGaugeWidth,
-                _chargeGaugeHeight),
-            Texture2D.whiteTexture);
-        
-        GUI.color = (_playerDashAttack.IsTargetInRange && !_playerDashAttack.IsTargetBullet)
-            ? Color.red
-            : Color.Lerp(Color.white, Color.yellow, progress);
-
-        GUI.DrawTexture(
-            new Rect(
-                center.x - _chargeGaugeWidth * 0.5f + _chargeGaugeOffset.x,
-                center.y + _chargeGaugeOffset.y,
-                _chargeGaugeWidth * progress,
-                _chargeGaugeHeight),
             Texture2D.whiteTexture);
 
         GUI.color = Color.white;

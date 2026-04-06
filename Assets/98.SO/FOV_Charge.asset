@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c586affb44a5984f9b4f63a29a4c3e9, type: 3}
   m_Name: FOV_Charge
   m_EditorClassIdentifier: Assembly-CSharp::CameraFovSettingSO
-  _targetFov: 50
+  _targetFov: 45
   _blendInTime: 0.35
   _blendOutTime: 0.12

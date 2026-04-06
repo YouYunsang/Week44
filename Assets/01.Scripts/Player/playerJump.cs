@@ -16,6 +16,7 @@ public class PlayerJump : MonoBehaviour
     private CharacterController _characterController;
     private float _verticalVelocity = 0f;
     private bool _isGrounded = false;
+    private bool _previousGrounded = false;
 
     public bool IsGrounded => _isGrounded;
     public float VerticalVelocity => _verticalVelocity;
@@ -41,10 +42,16 @@ public class PlayerJump : MonoBehaviour
             _input.OnJump -= HandleJump;
     }
 
+    private void Start()
+    {
+        _previousGrounded = _isGrounded;
+    }
+
     private void Update()
     {
         // 지면 체크 및 중력 처리
         CheckGround();
+        PublishGroundedChangedIfNeeded();
         ApplyGravity();
     }
 
@@ -66,6 +73,18 @@ public class PlayerJump : MonoBehaviour
             _groundCheckRadius,
             _groundLayer
         );
+    }
+
+    private void PublishGroundedChangedIfNeeded()
+    {
+        if (_previousGrounded == _isGrounded) return;
+
+        EventBus<OnPlayerGroundedChangedEvent>.Publish(new OnPlayerGroundedChangedEvent
+        {
+            isGrounded = _isGrounded
+        });
+
+        _previousGrounded = _isGrounded;
     }
 
     private void ApplyGravity()

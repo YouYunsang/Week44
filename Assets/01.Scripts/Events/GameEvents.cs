@@ -48,7 +48,6 @@ public struct OnMenuCloseEvent : IEvent { }
 public enum CameraNoiseChannel
 {
     Move,
-    DashCharge
 }
 public struct OnCameraNoiseSignalEvent : IEvent
 {
@@ -62,7 +61,6 @@ public struct OnCameraNoiseSignalEvent : IEvent
 public enum CameraFovChannel
 {
     Move,
-    DashCharge,
     Dash
 }
 
@@ -104,15 +102,16 @@ public struct OnCameraChromaticSignalEvent : IEvent
 
 #region Player Move
 public struct OnPlayerMoveStartedEvent : IEvent { }
+
 public struct OnPlayerMoveStoppedEvent : IEvent { }
+
+public struct OnPlayerGroundedChangedEvent : IEvent
+{
+    public bool isGrounded;
+}
 #endregion
 
 #region Player Dash Attack
-// 대시 차징 시작
-public struct OnDashChargeStartedEvent : IEvent { }
-
-// 대시 차징 취소
-public struct OnDashChargeCanceledEvent : IEvent { }
 
 // 대시 돌진 시작
 public struct OnDashStartedEvent : IEvent { }
@@ -122,20 +121,6 @@ public struct OnDashEndedEvent : IEvent { }
 
 // 대시 공격 판정 실행
 public struct OnDashStrikeEvent : IEvent { }
-#endregion
-
-#region Dutch Control
-public enum CameraDutchChannel
-{
-    DashCharge
-}
-
-public struct OnCameraDutchSignalEvent : IEvent
-{
-    public CameraDutchChannel channel;
-    public bool isActive;
-    public float normalized;
-}
 #endregion
 
 #region Landing
@@ -151,6 +136,7 @@ public struct OnPlayerLandedEvent : IEvent
     public LandingImpactType impactType;
     public float downwardSpeed;
     public float impulseStrength;
+    public float impulseDuration;
 }
 #endregion
 
