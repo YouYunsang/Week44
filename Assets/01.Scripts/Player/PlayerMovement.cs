@@ -162,15 +162,10 @@ public class PlayerMovement : MonoBehaviour
     {
         _canMove = canMove;
 
-        if (!canMove)
+        if (!canMove && _isMoving)
         {
-            _moveInput = Vector2.zero;
-
-            if (_isMoving)
-            {
-                _isMoving = false;
-                EventBus<OnPlayerMoveStoppedEvent>.Publish(new OnPlayerMoveStoppedEvent());
-            }
+            _isMoving = false;
+            EventBus<OnPlayerMoveStoppedEvent>.Publish(new OnPlayerMoveStoppedEvent());
         }
     }
     #endregion
