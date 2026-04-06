@@ -34,7 +34,7 @@ namespace Assets.Scripts.SliceScripts
             positiveObject.GetComponent<MeshFilter>().mesh = positiveSideMeshData;
             negativeObject.GetComponent<MeshFilter>().mesh = negativeSideMeshData;
 
-            float destroyDelay = 3f;
+            float destroyDelay = 2f;
             SliceConfig config = objectToCut.GetComponent<SliceConfig>();
             if (config != null)
                 destroyDelay = config.FragmentDestroyDelay;
