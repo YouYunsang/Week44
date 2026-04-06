@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7867724010108147991}
   - component: {fileID: 8645740192600503495}
   - component: {fileID: 8922617326964992291}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 1739295810619522336}
   - component: {fileID: 6419762708283706503}
   - component: {fileID: 8713482614171108421}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Trails
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5137,8 +5137,8 @@ MonoBehaviour:
   _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
   _sliceExecutor: {fileID: 816522476539103241}
   _attackRange: 9
-  _attackCooldown: 0.5
-  _slowAttackCooldown: 0.1
+  _attackCooldown: 0.3
+  _slowAttackCooldown: 0
 --- !u!114 &7836380275553792151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5359,18 +5359,14 @@ MonoBehaviour:
   _basicAttackRange: 2
   _stackOffset: {x: 0, y: 60}
   _stackRechargeBarOffset: {x: 0, y: 95}
-  _chargeGaugeOffset: {x: 0, y: 40}
   _dashLabelOffset: {x: 0, y: -60}
   _stackLabelWidth: 120
   _stackLabelHeight: 30
   _stackRechargeBarWidth: 80
   _stackRechargeBarHeight: 6
-  _chargeGaugeWidth: 150
-  _chargeGaugeHeight: 10
   _dashLabelWidth: 200
   _dashLabelHeight: 40
   _defaultCrosshairSize: 6
-  _maxChargeCrosshairSize: 10
 --- !u!1 &5178584912461210033
 GameObject:
   m_ObjectHideFlags: 0
@@ -5508,7 +5504,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6846602895434991804}
   - component: {fileID: 6603874026356201746}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}

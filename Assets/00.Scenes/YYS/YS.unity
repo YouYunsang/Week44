@@ -764,14 +764,10 @@ PrefabInstance:
       propertyPath: _volume
       value: 
       objectReference: {fileID: 7081442731783275095}
-    - target: {fileID: 5272155380467087171, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
-      propertyPath: _volume
+    - target: {fileID: 6022937862770723922, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
+      propertyPath: _slowBlackAndWhiteVolume
       value: 
       objectReference: {fileID: 7081442731783275095}
-    - target: {fileID: 5272155380467087171, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6058297779998656747, guid: cf251e079ca2ad042ac27d3ad205ab5c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.0923
