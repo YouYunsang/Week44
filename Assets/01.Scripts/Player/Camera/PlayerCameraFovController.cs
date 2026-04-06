@@ -9,9 +9,6 @@ public class PlayerCameraFovController : MonoBehaviour
     [Header("Move Setting")]
     [SerializeField] private CameraFovSettingSO _moveSetting;
 
-    [Header("Charge Setting")]
-    [SerializeField] private CameraFovSettingSO _chargeSetting;
-
     [Header("Dash Setting")]
     [SerializeField] private CameraFovSettingSO _dashSetting;
 
@@ -20,9 +17,6 @@ public class PlayerCameraFovController : MonoBehaviour
 
     private bool _isMoveActive = false;
     private float _moveNormalized = 0f;
-
-    private bool _isChargeActive = false;
-    private float _chargeNormalized = 0f;
 
     private float _targetFov;
     private float _currentBlendTime = 0.15f;
@@ -65,11 +59,6 @@ public class PlayerCameraFovController : MonoBehaviour
                 _moveNormalized = evt.normalized;
                 break;
 
-            case CameraFovChannel.DashCharge:
-                _isChargeActive = evt.isActive;
-                _chargeNormalized = evt.normalized;
-                break;
-
             case CameraFovChannel.Dash:
                 _isDashActive = evt.isActive;
                 _dashNormalized = evt.normalized;
@@ -83,12 +72,6 @@ public class PlayerCameraFovController : MonoBehaviour
         if (_isDashActive)
         {
             SetActiveSetting(_dashSetting, true);
-            return;
-        }
-
-        if (_isChargeActive)
-        {
-            SetActiveSetting(_chargeSetting, true);
             return;
         }
 
@@ -119,8 +102,6 @@ public class PlayerCameraFovController : MonoBehaviour
 
         if (_isDashActive && setting == _dashSetting)
             normalized = _dashNormalized;
-        else if (_isChargeActive && setting == _chargeSetting)
-            normalized = _chargeNormalized;
         else if (_isMoveActive && setting == _moveSetting)
             normalized = _moveNormalized;
 
