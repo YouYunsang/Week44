@@ -1855,7 +1855,6 @@ GameObject:
   - component: {fileID: 1929479568}
   - component: {fileID: 1929479567}
   - component: {fileID: 1929479566}
-  - component: {fileID: 1929479571}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -1974,24 +1973,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1929479571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1929479565}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3986457296efba045886aa6b3ffe987b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StackedSliceable
-  _maxSliceCount: 1
-  _sliceForce: 15
-  _separateForceRatio: 0.55
-  _torqueForceRatio: 0.3
-  _showDebugLog: 0
-  _debugTriggerKey: 120
 --- !u!1001 &2057478439
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2026,7 +2007,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 816522476539103241, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: _colliderDisableTime
-      value: 0.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1739295810619522336, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
       propertyPath: m_LocalPosition.x
