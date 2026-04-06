@@ -29,7 +29,7 @@ public class BossLimb : MonoBehaviour
 
     void Start()
     {
-        _sliceable = GetComponentInChildren<Sliceable>();
+        _sliceable = GetComponent<Sliceable>();
         _watching  = _sliceable != null;
     }
 
@@ -42,10 +42,12 @@ public class BossLimb : MonoBehaviour
             Notify();
     }
 
+    /// <summary>리스폰 직전에 MobSpawnPoint에서 호출 — OnDestroy가 phantom 이벤트를 쏘지 않도록 억제</summary>
+    public void MarkForRespawn() => _sliced = true;
+
     void OnDestroy()
     {
         if (_isAppQuitting || !gameObject.scene.isLoaded) return;
-        if (_sliceable != null) return;
         Notify();
     }
 
