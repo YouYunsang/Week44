@@ -5042,6 +5042,7 @@ GameObject:
   - component: {fileID: 816522476539103241}
   - component: {fileID: 5325060359221905237}
   - component: {fileID: 4890925015378917910}
+  - component: {fileID: 8985335370973968968}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -5105,6 +5106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   _input: {fileID: 11400000, guid: be591b0f3be262847af2e273b8ca8db2, type: 2}
   _moveSpeed: 10
+  _slowSpeedMultiplier: 1.5
 --- !u!114 &5614986853067378888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5321,6 +5323,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSliceExecutor
   _camera: {fileID: 0}
+  _sliceForce: 8
+  _separateForceRatio: 0.55
+  _torqueForceRatio: 0.3
+  _forwardForceBias: 0.65
+  _colliderDisableTime: 0.05
 --- !u!114 &5325060359221905237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5369,6 +5376,18 @@ MonoBehaviour:
   _dashLabelWidth: 200
   _dashLabelHeight: 40
   _defaultCrosshairSize: 6
+--- !u!114 &8985335370973968968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610172585898186420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91022cf03b814dd4daa9683374175f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHitReceiver
 --- !u!1 &5178584912461210033
 GameObject:
   m_ObjectHideFlags: 0

@@ -49,7 +49,10 @@ public class MobSpawnPoint : MonoBehaviour
             // 죽어가는 중(아직 Destroy 안 됨)이어도 강제로 정리하고 새로 스폰
             if (mob.spawnedMob != null)
             {
-                Destroy(mob.spawnedMob);
+                // BossLimb의 OnDestroy가 phantom 이벤트를 쏘지 않도록 먼저 억제
+                foreach (var limb in mob.spawnedMob.GetComponentsInChildren<BossLimb>())
+                    limb.MarkForRespawn();
+                DestroyImmediate(mob.spawnedMob);
                 mob.spawnedMob = null;
             }
 

@@ -109,6 +109,12 @@ public partial class BossProceduralAnimator
 
         // 5. 착지 + 판정
         transform.position = landPos;
+
+        EventBus<OnBossStompImpactEvent>.Publish(new OnBossStompImpactEvent
+        {
+            position = transform.position
+        });
+
         _rangeIndicator?.Hide(SLOT_STOMP);
         EventBus<OnBossAttackEvent>.Publish(new OnBossAttackEvent { attackType = BossAttackType.JumpStomp });
         PublishHitRect(Vector3.down, _stompForce, stompOrig, fwdN, _stompSize);
