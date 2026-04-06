@@ -1153,8 +1153,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSliceExecutor
   _camera: {fileID: 56097342}
-  _pushForcePower: 14
-  _invincetime: 0.5
+  _sliceForce: 8
+  _separateForceRatio: 0.55
+  _torqueForceRatio: 0.3
+  _forwardForceBias: 0.65
+  _colliderDisableTime: 0.05
 --- !u!114 &1510724062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1774,18 +1777,6 @@ PrefabInstance:
     - target: {fileID: 1476941199003381863, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
       propertyPath: m_Name
       value: Boss
-      objectReference: {fileID: 0}
-    - target: {fileID: 5439551233431080963, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      propertyPath: _detectionRange
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5439551233431080963, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      propertyPath: _debugStartNoLegs
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5439551233431080963, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
-      propertyPath: _debugStartHeadOnly
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8440111393602398749, guid: 6f8e6ba792cdb02439d03d52117498ba, type: 3}
       propertyPath: m_LocalPosition.x
