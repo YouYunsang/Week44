@@ -9,10 +9,14 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float _moveSpeed = 5f;
 
+    [Header("Slow Motion")]
+    [SerializeField] private float _slowSpeedMultiplier = 1.5f;
+
     private CharacterController _characterController;
     private Vector2 _moveInput = Vector2.zero;
     private bool _canMove = true;
     private bool _isMoving = false;
+    private bool _isSlowing = false;
 
     public bool IsMoving => _isMoving;
 
@@ -26,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
         if (_input != null) _input.OnMove += HandleMove;
         EventBus<OnMenuOpenEvent>.Subscribe(OnMenuOpen);
         EventBus<OnMenuCloseEvent>.Subscribe(OnMenuClose);
+        EventBus<OnSlowGaugeChangedEvent>.Subscribe(OnSlowGaugeChanged);
     }
 
     private void OnDisable()
@@ -33,7 +38,10 @@ public class PlayerMovement : MonoBehaviour
         if (_input != null) _input.OnMove -= HandleMove;
         EventBus<OnMenuOpenEvent>.Unsubscribe(OnMenuOpen);
         EventBus<OnMenuCloseEvent>.Unsubscribe(OnMenuClose);
+        EventBus<OnSlowGaugeChangedEvent>.Unsubscribe(OnSlowGaugeChanged);
     }
+
+    private void OnSlowGaugeChanged(OnSlowGaugeChangedEvent e) => _isSlowing = e.isSlowing;
 
     private void OnMenuOpen(OnMenuOpenEvent e)   => SetMoveEnabled(false);
     private void OnMenuClose(OnMenuCloseEvent e) => SetMoveEnabled(true);
@@ -114,7 +122,8 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 moveDirection = right * _moveInput.x + forward * _moveInput.y;
 
-        _characterController.Move(moveDirection * _moveSpeed * Time.deltaTime);
+        float speed = _moveSpeed * (_isSlowing ? _slowSpeedMultiplier : 1f);
+        _characterController.Move(moveDirection * speed * Time.deltaTime);
     }
 
     public void SetMoveEnabled(bool canMove)
