@@ -96,7 +96,6 @@ public class PlayerDashAttack : MonoBehaviour
             return;
 
         RechargeStack();
-        UpdateCharge();
     }
 
     private void HandleDashAttackPressed()
@@ -105,50 +104,26 @@ public class PlayerDashAttack : MonoBehaviour
         if (_isDashing || _currentStack <= 0)
             return;
 
-        _isCharging = true;
-        _currentRange = _data.MinAttackRange;
-        _isTargetInRange = false;
+        _currentRange = _data.MaxAttackRange;
 
-        // 차징 시작 이벤트 발행
-        EventBus<OnDashChargeStartedEvent>.Publish(new OnDashChargeStartedEvent());
-
-        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
+        if(!_sliceExecutor.TryGetSliceHit(_currentRange, out RaycastHit hit))
         {
-            channel = CameraNoiseChannel.DashCharge,
-            isActive = true,
-            normalized = 0f
-        });
+            _currentRange = _data.MinAttackRange;
+            return;
+        }
 
-        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
+        if(hit.collider.CompareTag("Bullet"))
         {
-            channel = CameraFovChannel.DashCharge,
-            isActive = true,
-            normalized = 0f
-        });
+            _currentRange = _data.MinAttackRange;
+            return;
+        }
 
-        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
-        {
-            channel = CameraDutchChannel.DashCharge,
-            isActive = true,
-            normalized = 0f
-        });
+        ConsumeStack();
+        StartCoroutine(DashAndSlice(hit));
     }
 
     private void HandleDashAttackReleased()
     {
-        // 차징 상태일 때만 release 처리
-        if (!_isCharging)
-            return;
-
-        _isCharging = false;
-
-        bool success = TryDashAndSlice();
-        if (!success)
-        {
-            // 실패 시 차징 취소 이벤트 발행
-            EventBus<OnDashChargeCanceledEvent>.Publish(new OnDashChargeCanceledEvent());
-        }
-
         EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
         {
             channel = CameraNoiseChannel.DashCharge,
@@ -188,71 +163,10 @@ public class PlayerDashAttack : MonoBehaviour
         }
     }
 
-    private void UpdateCharge()
-    {
-        if (!_isCharging || _sliceExecutor == null)
-            return;
-
-        // 홀드 중 사거리 충전
-        _currentRange = Mathf.Min(
-            _currentRange + _data.ChargeSpeed * Time.deltaTime,
-            _data.MaxAttackRange);
-
-        // 현재 충전 사거리 내 타겟 존재 여부 확인
-       if(_sliceExecutor.TryGetSliceHit(_currentRange, out RaycastHit hit))
-        {
-            _isTargetInRange = true;
-            IsTargetBullet = hit.collider.CompareTag("Bullet");
-        }
-        else
-        {
-            _isTargetInRange = false;
-            IsTargetBullet = false;
-        }
-
-        EventBus<OnCameraNoiseSignalEvent>.Publish(new OnCameraNoiseSignalEvent
-        {
-            channel = CameraNoiseChannel.DashCharge,
-            isActive = true,
-            normalized = ChargeNormalized
-        });
-
-        EventBus<OnCameraFovSignalEvent>.Publish(new OnCameraFovSignalEvent
-        {
-            channel = CameraFovChannel.DashCharge,
-            isActive = true,
-            normalized = ChargeNormalized
-        });
-
-        EventBus<OnCameraDutchSignalEvent>.Publish(new OnCameraDutchSignalEvent
-        {
-            channel = CameraDutchChannel.DashCharge,
-            isActive = true,
-            normalized = ChargeNormalized
-        });
-    }
 
     private bool TryDashAndSlice()
     {
-        if (_sliceExecutor == null)
-            return false;
-
-        // release 시점의 유효 타겟 확인
-        if (!_sliceExecutor.TryGetSliceHit(_currentRange, out RaycastHit hit))
-        {
-            _currentRange = _data.MinAttackRange;
-            return false;
-        }
-
-        if(hit.collider.CompareTag("Bullet"))
-        {
-            _currentRange = _data.MinAttackRange;
-            return false;
-        }
-
-        ConsumeStack();
-        StartCoroutine(DashAndSlice(hit));
-        return true;
+        return false;
     }
 
     private void ConsumeStack()
