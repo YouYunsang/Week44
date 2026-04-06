@@ -17,8 +17,12 @@ public class PlayerDashAttack : MonoBehaviour
     [SerializeField] private int _currentStack = 0;
     [SerializeField] private float _currentRange = 0f;
 
+    [Header("DashDelay")]
+    [SerializeField] private float _dashDelay = 0.5f;
+
     private float _rechargeTimer = 0f;
     private bool _isDashing = false;
+    private bool _isDelay = false;
     private bool _isTargetInRange = false;
 
     public int CurrentStack => _currentStack;
@@ -92,7 +96,7 @@ public class PlayerDashAttack : MonoBehaviour
     private void HandleDashAttackPressed()
     {
         // 대시 중이거나 스택이 없으면 시작 불가
-        if (_isDashing || _currentStack <= 0)
+        if (_isDashing || _currentStack <= 0 || _isDelay)
             return;
 
         _currentRange = _data.MaxAttackRange;
@@ -141,9 +145,17 @@ public class PlayerDashAttack : MonoBehaviour
 
     private void ConsumeStack()
     {
-        // 스택 소비 후 충전 타이머 초기화
+        // 스택 소비
         _currentStack = Mathf.Max(_currentStack - 1, 0);
-        _rechargeTimer = 0f;
+    }
+
+    private IEnumerator DashDelay()
+    {
+        _isDelay = true;
+
+        yield return new WaitForSeconds(_dashDelay);
+
+        _isDelay = false;
     }
 
     private IEnumerator DashAndSlice(RaycastHit hit)
@@ -253,5 +265,7 @@ public class PlayerDashAttack : MonoBehaviour
 
         _currentRange = _data.MinAttackRange;
         _isDashing = false;
+
+        StartCoroutine(DashDelay());
     }
 }
