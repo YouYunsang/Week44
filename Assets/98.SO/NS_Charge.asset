@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NS_Charge
   m_EditorClassIdentifier: Assembly-CSharp::CameraNoiseSettingSO
   _noiseProfile: {fileID: 11400000, guid: 9c79515bd9732e84ea710080644961bb, type: 2}
-  _amplitudeGain: 1
+  _amplitudeGain: 0.3
   _frequencyGain: 1
   _pivotOffset: {x: 0, y: 0, z: 0}
   _blendInSpeed: 10
