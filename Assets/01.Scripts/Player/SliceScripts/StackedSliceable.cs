@@ -32,16 +32,6 @@ public class StackedSliceable : MonoBehaviour
     private int  _currentSliceCount = 0;
     private bool _isSliced          = false;
 
-    // ───────────────────────────── Unity Lifecycle ─────────────────────────────
-
-    private void Update()
-    {
-        if (_showDebugLog && Input.GetKeyDown(_debugTriggerKey))
-            ForceExecuteSlices();
-    }
-
-    // ───────────────────────────── Public API ─────────────────────────────
-
     /// <summary>
     /// PlayerSliceExecutor에서 슬라이스 요청 시 호출.
     /// planeOrigin : 슬라이스 평면의 월드 위치 (보통 hit.point)
@@ -61,22 +51,6 @@ public class StackedSliceable : MonoBehaviour
             ExecuteAllSlices();
     }
 
-    /// <summary>
-    /// 누적 횟수 무관하게 강제 실행 (디버그 키 / 외부 트리거)
-    /// </summary>
-    public void ForceExecuteSlices()
-    {
-        if (_isSliced) return;
-
-        if (_pendingSlices.Count == 0)
-        {
-            Debug.LogWarning("[StackedSliceable] 누적된 슬라이스가 없습니다.");
-            return;
-        }
-
-        ExecuteAllSlices();
-    }
-
     // ───────────────────────────── Private Logic ─────────────────────────────
 
     private void ExecuteAllSlices()
@@ -91,6 +65,8 @@ public class StackedSliceable : MonoBehaviour
 
     private IEnumerator SliceSequence()
     {
+        Vector3 originPos = transform.position;
+
         GameObject currentTarget = gameObject;
         List<GameObject> allSlicedPieces = new();
 
@@ -128,18 +104,15 @@ public class StackedSliceable : MonoBehaviour
                 continue;
             }
 
-            GameObject positive = pieces[0]; // positive side
-            GameObject negative = pieces[1]; // negative side
-
-            allSlicedPieces.Add(positive);
-            allSlicedPieces.Add(negative);
+            allSlicedPieces.Add(pieces[0]);
+            allSlicedPieces.Add(pieces[1]);
 
             // 원본이 아닌 중간 조각은 제거
             if (currentTarget != gameObject)
                 Destroy(currentTarget);
 
             // 다음 슬라이스는 negative 조각에 이어서 적용
-            currentTarget = negative;
+            currentTarget = pieces[1];
 
             yield return null; // 프레임 분산
         }
@@ -148,10 +121,10 @@ public class StackedSliceable : MonoBehaviour
         Destroy(gameObject);
 
         // 조각들에 폭발력 적용
-        ApplyExplosionForce(allSlicedPieces);
+        ApplyExplosionForce(allSlicedPieces, originPos);
     }
 
-    private void ApplyExplosionForce(List<GameObject> pieces)
+    private void ApplyExplosionForce(List<GameObject> pieces, Vector3 originPos)
     {
         foreach (GameObject piece in pieces)
         {
@@ -159,7 +132,7 @@ public class StackedSliceable : MonoBehaviour
             if (!piece.TryGetComponent<Rigidbody>(out Rigidbody rb)) continue;
 
             Vector3 randomDir = (
-                piece.transform.position - transform.position
+                piece.transform.position - originPos
                 + Random.insideUnitSphere * _explosionRadius
             ).normalized;
 

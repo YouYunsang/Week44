@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class RespawnManager : MonoSingleton<RespawnManager>
 {
+
     [SerializeField] InputSO inputSO;
     [SerializeField] string playerTag = "Player";
 
