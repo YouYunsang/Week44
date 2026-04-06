@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 0d5caa2f91d788941aff29526097346f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -146,6 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StackedSliceable
   _maxSliceCount: 1000
   _sliceForce: 3
-  _explosionRadius: 0.5
+  _separateForceRatio: 0.55
+  _torqueForceRatio: 0.3
   _showDebugLog: 1
   _debugTriggerKey: 120
