@@ -25,6 +25,7 @@ public class SliceableMeshSceneChanger : Sliceable
     void Start()
     {
         SetupTMPMesh();
+        EventBus<OnSliceableReadyEvent>.Publish(new OnSliceableReadyEvent());
     }
 
     private void SetupTMPMesh()
@@ -93,6 +94,7 @@ internal class SceneChangeRunner : MonoBehaviour
     private IEnumerator Run(string sceneName, float delay)
     {
         yield return new WaitForSeconds(delay);
+        EventBus<OnSceneChangeBeginEvent>.Publish(new OnSceneChangeBeginEvent());
         SceneManager.LoadScene(sceneName);
         Destroy(gameObject);
     }

@@ -181,6 +181,12 @@ public struct OnBossStompImpactEvent : IEvent
 public struct OnBossDiedEvent : IEvent { }
 #endregion
 
+// 씬 전환 시작 (SliceableMeshSceneChanger 딜레이 종료 직전)
+public struct OnSceneChangeBeginEvent : IEvent { }
+
+// SliceableMeshSceneChanger 셋업 완료
+public struct OnSliceableReadyEvent : IEvent { }
+
 #region Weapon Swing
 public enum WeaponSwingType
 {
