@@ -1,22 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
-using TMPro; // TMP 사용을 위해 필수
+using System.Collections;
+using TMPro;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 public class SliceableMeshSceneChanger : Sliceable
 {
-    [Header("Mesh Combine Settings")]
-    [SerializeField] private bool _combineOnStart = true;
-    [SerializeField] private bool _destroyOriginalChildren = false;
-
     [Header("Scene Change Settings")]
     [SerializeField] private string _nextSceneName;
+    [SerializeField] private float _sceneChangeDelay = 2f;
 
     private MeshFilter _myFilter;
     private MeshRenderer _myRenderer;
     private bool _isAppQuitting = false;
+    private static bool _sceneChangeScheduled = false;
 
     void Awake()
     {
@@ -26,108 +24,76 @@ public class SliceableMeshSceneChanger : Sliceable
 
     void Start()
     {
-        if (_combineOnStart)
-        {
-            CombineAllChildren();
-        }
+        SetupTMPMesh();
     }
 
-    /// <summary>
-    /// 일반 메시와 TMP 메시를 모두 추출하여 하나로 합칩니다.
-    /// </summary>
-    private void CombineAllChildren()
+    private void SetupTMPMesh()
     {
-        // 1. 자식들에게서 모든 MeshFilter와 TMP 컴포넌트를 수집
-        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
-        TMP_Text[] tmpTexts = GetComponentsInChildren<TMP_Text>();
-
-        List<CombineInstance> combineList = new List<CombineInstance>();
-        Material targetMat = null;
-
-        // 2. 일반 MeshFilter 처리
-        foreach (var filter in meshFilters)
+        TMP_Text tmp = GetComponentInChildren<TMP_Text>();
+        if (tmp == null)
         {
-            if (filter == _myFilter) continue; // 자기 자신 제외
-            if (filter.sharedMesh == null) continue;
-            
-            // TMP가 내부적으로 생성한 MeshFilter는 TMP 전용 로직에서 처리하므로 제외
-            if (filter.GetComponent<TMP_Text>() != null) continue;
-
-            // 대표 머티리얼 설정 (첫 번째 발견되는 것)
-            if (targetMat == null)
-            {
-                var renderer = filter.GetComponent<MeshRenderer>();
-                if (renderer != null) targetMat = renderer.sharedMaterial;
-            }
-
-            CombineInstance ci = new CombineInstance();
-            ci.mesh = filter.sharedMesh;
-            // 부모의 로컬 좌표계 기준으로 변환
-            ci.transform = transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
-            combineList.Add(ci);
-
-            if (_destroyOriginalChildren) Destroy(filter.gameObject);
-            else filter.gameObject.SetActive(false);
+            Debug.LogWarning("[SliceableMeshSceneChanger] TMP_Text 자식을 찾지 못했습니다.");
+            return;
         }
 
-        // 3. TextMeshPro 메시 처리 (방법 B 적용)
-        foreach (var tmp in tmpTexts)
+        tmp.ForceMeshUpdate();
+
+        if (tmp.mesh == null || tmp.mesh.vertexCount == 0)
         {
-            // 현재 텍스트 상태로 메시를 강제 갱신
-            tmp.ForceMeshUpdate();
-            
-            // TMP의 메시를 복제 (원본 보호 및 일반 Mesh 취급)
-            Mesh meshCopy = Instantiate(tmp.mesh);
-
-            // TMP 머티리얼을 우선적으로 대표 머티리얼로 설정 (글자 색상/폰트 유지 목적)
-            if (targetMat == null || targetMat.name.Contains("Default"))
-            {
-                targetMat = tmp.fontSharedMaterial;
-            }
-
-            CombineInstance ci = new CombineInstance();
-            ci.mesh = meshCopy;
-            ci.transform = transform.worldToLocalMatrix * tmp.transform.localToWorldMatrix;
-            combineList.Add(ci);
-
-            if (_destroyOriginalChildren) Destroy(tmp.gameObject);
-            else tmp.gameObject.SetActive(false);
+            Debug.LogWarning("[SliceableMeshSceneChanger] TMP 메시가 비어있습니다.");
+            return;
         }
 
-        // 4. 최종 합치기 실행
-        if (combineList.Count > 0)
-        {
-            Mesh finalMesh = new Mesh();
-            finalMesh.name = "CombinedSliceableMesh";
-            // 정점 수가 많을 경우를 대비해 32비트 인덱스 사용
-            finalMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-            
-            // 모든 메시를 하나의 서브메시로 합침 (true, true)
-            finalMesh.CombineMeshes(combineList.ToArray(), true, true);
-            
-            _myFilter.mesh = finalMesh;
-            if (targetMat != null) _myRenderer.sharedMaterial = targetMat;
-            
-            Debug.Log($"[Combined] {combineList.Count}개의 요소를 합쳤습니다. (TMP 포함)");
-        }
+        // TMP 메시와 머티리얼을 루트에 직접 적용
+        _myFilter.mesh = Instantiate(tmp.mesh);
+        _myRenderer.sharedMaterial = tmp.fontSharedMaterial;
+
+        // 루트에서 TMP를 렌더링하므로 자식 TMP는 숨김
+        tmp.gameObject.SetActive(false);
+
+        UpdateCollider(_myFilter.mesh);
+    }
+
+    private void UpdateCollider(Mesh mesh)
+    {
+        MeshCollider mc = GetComponent<MeshCollider>();
+        if (mc != null) { mc.sharedMesh = mesh; return; }
+
+        BoxCollider bc = GetComponent<BoxCollider>();
+        if (bc != null) { bc.center = mesh.bounds.center; bc.size = mesh.bounds.size; return; }
+
+        BoxCollider newBox = gameObject.AddComponent<BoxCollider>();
+        newBox.center = mesh.bounds.center;
+        newBox.size   = mesh.bounds.size;
     }
 
     private void OnApplicationQuit() => _isAppQuitting = true;
 
     private void OnDestroy()
     {
-        // 앱 종료 중이 아니고 씬이 유효할 때만 실행
         if (_isAppQuitting || !gameObject.scene.isLoaded) return;
+        if (string.IsNullOrEmpty(_nextSceneName)) return;
+        if (_sceneChangeScheduled) return;
 
-        if (!string.IsNullOrEmpty(_nextSceneName))
-        {
-            PerformSceneChange();
-        }
+        _sceneChangeScheduled = true;
+
+        var runner = new GameObject("_SceneChangeRunner");
+        DontDestroyOnLoad(runner);
+        runner.AddComponent<SceneChangeRunner>().Init(_nextSceneName, _sceneChangeDelay);
+    }
+}
+
+internal class SceneChangeRunner : MonoBehaviour
+{
+    public void Init(string sceneName, float delay)
+    {
+        StartCoroutine(Run(sceneName, delay));
     }
 
-    private void PerformSceneChange()
+    private IEnumerator Run(string sceneName, float delay)
     {
-        // 씬 전환 실행
-        SceneManager.LoadScene(_nextSceneName);
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
+        Destroy(gameObject);
     }
 }

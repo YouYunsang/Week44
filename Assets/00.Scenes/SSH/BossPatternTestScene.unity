@@ -1038,11 +1038,8 @@ PrefabInstance:
       insertIndex: 8
       addedObject: {fileID: 1510724056}
     - targetCorrespondingSourceObject: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      insertIndex: -1
+      insertIndex: 16
       addedObject: {fileID: 1510724062}
-    - targetCorrespondingSourceObject: {fileID: 2610172585898186420, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1510724080}
   m_SourcePrefab: {fileID: 100100000, guid: 1d31956332dbbda479b811ffbc111128, type: 3}
 --- !u!1 &1510724050 stripped
 GameObject:
@@ -1173,18 +1170,6 @@ MonoBehaviour:
   _weaponPivot: {fileID: 8895883}
   _swingAngle: 200
   _swingDuration: 0.1
---- !u!114 &1510724080
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1510724050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91022cf03b814dd4daa9683374175f00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHitReceiver
 --- !u!1 &1529847412
 GameObject:
   m_ObjectHideFlags: 0

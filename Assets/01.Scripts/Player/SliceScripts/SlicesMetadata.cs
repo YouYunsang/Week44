@@ -416,7 +416,7 @@ namespace Assets.Scripts.SliceScripts
                             vert1, normal1, uv1,
                             vert2, normal2, uv2,
                             vert3, normal3, uv3,
-                            true,
+                            _useSharedVertices,
                             sourceIsCap);
                     }
                     else
