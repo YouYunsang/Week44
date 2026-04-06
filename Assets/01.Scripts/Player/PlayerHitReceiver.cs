@@ -12,6 +12,8 @@ public class PlayerHitReceiver : MonoBehaviour
     void OnHit(OnBossAttackHitEvent e)
     {
         Debug.Log($"[Player] 보스 공격에 사망 — 방향: {e.direction}, 힘: {e.force}");
-        // TODO: 실제 사망 처리 (GameOver 이벤트 등)
+        bool respawned = RespawnManager.Instance.TryRespawnByTag();
+        if (respawned)
+            StageManager.Instance.TryRespawnAll();
     }
 }
