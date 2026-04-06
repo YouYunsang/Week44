@@ -10,6 +10,9 @@ public class PlayerCameraNoiseController : MonoBehaviour
     [Header("Move Settings")]
     [SerializeField] private CameraNoiseSettingSO _moveSetting;
 
+    [Header("Boss Stomp Settings")]
+    [SerializeField] private CameraNoiseSettingSO _bossStompSetting;
+
     private CinemachineBasicMultiChannelPerlin _perlin;
     private CameraNoiseSettingSO _currentSetting;
 
@@ -18,6 +21,9 @@ public class PlayerCameraNoiseController : MonoBehaviour
 
     private bool _isMoveActive = false;
     private float _moveNormalized = 0f;
+
+    private bool _isBossStompActive = false;
+    private float _bossStompNormalized = 0f;
 
     private void Awake()
     {
@@ -52,11 +58,22 @@ public class PlayerCameraNoiseController : MonoBehaviour
                 _isMoveActive = evt.isActive;
                 _moveNormalized = evt.normalized;
                 break;
+
+            case CameraNoiseChannel.BossStomp:
+                _isBossStompActive = evt.isActive;
+                _bossStompNormalized = evt.normalized;
+                break;
         }
     }
 
     private void UpdateNoiseByPriority()
     {
+        if (_isBossStompActive)
+        {
+            SetActiveSetting(_bossStompSetting);
+            return;
+        }
+
         if (_isMoveActive)
         {
             SetActiveSetting(_moveSetting);
@@ -96,7 +113,12 @@ public class PlayerCameraNoiseController : MonoBehaviour
         float normalized = 1f;
         bool isBlendingIn = false;
 
-        if (_isMoveActive && _currentSetting == _moveSetting)
+        if (_isBossStompActive && _currentSetting == _bossStompSetting)
+        {
+            normalized = _bossStompNormalized;
+            isBlendingIn = true;
+        }
+        else if (_isMoveActive && _currentSetting == _moveSetting)
         {
             normalized = _moveNormalized;
             isBlendingIn = true;
@@ -106,10 +128,18 @@ public class PlayerCameraNoiseController : MonoBehaviour
         float targetFrequency = _currentSetting.FrequencyGain;
 
         // 활성 상태에서는 normalized 기반 스케일링
-        if (isBlendingIn && _currentSetting == _moveSetting)
+        if (isBlendingIn)
         {
-            targetAmplitude *= Mathf.Lerp(0.35f, 1f, normalized);
-            targetFrequency *= Mathf.Lerp(0.85f, 1.15f, normalized);
+            if (_currentSetting == _bossStompSetting)
+            {
+                targetAmplitude *= normalized;
+                targetFrequency *= Mathf.Lerp(0.9f, 1f, normalized);
+            }
+            else if (_currentSetting == _moveSetting)
+            {
+                targetAmplitude *= Mathf.Lerp(0.35f, 1f, normalized);
+                targetFrequency *= Mathf.Lerp(0.85f, 1.15f, normalized);
+            }
         }
 
         float blendSpeed = isBlendingIn ? _currentSetting.BlendInSpeed : _currentSetting.BlendOutSpeed;

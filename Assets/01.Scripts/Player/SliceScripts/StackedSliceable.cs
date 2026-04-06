@@ -23,11 +23,6 @@ public class StackedSliceable : MonoBehaviour
     private int _currentSliceCount = 0;
     private bool _isSliced = false;
 
-    private void Update()
-    {
-        if (_showDebugLog && Input.GetKeyDown(_debugTriggerKey))
-            ForceExecuteSlices();
-    }
 
     public void RequestSlice(Vector3 planeOrigin, Vector3 planeNormal, Vector3 sliceDirection)
     {
