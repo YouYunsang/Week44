@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8663630807966201749}
   - component: {fileID: 4051664892561642108}
   - component: {fileID: 2207221688749683959}
+  - component: {fileID: 1013576582334416499}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Bullet
@@ -131,3 +132,15 @@ MonoBehaviour:
   _shareVertices: 0
   _smoothVertices: 0
   _capMaterial: {fileID: 0}
+--- !u!114 &1013576582334416499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7014988171735255395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2602559cfccdab24c89a2db00096c103, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RespawnTrigger
